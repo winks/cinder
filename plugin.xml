@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="Cinder Preferences"
+            class="org.art_core.dev.cinder.preferences.CinderPrefPage"
+            id="org.art_core.dev.cinder.preferencesCinderPrefPage">
+      </page>
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.art_core.dev.cinder.preferences.CinderPrefInit">
+      </initializer>
+   </extension>
+
+	<extension
+		point="org.eclipse.ui.editors.annotationTypes">
+		<type
+			name="org.art_core.dev.cinder.TypeError"
+			super="org.eclipse.ui.workbench.texteditor.error"
+			markerType="org.art-core.dev.cinder.TypeError"
+			markerSeverity="2">
+		</type>
+		<type
+			name="org.art_core.dev.cinder.TypeWarning"
+			super="org.eclipse.ui.workbench.texteditor.warning"
+			markerType="org.art-core.dev.cinder.TypeWarning"
+			markerSeverity="1">
+		</type>
+		<type
+			name="org.art_core.dev.cinder.TypeInfo"
+			super="org.eclipse.ui.workbench.texteditor.info"
+			markerType="org.art-core.dev.cinder.TypeInfo"
+			markerSeverity="0">
+		</type>
+	</extension>
+	
+	<extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Cinder"
+            id="org.art_core.dev.cinder.views.InputView">
+      </category>
+      <view
+            name="Cinder Monkey View"
+            icon="icons/face-monkey.gif"
+            category="org.art_core.dev.cinder"
+            class="org.art_core.dev.cinder.views.InputView"
+            id="org.art_core.dev.cinder.views.MonkeyView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.TaskList"
+               relationship="right"
+               id="org.art_core.dev.cinder.views.InputView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+</plugin>
