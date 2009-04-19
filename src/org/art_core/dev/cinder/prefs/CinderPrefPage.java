@@ -1,4 +1,4 @@
-package org.art_core.dev.cinder.preferences;
+package org.art_core.dev.cinder.prefs;
 
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;

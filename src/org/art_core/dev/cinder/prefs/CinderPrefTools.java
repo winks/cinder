@@ -1,4 +1,4 @@
-package org.art_core.dev.cinder.preferences;
+package org.art_core.dev.cinder.prefs;
 
 /**
  * Constant definitions for plug-in preferences

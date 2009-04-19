@@ -1,5 +1,8 @@
 package org.art_core.dev.cinder.views;
 
+import java.awt.image.VolatileImage;
+import java.util.ArrayList;
+
 import org.art_core.dev.cinder.model.ItemManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
@@ -13,8 +16,14 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
 public class JFInputView extends ViewPart {
+	private static final String MONKEY_VIEW_ID = 
+		"org.art_core.dev.cinder.views.JFMonkeyView";
+	
+	private final String[] colNames = {"", "Name", "Status", "Line", "Offset"};
+	
 	private TableViewer viewer;
-	private TableColumn tCol, nCol, sCol;
+	private TableColumn tCol, nCol, sCol, lineCol, offCol;
+	
 	private Action action1;
 	private Action action2;
 	private Action doubleClickAction;
@@ -30,6 +39,15 @@ public class JFInputView extends ViewPart {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
+		createTableViewer(parent);
+
+		makeActions();
+		hookContextMenu();
+		hookDoubleClickAction();
+		contributeToActionBars();
+	}
+
+	private void createTableViewer(Composite parent) {
 		viewer = new TableViewer(
 			parent, 
 			SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION
@@ -37,16 +55,24 @@ public class JFInputView extends ViewPart {
 		final Table table = viewer.getTable();
 		
 		tCol = new TableColumn(table, SWT.LEFT);
-		tCol.setText("");
-		tCol.setWidth(10);
+		tCol.setText(colNames[0]);
+		tCol.setWidth(20);
 		
 		nCol = new TableColumn(table, SWT.LEFT);
-		nCol.setText("Name");
+		nCol.setText(colNames[1]);
 		nCol.setWidth(150);
 		
 		sCol = new TableColumn(table, SWT.LEFT);
-		sCol.setText("Status");
+		sCol.setText(colNames[2]);
 		sCol.setWidth(150);
+		
+		lineCol = new TableColumn(table, SWT.LEFT);
+		lineCol.setText(colNames[3]);
+		lineCol.setWidth(50);
+		
+		offCol = new TableColumn(table, SWT.LEFT);
+		offCol.setText(colNames[4]);
+		offCol.setWidth(50);
 		
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -54,20 +80,9 @@ public class JFInputView extends ViewPart {
 		viewer.setContentProvider(new JFContentProvider());
 		viewer.setLabelProvider(new JFLabelProvider());
 		viewer.setSorter(new JFSorter());
-		//viewer.setInput(getViewSite());
 		viewer.setInput(ItemManager.getManager());
-
-		// Create the help context id for the viewer's control
-		/*PlatformUI.getWorkbench().getHelpSystem().setHelp(
-				viewer.getControl(), 
-				"org.art_core.dev.cinder.viewer"
-		);*/
-		makeActions();
-		hookContextMenu();
-		hookDoubleClickAction();
-		contributeToActionBars();
 	}
-
+	
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);

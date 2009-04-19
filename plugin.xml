@@ -5,7 +5,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="Cinder Preferences"
-            class="org.art_core.dev.cinder.preferences.CinderPrefPage"
+            class="org.art_core.dev.cinder.prefs.CinderPrefPage"
             id="org.art_core.dev.cinder.preferencesCinderPrefPage">
       </page>
    </extension>
@@ -13,7 +13,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.art_core.dev.cinder.preferences.CinderPrefInit">
+            class="org.art_core.dev.cinder.prefs.CinderPrefInit">
       </initializer>
    </extension>
 

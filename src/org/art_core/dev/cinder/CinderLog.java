@@ -4,7 +4,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * The logger of convenience for the Favorites plug-in.
+ * The logger of convenience for the Cinder plug-in.
  */
 public class CinderLog {
    /**

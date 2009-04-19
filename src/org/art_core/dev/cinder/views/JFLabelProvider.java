@@ -17,6 +17,10 @@ class JFLabelProvider extends LabelProvider	implements ITableLabelProvider {
 				return ((IItem) obj).getName();
 			case 2: // location column
 				return ((IItem) obj).getLocation();
+			case 3: // line number column
+				return String.valueOf(((IItem) obj).getLine());
+			case 4: // offset column
+				return String.valueOf(((IItem) obj).getOffset());
 			default:
 				return "";
 		}

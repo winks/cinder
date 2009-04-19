@@ -7,39 +7,58 @@ import org.eclipse.core.runtime.Platform;
 
 
 public class PropertiesItem implements IItem {
-	private Hashtable htProp;
+	//private Hashtable<String, String> htProp;
 	private ItemType type;
-	private IResource resource;
 	private String name;
+	private String location;
+	private int line;
+	private int offset;
+	
+	private IResource resource;
 	
 	public PropertiesItem(String name) {
-		this.name = name;
-		this.type = ItemType.UNKNOWN;
+		this(name, "empty", ItemType.WORKBENCH_FILE);
 	}
 	
-	public PropertiesItem(Hashtable ht) {
-		htProp = ht;
+	public PropertiesItem(String name, String loc) {
+		this(name, loc, ItemType.WORKBENCH_FILE);
 	}
+	
+	public PropertiesItem(String name, String loc, ItemType ty) {
+		this.name = name;
+		this.location = loc;
+		this.type = ty;
+		this.line = 2;
+		this.offset = 4;
+	}
+	
+	/*public PropertiesItem(Hashtable ht) {
+		htProp = ht;
+	}*/
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public void setName(String newName) {
-		
+		return this.name;
 	}
 	
 	@Override
 	public String getLocation() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.location;
 	}
 
 	@Override
 	public ItemType getType() {
-		return type;
+		return this.type;
+	}
+	
+	@Override
+	public int getLine() {
+		return this.line;
+	}
+
+	@Override
+	public int getOffset() {
+		return this.offset;
 	}
 
 	// For now, this is how we suppress a warning that we cannot fix

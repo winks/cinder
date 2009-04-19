@@ -6,9 +6,9 @@ public interface IItem
 	extends IAdaptable
 {	
 	String getName();
-	void setName(String newName);
 	String getLocation();
-	
+	int getLine();
+	int getOffset();
 	ItemType getType();
 	
 	

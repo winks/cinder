@@ -1,9 +1,9 @@
-package org.art_core.dev.cinder.views;
+package org.art_core.dev.cinder.zzz;
 
-import org.art_core.dev.cinder.views.InputView;
-import org.art_core.dev.cinder.views.InputView.NameSorter;
-import org.art_core.dev.cinder.views.InputView.ViewContentProvider;
-import org.art_core.dev.cinder.views.InputView.ViewLabelProvider;
+import org.art_core.dev.cinder.zzz.InputView;
+import org.art_core.dev.cinder.zzz.InputView.NameSorter;
+import org.art_core.dev.cinder.zzz.InputView.ViewContentProvider;
+import org.art_core.dev.cinder.zzz.InputView.ViewLabelProvider;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.*;
@@ -33,7 +33,7 @@ public class InputView extends ViewPart {
 	 
 	class ViewContentProvider implements IStructuredContentProvider {
 		private static final String MONKEY_VIEW_ID = 
-			"org.art_core.dev.cinder.views.MonkeyView";
+			"org.art_core.dev.cinder.zzz.MonkeyView";
 
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}

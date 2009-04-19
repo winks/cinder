@@ -1,4 +1,4 @@
-package org.art_core.dev.cinder.preferences;
+package org.art_core.dev.cinder.prefs;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
