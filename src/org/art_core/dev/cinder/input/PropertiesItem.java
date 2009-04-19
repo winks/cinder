@@ -10,6 +10,22 @@ public class PropertiesItem implements Item {
 	}
 
 	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public void setName(String newName) {
+		
+	}
+	
+	@Override
+	public String getLocation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
 	public String getDefinition() {
 		// TODO Auto-generated method stub
 		return null;

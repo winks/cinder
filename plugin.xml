@@ -52,6 +52,13 @@
             class="org.art_core.dev.cinder.views.InputView"
             id="org.art_core.dev.cinder.views.MonkeyView">
       </view>
+      <view
+            name="Cinder JF Monkey View"
+            icon="icons/face-monkey.gif"
+            category="org.art_core.dev.cinder"
+            class="org.art_core.dev.cinder.views.JFInputView"
+            id="org.art_core.dev.cinder.views.JFMonkeyView">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
