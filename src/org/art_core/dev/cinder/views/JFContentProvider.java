@@ -1,8 +1,12 @@
 package org.art_core.dev.cinder.views;
 
+import org.art_core.dev.cinder.model.ItemManager;
+import org.art_core.dev.cinder.model.ItemManagerEvent;
+import org.art_core.dev.cinder.model.ItemManagerListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.IViewSite;
+
 
 /*
  * The content provider class is responsible for
@@ -14,23 +18,35 @@ import org.eclipse.ui.IViewSite;
  * (like Task List, for example).
  */
  
-public class JFContentProvider implements IStructuredContentProvider {
-	private static final String JFMONKEY_VIEW_ID = 
-		"org.art_core.dev.cinder.views.JFMonkeyView";
+public class JFContentProvider 
+	implements IStructuredContentProvider, ItemManagerListener
+{
+	private TableViewer viewer;
+	private ItemManager manager;
 
 	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		this.viewer = (TableViewer) v;
+		if (manager != null)
+			manager.removeItemManagerListener(this);
+		manager = (ItemManager) newInput;
+		if (manager != null)
+			manager.addItemManagerListener(this);
 	}
+	
 	public void dispose() {
 	}
+	
 	public Object[] getElements(Object parent) {
-		if (parent instanceof IViewSite) {
-			IViewSite view = (IViewSite)parent;
-			String viewId = view.getId();
-			
-			if (viewId.equals(JFMONKEY_VIEW_ID)) {
-				return new String[] { "Cheetah", "King Kong", "Donkey Kong" };
-			}
+		return manager.getItems();
+	}
+	
+	public void itemsChanged(ItemManagerEvent event) {
+		viewer.getTable().setRedraw(false);
+		try {
+			viewer.remove(event.getItemsRemoved());
+			viewer.add(event.getItemsAdded());
+		} finally {
+			viewer.getTable().setRedraw(true);
 		}
-		return null;
 	}
 }

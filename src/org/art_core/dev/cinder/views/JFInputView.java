@@ -1,5 +1,6 @@
 package org.art_core.dev.cinder.views;
 
+import org.art_core.dev.cinder.model.ItemManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -13,7 +14,7 @@ import org.eclipse.swt.SWT;
 
 public class JFInputView extends ViewPart {
 	private TableViewer viewer;
-	private TableColumn nCol, sCol;
+	private TableColumn tCol, nCol, sCol;
 	private Action action1;
 	private Action action2;
 	private Action doubleClickAction;
@@ -35,6 +36,10 @@ public class JFInputView extends ViewPart {
 		);
 		final Table table = viewer.getTable();
 		
+		tCol = new TableColumn(table, SWT.LEFT);
+		tCol.setText("");
+		tCol.setWidth(10);
+		
 		nCol = new TableColumn(table, SWT.LEFT);
 		nCol.setText("Name");
 		nCol.setWidth(150);
@@ -49,7 +54,8 @@ public class JFInputView extends ViewPart {
 		viewer.setContentProvider(new JFContentProvider());
 		viewer.setLabelProvider(new JFLabelProvider());
 		viewer.setSorter(new JFSorter());
-		viewer.setInput(getViewSite());
+		//viewer.setInput(getViewSite());
+		viewer.setInput(ItemManager.getManager());
 
 		// Create the help context id for the viewer's control
 		/*PlatformUI.getWorkbench().getHelpSystem().setHelp(

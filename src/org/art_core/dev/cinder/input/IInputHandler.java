@@ -1,6 +1,6 @@
 package org.art_core.dev.cinder.input;
 
-public interface InputHandler {
+public interface IInputHandler {
 	
 	public boolean isReadable();
 	

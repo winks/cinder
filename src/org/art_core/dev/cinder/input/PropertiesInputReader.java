@@ -1,18 +1,18 @@
 package org.art_core.dev.cinder.input;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.Hashtable;
 import java.util.Properties;
 
+import org.art_core.dev.cinder.model.PropertiesItem;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 
-public class PropertiesInputReader implements InputHandler {
+public class PropertiesInputReader implements IInputHandler {
 	private String sFilename;
+	private final String basename = "cinder.properties";
 	
 	public PropertiesInputReader(String file) {
 		IPath ipath = new Path(file);
@@ -38,7 +38,6 @@ public class PropertiesInputReader implements InputHandler {
 		
 		Properties prop = new Properties();
 		try {
-			
 			FileInputStream stream = new FileInputStream(sFilename);
 			prop.load(stream);
 			stream.close();
