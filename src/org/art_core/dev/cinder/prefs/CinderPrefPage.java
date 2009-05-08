@@ -61,7 +61,7 @@ public class CinderPrefPage
 		
 		addField(
 			new StringFieldEditor(	
-				CinderPrefTools.P_STRING+"_what", 
+				CinderPrefTools.P_STRING+"_highlight", 
 				"&highlight:", 
 				getFieldEditorParent())
 		);

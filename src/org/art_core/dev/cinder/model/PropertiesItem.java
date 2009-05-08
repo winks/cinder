@@ -1,6 +1,6 @@
 package org.art_core.dev.cinder.model;
 
-import java.util.Hashtable;
+//import java.util.Hashtable;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
@@ -22,6 +22,14 @@ public class PropertiesItem implements IItem {
 	
 	public PropertiesItem(String name, String loc) {
 		this(name, loc, ItemType.WORKBENCH_FILE);
+	}
+	
+	public PropertiesItem(String name, String loc, String ty) {
+		this.name = name;
+		this.location = loc;
+		this.type = ItemType.JAVA_PACKAGE_ROOT;
+		this.line = 23;
+		this.offset = 42;
 	}
 	
 	public PropertiesItem(String name, String loc, ItemType ty) {
@@ -59,6 +67,16 @@ public class PropertiesItem implements IItem {
 	@Override
 	public int getOffset() {
 		return this.offset;
+	}
+	
+	public String toString() {
+		String s = "";
+		s += this.name + ":";
+		s += this.location + ":";
+		s += this.line + ":";
+		s += this.offset + ":";
+		s += this.type.toString();
+		return s;
 	}
 
 	// For now, this is how we suppress a warning that we cannot fix

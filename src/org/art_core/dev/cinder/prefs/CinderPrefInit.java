@@ -19,8 +19,7 @@ public class CinderPrefInit extends AbstractPreferenceInitializer {
 		IPreferenceStore store = CinderPlugin.getDefault().getPreferenceStore();
 		store.setDefault(CinderPrefTools.P_BOOLEAN, true);
 		store.setDefault(CinderPrefTools.P_CHOICE, "choice2");
-		store.setDefault(CinderPrefTools.P_STRING,
-				"Default value");
+		store.setDefault(CinderPrefTools.P_STRING, "Default value");
 	}
 
 }

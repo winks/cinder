@@ -38,6 +38,10 @@ public class ItemManager {
 			items.add(new PropertiesItem("foo", "JAVA_PACKAGE_ROOT", ItemType.JAVA_PACKAGE_ROOT));
 			items.add(new PropertiesItem("foo", "JAVA_PROJECT", ItemType.JAVA_PROJECT));
 			PropertiesInputReader pir = new PropertiesInputReader("cinder.properties");
+			Collection<IItem> coll = pir.getItems();
+			for(IItem item : coll) {
+				items.add(item);
+			}
 		}
 		return items.toArray(new IItem[items.size()]);
 	}

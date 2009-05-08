@@ -2,6 +2,10 @@ package org.art_core.dev.cinder.model;
 
 import org.eclipse.core.runtime.IAdaptable;
 
+/*
+ * Abstract class for Items in Properties.
+ * 
+ */
 public interface IItem 
 	extends IAdaptable
 {	

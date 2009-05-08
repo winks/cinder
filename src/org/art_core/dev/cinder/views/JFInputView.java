@@ -1,8 +1,5 @@
 package org.art_core.dev.cinder.views;
 
-import java.awt.image.VolatileImage;
-import java.util.ArrayList;
-
 import org.art_core.dev.cinder.model.ItemManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
@@ -40,13 +37,16 @@ public class JFInputView extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		createTableViewer(parent);
-
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
 	}
 
+	/**
+	 * Creates the TableViewer
+	 * @param parent
+	 */
 	private void createTableViewer(Composite parent) {
 		viewer = new TableViewer(
 			parent, 
@@ -54,22 +54,27 @@ public class JFInputView extends ViewPart {
 		);
 		final Table table = viewer.getTable();
 		
+		// icon column
 		tCol = new TableColumn(table, SWT.LEFT);
 		tCol.setText(colNames[0]);
 		tCol.setWidth(20);
 		
+		// name column
 		nCol = new TableColumn(table, SWT.LEFT);
 		nCol.setText(colNames[1]);
 		nCol.setWidth(150);
 		
+		// status column
 		sCol = new TableColumn(table, SWT.LEFT);
 		sCol.setText(colNames[2]);
 		sCol.setWidth(150);
 		
+		// line number column
 		lineCol = new TableColumn(table, SWT.LEFT);
 		lineCol.setText(colNames[3]);
 		lineCol.setWidth(50);
 		
+		// offset column
 		offCol = new TableColumn(table, SWT.LEFT);
 		offCol.setText(colNames[4]);
 		offCol.setWidth(50);
@@ -83,6 +88,9 @@ public class JFInputView extends ViewPart {
 		viewer.setInput(ItemManager.getManager());
 	}
 	
+	/**
+	 * Adds actions to the context menu
+	 */
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
@@ -94,6 +102,17 @@ public class JFInputView extends ViewPart {
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
+	}
+	
+	/**
+	 * Adds actions to a double click
+	 */
+	private void hookDoubleClickAction() {
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				doubleClickAction.run();
+			}
+		});
 	}
 
 	private void contributeToActionBars() {
@@ -120,10 +139,14 @@ public class JFInputView extends ViewPart {
 		manager.add(action2);
 	}
 
+	/**
+	 * Initialize the actions needed
+	 */
 	private void makeActions() {
+		// action1 - generic
 		action1 = new Action() {
 			public void run() {
-				showMessage("Action 1 executed");
+				showMessage("Action 1 executed", "Action Title");
 			}
 		};
 		action1.setText("Action 1");
@@ -131,35 +154,36 @@ public class JFInputView extends ViewPart {
 		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		
+		// action2 - generic
 		action2 = new Action() {
 			public void run() {
-				showMessage("Action 2 executed");
+				showMessage("Action 2 executed", "Action Title");
 			}
 		};
 		action2.setText("Action 2");
 		action2.setToolTipText("Action 2 tooltip");
 		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		
+		// doubleclick - generic
 		doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection)selection).getFirstElement();
-				showMessage("Double-click detected on "+obj.toString());
+				showMessage("Double-click detected on "+obj.toString(), "Action Title");
 			}
 		};
 	}
 
-	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
-			}
-		});
-	}
-	private void showMessage(String message) {
+	/**
+	 * Show a popup message
+	 * @param message
+	 * @param title
+	 */
+	private void showMessage(String message, String title) {
 		MessageDialog.openInformation(
 			viewer.getControl().getShell(),
-			"Employee",
+			title,
 			message);
 	}
 
