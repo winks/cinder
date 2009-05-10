@@ -1,10 +1,19 @@
 package org.art_core.dev.cinder.views;
 
+import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.model.ItemManager;
+import org.art_core.dev.cinder.model.PropertiesItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.*;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.text.AbstractDocument;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -13,9 +22,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
 public class JFInputView extends ViewPart {
-	private static final String MONKEY_VIEW_ID = 
-		"org.art_core.dev.cinder.views.JFMonkeyView";
+	//private static final String MONKEY_VIEW_ID = "org.art_core.dev.cinder.views.JFMonkeyView";
 	
+	private final String JAVAEDITORID="org.eclipse.jdt.ui.CompilationUnitEditor";
 	private final String[] colNames = {"", "Name", "Status", "Line", "Offset"};
 	
 	private TableViewer viewer;
@@ -168,9 +177,74 @@ public class JFInputView extends ViewPart {
 		// doubleclick - generic
 		doubleClickAction = new Action() {
 			public void run() {
+				// select the clicked item from the view
 				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection)selection).getFirstElement();
-				showMessage("Double-click detected on "+obj.toString(), "Action Title");
+				PropertiesItem pi = (PropertiesItem)((IStructuredSelection)selection).getFirstElement();
+				if (pi == null)  {
+					return;
+				}
+				//String msg = "Double-click detected on "+pi.toString()+"\n\n";
+				//showMessage(msg, "Action Title");
+				
+				AbstractTextEditor editor = null;
+				
+				// hardcoded project name - for now
+				String projectName = "HelloWorldASD";
+				String newLoc = projectName + "/" + pi.getLocation();
+				try {
+					// find the correct editor window, based on the name
+					IFile res = (IFile)ResourcesPlugin.getWorkspace().getRoot().findMember(newLoc);
+					CinderLog.logInfo("JFIV:"+res.toString());
+					FileEditorInput fileinput = new FileEditorInput(res);
+					editor = (AbstractTextEditor)PlatformUI.getWorkbench().getActiveWorkbenchWindow().
+						getActivePage().openEditor(fileinput, JAVAEDITORID);
+				} catch (Exception e) {
+					//resourceMessage("AV_W_FILENOTFOUND", projectName+pi.getLocation());
+					CinderLog.logInfo("JFIV:E:"+newLoc);
+					return;
+				}
+				if(editor != null){
+					// convert line numbers to offset numbers (eclipse internal)
+					IEditorInput input = editor.getEditorInput();
+					IDocument doc = ((ITextEditor)editor).getDocumentProvider().getDocument(input);
+					int iLineOffset = -1;
+					int iLineLength = -1;
+					int iOff = pi.getOffset();
+					int iLen = 5;
+					try {
+						iLineOffset = doc.getLineOffset(pi.getLine());
+						iLineLength = doc.getLineLength(pi.getLine());
+						CinderLog.logInfo("JFIV:LineOff:"+iLineOffset+" LineLen: "+iLineLength);
+						if (iLineOffset >= 0) {
+							iOff += iLineOffset;
+							if (iLineLength >= 0) {
+								iLen = iLineLength;
+								
+								// optional stripping of leading whitespace
+								int iCounter = 0;
+								String test = "";
+								for(int i = 0; i <= iLineLength; i++) {
+									test = doc.get(iLineOffset+i, 1);
+									if (test.equals(" ") || test.equals("\t")) {
+										iCounter++;
+									} else {
+										break;
+									}
+								}
+								iOff += iCounter;
+								iLen -= iCounter;
+								CinderLog.logInfo("JFIV:++:"+iCounter);
+							}
+						}
+					} catch (Exception e) {
+						CinderLog.logInfo("JFIV:E:"+e.getMessage());
+					}
+					
+					// avoid to select the linebreak at the end
+					iLen -= 1;
+					TextSelection sel = new TextSelection(iOff, iLen);
+					editor.getSelectionProvider().setSelection(sel);
+				}
 			}
 		};
 	}

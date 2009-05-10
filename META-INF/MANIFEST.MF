@@ -7,9 +7,12 @@ Bundle-Activator: org.art_core.dev.cinder.CinderPlugin
 Bundle-Vendor: art-core
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.core.resources;bundle-version="3.4.1"
+ org.eclipse.core.resources;bundle-version="3.4.1",
+ org.eclipse.ui.ide
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.jdt.ui,
- org.eclipse.ui.ide
+ org.eclipse.jface.text,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.texteditor
 

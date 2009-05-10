@@ -71,7 +71,7 @@ public class PropertiesInputReader implements IInputHandler {
 	}
 }
 /*
-// only 1 open project supported
+// only 1 open project supported 
 IProject[] pro = root.getProjects();
 String projectName = "";
 

@@ -69,7 +69,7 @@ public class XmlInputReader implements IInputHandler {
 							String eMessage = error.getAttribute("message");
 							String ePattern = error.getAttribute("pattern");
 							
-							xi = new PropertiesItem(fileName, ePattern,
+							xi = new PropertiesItem(ePattern, fileName,
 									CinderTools.chooseType(eSeverity),
 									eLine.intValue(), eColumn.intValue());
 							xi.setMessage(eMessage);
