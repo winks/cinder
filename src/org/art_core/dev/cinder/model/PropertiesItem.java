@@ -11,33 +11,53 @@ public class PropertiesItem implements IItem {
 	private ItemType type;
 	private String name;
 	private String location;
+	private String message;
 	private int line;
 	private int offset;
 	
 	private IResource resource;
 	
+	public static final ItemType DEFAULT_TYPE = ItemType.JAVA_PACKAGE;
+	public static final int DEFAULT_LINE = 0;
+	public static final int DEFAULT_OFFSET = -1;
+	
+	/*
+	 * These are the Constructors
+	 */
 	public PropertiesItem(String name) {
-		this(name, "empty", ItemType.WORKBENCH_FILE);
+		this(name, "empty", DEFAULT_TYPE, DEFAULT_LINE, DEFAULT_OFFSET);
 	}
 	
 	public PropertiesItem(String name, String loc) {
-		this(name, loc, ItemType.WORKBENCH_FILE);
-	}
-	
-	public PropertiesItem(String name, String loc, String ty) {
-		this.name = name;
-		this.location = loc;
-		this.type = ItemType.JAVA_PACKAGE_ROOT;
-		this.line = 23;
-		this.offset = 42;
+		this(name, loc, DEFAULT_TYPE, DEFAULT_LINE, DEFAULT_OFFSET);
 	}
 	
 	public PropertiesItem(String name, String loc, ItemType ty) {
+		this(name, loc, ty, DEFAULT_LINE, DEFAULT_OFFSET);
+	}
+	
+	public PropertiesItem(String name, String loc, int line) {
+		this(name, loc, DEFAULT_TYPE, line, DEFAULT_OFFSET);
+	}
+	
+	public PropertiesItem(String name, String loc, int line, int offset) {
+		this(name, loc, DEFAULT_TYPE, line, offset);
+	}
+	
+	/**
+	 * Full constructor
+	 * @param name
+	 * @param loc
+	 * @param ty
+	 * @param line
+	 * @param offset
+	 */
+	public PropertiesItem(String name, String loc, ItemType ty, int line, int offset) {
 		this.name = name;
 		this.location = loc;
 		this.type = ty;
-		this.line = 2;
-		this.offset = 4;
+		this.line = line;
+		this.offset = offset;
 	}
 	
 	/*public PropertiesItem(Hashtable ht) {
@@ -67,6 +87,14 @@ public class PropertiesItem implements IItem {
 	@Override
 	public int getOffset() {
 		return this.offset;
+	}
+	
+	public String getMessage() {
+		return this.message;
+	}
+	
+	public void setMessage (String msg) {
+		this.message = msg;
 	}
 	
 	public String toString() {

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.art_core.dev.cinder.input.PropertiesInputReader;
+import org.art_core.dev.cinder.input.XmlInputReader;
 
 public class ItemManager {
 	private static ItemManager manager;
@@ -26,7 +27,9 @@ public class ItemManager {
 	public IItem[] getItems() {
 		if (items == null) {
 			items = new ArrayList<IItem>();
-			items.add(new PropertiesItem("xyz"));
+			
+			// this a bogus list for debugging
+			items.add(new PropertiesItem("foo"));
 			items.add(new PropertiesItem("foo", "bar"));
 			items.add(new PropertiesItem("foo", "WORKBENCH_FOLDER", ItemType.WORKBENCH_FOLDER));
 			items.add(new PropertiesItem("foo", "WORKBENCH_PROJECT", ItemType.WORKBENCH_PROJECT));
@@ -37,8 +40,16 @@ public class ItemManager {
 			items.add(new PropertiesItem("foo", "JAVA_PACKAGE", ItemType.JAVA_PACKAGE));
 			items.add(new PropertiesItem("foo", "JAVA_PACKAGE_ROOT", ItemType.JAVA_PACKAGE_ROOT));
 			items.add(new PropertiesItem("foo", "JAVA_PROJECT", ItemType.JAVA_PROJECT));
+			// end bogus list
+			
 			PropertiesInputReader pir = new PropertiesInputReader("cinder.properties");
 			Collection<IItem> coll = pir.getItems();
+			for(IItem item : coll) {
+				items.add(item);
+			}
+			
+			XmlInputReader xir = new XmlInputReader("cinder.xml");
+			coll = xir.getItems();
 			for(IItem item : coll) {
 				items.add(item);
 			}

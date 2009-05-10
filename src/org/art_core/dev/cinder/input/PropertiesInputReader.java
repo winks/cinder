@@ -29,8 +29,8 @@ public class PropertiesInputReader implements IInputHandler {
 		String sPath = root.getLocation().toString();
 		sFilename = sPath + "/" + file;
 
-		CinderLog.logInfo("path: "+sPath);
-		CinderLog.logInfo("plus: "+sFilename);
+		CinderLog.logInfo("PIR:path: "+sPath);
+		CinderLog.logInfo("PIR:plus: "+sFilename);
 		
 		readFile(sFilename);
 	}
@@ -53,11 +53,11 @@ public class PropertiesInputReader implements IInputHandler {
 			String n = prop.getProperty("name");
 			String s = prop.getProperty("status");
 			String t = prop.getProperty("type");
-			CinderLog.logInfo(n.toString());
-			CinderLog.logInfo(s.toString());
-			CinderLog.logInfo(t.toString());
+			CinderLog.logInfo("PIR:"+n.toString());
+			CinderLog.logInfo("PIR:"+s.toString());
+			CinderLog.logInfo("PIR:"+t.toString());
 			pi = new PropertiesItem(n, s);
-			CinderLog.logInfo(pi.toString());
+			CinderLog.logInfo("PIR:"+pi.toString());
 			items.add(pi);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -65,6 +65,7 @@ public class PropertiesInputReader implements IInputHandler {
 		}
 	}
 	
+	@Override
 	public Collection<IItem> getItems() {
 		return this.items;
 	}
