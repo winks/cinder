@@ -201,7 +201,7 @@ public class JFInputView extends ViewPart {
 					editor = (AbstractTextEditor)PlatformUI.getWorkbench().getActiveWorkbenchWindow().
 						getActivePage().openEditor(fileinput, JAVAEDITORID);
 					
-					IMarker marker = res.createMarker("warning");
+					IMarker marker = res.createMarker(IMarker.TASK);
 					marker.setAttribute(IMarker.MESSAGE, pi.getMessage() + ": " + pi.getLine());
 					//marker.setAttribute(IMarker.CHAR_START, 50);
 					//marker.setAttribute(IMarker.CHAR_END, 70);
