@@ -24,7 +24,7 @@ import org.eclipse.swt.SWT;
 public class JFInputView extends ViewPart {
 	//private static final String MONKEY_VIEW_ID = "org.art_core.dev.cinder.views.JFMonkeyView";
 	
-	private final String JAVAEDITORID="org.eclipse.jdt.ui.CompilationUnitEditor";
+	private final String JAVAEDITORID = "org.eclipse.jdt.ui.CompilationUnitEditor";
 	private final String[] colNames = {"", "Name", "Status", "Line", "Offset"};
 	
 	private TableViewer viewer;

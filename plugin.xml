@@ -43,21 +43,14 @@
          point="org.eclipse.ui.views">
       <category
             name="Cinder"
-            id="org.art_core.dev.cinder.views.InputView">
+            id="org.art_core.dev.cinder">
       </category>
       <view
-            name="Cinder Monkey View"
-            icon="icons/face-monkey.gif"
-            category="org.art_core.dev.cinder"
-            class="org.art_core.dev.cinder.views.InputView"
-            id="org.art_core.dev.cinder.views.MonkeyView">
-      </view>
-      <view
-            name="Cinder JF Monkey View"
+            name="Cinder JF View"
             icon="icons/face-monkey.gif"
             category="org.art_core.dev.cinder"
             class="org.art_core.dev.cinder.views.JFInputView"
-            id="org.art_core.dev.cinder.views.JFMonkeyView">
+            id="org.art_core.dev.cinder.views.JFInputView">
       </view>
    </extension>
    <extension
