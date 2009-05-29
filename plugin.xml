@@ -72,4 +72,43 @@
          </view>
       </perspectiveExtension>
    </extension>
+   <extension
+         id="auditmarker"
+         name="Properties Auditor Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <persistent value="true"/>
+      <attribute name="key"/>
+      <attribute name="violation"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            class="org.art_core.dev.cinder.builder.ViolationResolutionGenerator"
+            markerType="org.art_core.dev.cinder.auditmarker">
+      </markerResolutionGenerator>
+   </extension>
+   <extension
+         id="propertiesAuditor"
+         name="Favorites Properties Auditor"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.art_core.dev.cinder.builder.PropertiesAuditorNature">
+         </run>
+      </runtime>
+      <builder
+            id="org.art_core.dev.cinder.builder.propertiesFileAuditor">
+      </builder>
+      <requires-nature
+            id="org.eclipse.jdt.core.javanature">
+      </requires-nature>
+      <requires-nature
+            id="org.eclipse.pde.PluginNature">
+      </requires-nature>
+      <one-of-nature
+            id="pluginAuditors">
+      </one-of-nature>
+   </extension>
 </plugin>
