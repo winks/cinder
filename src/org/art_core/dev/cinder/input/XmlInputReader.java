@@ -11,8 +11,12 @@ import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.CinderTools;
 import org.art_core.dev.cinder.model.IItem;
 import org.art_core.dev.cinder.model.PropertiesItem;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -30,6 +34,11 @@ public class XmlInputReader implements IInputHandler {
 		CinderLog.logInfo("XIR:path: "+sPath);
 		CinderLog.logInfo("XIR:plus: "+sFilename);
 		
+		IProject[] allProjects = root.getProjects();
+		for (int i = 0; i < allProjects.length; i++) {
+			CinderLog.logInfo("DBG: "+allProjects[i].getName().toString());
+		}
+
 		readFile(sFilename);
 	}
 

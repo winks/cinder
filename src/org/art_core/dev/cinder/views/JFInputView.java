@@ -9,7 +9,9 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.core.internal.resources.Marker;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.IDocument;
@@ -198,9 +200,23 @@ public class JFInputView extends ViewPart {
 					FileEditorInput fileinput = new FileEditorInput(res);
 					editor = (AbstractTextEditor)PlatformUI.getWorkbench().getActiveWorkbenchWindow().
 						getActivePage().openEditor(fileinput, JAVAEDITORID);
+					
+					IMarker marker = res.createMarker("warning");
+					marker.setAttribute(IMarker.MESSAGE, pi.getMessage() + ": " + pi.getLine());
+					//marker.setAttribute(IMarker.CHAR_START, 50);
+					//marker.setAttribute(IMarker.CHAR_END, 70);
+					marker.setAttribute(IMarker.LINE_NUMBER, pi.getLine());
+					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+					marker.setAttribute("key", pi.getName());
+			        marker.setAttribute("violation", pi.getMessage());
+			        
+			        CinderLog.logInfo("JFIV:MARKER:"+marker.toString());
+			        CinderLog.logInfo("JFIV:MARKER:"+marker.getType());
+			        CinderLog.logInfo("JFIV:MARKER:"+marker.getAttribute(IMarker.LINE_NUMBER, 666));
 				} catch (Exception e) {
 					//resourceMessage("AV_W_FILENOTFOUND", projectName+pi.getLocation());
 					CinderLog.logInfo("JFIV:E:"+newLoc);
+					
 					return;
 				}
 				if(editor != null){

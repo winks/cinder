@@ -148,7 +148,7 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
       for (int i = 0; i < children.length; i++) {
          IResourceDelta child = children[i];
          String fileName = child.getProjectRelativePath().lastSegment();
-         if (fileName.equals("plugin.xml") || fileName.equals("plugin.properties"))
+         if (fileName.equals("HelloWorldOutput.java") || fileName.equals("HelloWorldASD.java"))
             return true;
       }
       return false;
@@ -175,13 +175,13 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
 
       if (checkCancel(monitor))
          return;
-      Map<String, Location> pluginKeys = scanPlugin(getProject().getFile("plugin.xml"));
+      Map<String, Location> pluginKeys = scanPlugin(getProject().getFile("HelloWorldOutput.java"));
       monitor.worked(1);
 
       if (checkCancel(monitor))
          return;
       Map<String, Location> propertyKeys =
-            scanProperties(getProject().getFile("plugin.properties"));
+            scanProperties(getProject().getFile("HelloWorldASD.java"));
       monitor.worked(1);
 
       if (checkCancel(monitor))
@@ -350,6 +350,9 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
                : IMarker.SEVERITY_WARNING);
          marker.setAttribute(KEY, loc.key);
          marker.setAttribute(VIOLATION, violation);
+         
+         CinderLog.logInfo("rP: "+marker.toString());
+         CinderLog.logInfo("rP: "+marker.getAttribute(IMarker.SEVERITY, 666)+"");
       }
       catch (CoreException e) {
     	  CinderLog.logError(e);

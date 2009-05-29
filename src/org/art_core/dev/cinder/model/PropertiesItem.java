@@ -2,7 +2,12 @@ package org.art_core.dev.cinder.model;
 
 //import java.util.Hashtable;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 
@@ -14,6 +19,7 @@ public class PropertiesItem implements IItem {
 	private String message;
 	private int line;
 	private int offset;
+	public IFile rFile;
 	
 	private IResource resource;
 	
@@ -58,6 +64,17 @@ public class PropertiesItem implements IItem {
 		this.type = ty;
 		this.line = line;
 		this.offset = offset;
+		Path p = new Path("HelloWorldASD/" + loc);
+		this.rFile = ResourcesPlugin.getWorkspace().getRoot().getFile(p);
+		/*try {
+			IMarker marker = rFile.createMarker("warning");
+			marker.setAttribute(IMarker.MESSAGE, name + ": " + line);
+			marker.setAttribute(IMarker.CHAR_START, 50);
+			marker.setAttribute(IMarker.CHAR_END, 70);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 	}
 	
 	/*public PropertiesItem(Hashtable ht) {
