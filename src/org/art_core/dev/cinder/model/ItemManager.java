@@ -2,7 +2,7 @@ package org.art_core.dev.cinder.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+//import java.util.Iterator;
 import java.util.List;
 
 import org.art_core.dev.cinder.input.PropertiesInputReader;
@@ -72,9 +72,9 @@ public class ItemManager {
 		listeners.remove(listener);
 	}
 	
-	private void fireItemsChanged(IItem[] itemsAdded, IItem[] itemsRemoved) {
+	/*private void fireItemsChanged(IItem[] itemsAdded, IItem[] itemsRemoved) {
 		ItemManagerEvent event = new ItemManagerEvent(this, itemsAdded, itemsRemoved);
 		for (Iterator<ItemManagerListener> iter = listeners.iterator(); iter.hasNext();)
 			iter.next().itemsChanged(event);
-	}
+	}*/
 }

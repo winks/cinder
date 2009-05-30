@@ -9,11 +9,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.core.internal.resources.Marker;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.*;
@@ -190,19 +190,41 @@ public class JFInputView extends ViewPart {
 				
 				AbstractTextEditor editor = null;
 				
-				// hardcoded project name - for now
-				String projectName = "HelloWorldASD";
-				String newLoc = projectName + "/" + pi.getLocation();
+				String sMyLoc = pi.getLocation();
+				// find the correct editor window, based on the name
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				IProject[] projects = root.getProjects();
+				
 				try {
-					// find the correct editor window, based on the name
-					IFile res = (IFile)ResourcesPlugin.getWorkspace().getRoot().findMember(newLoc);
-					CinderLog.logInfo("JFIV:"+res.toString());
+					CinderLog.logInfo("JFIV_start");
+					Thread.sleep(200);
+					IFile res = null;
+					String sProjName = "";
+					for (int i = 0; i < projects.length; i++) {
+						sProjName = projects[i].getName();
+						CinderLog.logInfo("JFIV:DBG: "+sProjName);
+						Thread.sleep(200);
+						res = (IFile)root.findMember(sProjName+"/"+sMyLoc);
+						if (res == null) {
+							CinderLog.logInfo("JFIV_notfound:NULL");
+							Thread.sleep(100);
+							continue;
+						} else {
+							CinderLog.logInfo("JFIV____found:"+res.toString());
+							Thread.sleep(100);
+							break;
+						}
+					}
+					CinderLog.logInfo("JFIV_start");
+					Thread.sleep(100);
+					
 					FileEditorInput fileinput = new FileEditorInput(res);
 					editor = (AbstractTextEditor)PlatformUI.getWorkbench().getActiveWorkbenchWindow().
-						getActivePage().openEditor(fileinput, JAVAEDITORID);
+							getActivePage().openEditor(fileinput, JAVAEDITORID);
 					
 					IMarker marker = res.createMarker(IMarker.TASK);
-					marker.setAttribute(IMarker.MESSAGE, pi.getMessage() + ": " + pi.getLine());
+					marker.setAttribute(IMarker.MESSAGE, 
+							pi.getName() + "(" + pi.getMessage() + "): " + pi.getLine());
 					//marker.setAttribute(IMarker.CHAR_START, 50);
 					//marker.setAttribute(IMarker.CHAR_END, 70);
 					marker.setAttribute(IMarker.LINE_NUMBER, pi.getLine());
@@ -210,12 +232,11 @@ public class JFInputView extends ViewPart {
 					marker.setAttribute("key", pi.getName());
 			        marker.setAttribute("violation", pi.getMessage());
 			        
-			        CinderLog.logInfo("JFIV:MARKER:"+marker.toString());
 			        CinderLog.logInfo("JFIV:MARKER:"+marker.getType());
 			        CinderLog.logInfo("JFIV:MARKER:"+marker.getAttribute(IMarker.LINE_NUMBER, 666));
 				} catch (Exception e) {
 					//resourceMessage("AV_W_FILENOTFOUND", projectName+pi.getLocation());
-					CinderLog.logInfo("JFIV:E:"+newLoc);
+					CinderLog.logError("JFIV:E:"+sMyLoc, e);
 					
 					return;
 				}
