@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+      point="org.eclipse.ui.views">
+   <view
+         class="com.eclipse_tips.markers.MyCustomMarkersView"
+         icon="icons/sample.gif"
+         id="com.eclipse-tips.markers.customMarker"
+         name="My Custom Markers">
+   </view>
+	</extension>
+
+	<extension
+      point="org.eclipse.ui.ide.markerSupport">
+   <markerContentGenerator
+         id="com.eclipse-tips.markers.myCustomMarkerGenerator"
+         name="My Marker Generator">
+   <markerTypeReference
+         id="org.eclipse.core.resources.marker"/>
+         
+   <markerFieldReference
+         id="org.eclipse.ui.ide.severityAndDescriptionField"/>
+   <markerFieldReference
+         id="org.eclipse.ui.ide.locationField"/>
+   <markerFieldReference
+         id="org.eclipse.ui.ide.markerType"/>
+   <markerFieldReference
+         id="org.eclipse.ui.ide.priorityField"/>
+   <markerFieldReference
+         id="org.eclipse.ui.ide.resourceField"/>
+   <markerFieldReference
+         id="com.eclipse-tips.markers.projectField"/> 
+   </markerContentGenerator>
+
+   <markerField
+      class="com.eclipse_tips.markers.ProjectField"
+      id="com.eclipse-tips.markers.projectField"
+      name="Project">
+   </markerField> 
+    </extension>
+</plugin>
