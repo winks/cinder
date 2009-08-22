@@ -42,12 +42,14 @@ public class ItemManager {
 			items.add(new PropertiesItem("foo", "JAVA_PROJECT", ItemType.JAVA_PROJECT));
 			// end bogus list
 			
+			// read from properties file
 			PropertiesInputReader pir = new PropertiesInputReader("cinder.properties");
 			Collection<IItem> coll = pir.getItems();
 			for(IItem item : coll) {
 				items.add(item);
 			}
 			
+			// read from XML file
 			XmlInputReader xir = new XmlInputReader("cinder.xml");
 			coll = xir.getItems();
 			for(IItem item : coll) {

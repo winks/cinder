@@ -14,7 +14,7 @@ public abstract class ItemType implements Comparable<ItemType> {
 	private final String printName;
 	private final int ordinal;
 	
-	private ItemType(String id, String name, int position) {
+	public ItemType(String id, String name, int position) {
 		this.id = id;
 		this.printName = name;
 		this.ordinal = position;
