@@ -14,7 +14,7 @@ public abstract class ItemType implements Comparable<ItemType> {
 	private final String printName;
 	private final int ordinal;
 	
-	public ItemType(String id, String name, int position) {
+	public ItemType(final String id, final String name, final int position) {
 		this.id = id;
 		this.printName = name;
 		this.ordinal = position;
@@ -32,7 +32,7 @@ public abstract class ItemType implements Comparable<ItemType> {
 	public abstract IItem newItem(Object obj);
 	public abstract IItem loadItem(String info);
 	
-	public int compareTo(ItemType other) {
+	public int compareTo(final ItemType other) {
 		return this.ordinal - other.ordinal;
 	}
 	
@@ -59,8 +59,9 @@ public abstract class ItemType implements Comparable<ItemType> {
 		}
 
 		public IItem newItem(Object obj) {
-			if (!(obj instanceof IFile))
+			if (!(obj instanceof IFile)) {
 				return null;
+			}
 			return null;
 		}
 
@@ -228,6 +229,6 @@ public static final ItemType JAVA_INTERFACE
         JAVA_CLASS_FILE, JAVA_COMP_UNIT, JAVA_INTERFACE, JAVA_CLASS,};
   
 	public static ItemType[] getTypes() {
-		return TYPES;
+		return TYPES.clone();
 	}
 }

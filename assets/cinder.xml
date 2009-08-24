@@ -4,6 +4,6 @@
   <error line="2" column="0" severity="warning" message="unneeded import" pattern="ImportPattern" />
 </file>
 <file name="src/HelloWorldOutput.java">
-  <error line="8" column="0" severity="warning" message="unneeded loop" pattern="LoopPattern" />
+  <error line="9" column="0" severity="warning" message="unneeded loop" pattern="LoopPattern" />
 </file>
 </files>

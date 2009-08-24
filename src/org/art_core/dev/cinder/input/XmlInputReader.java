@@ -19,17 +19,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class XmlInputReader implements IInputHandler {
-	private String sFilename;
-	private Collection<IItem> items = new ArrayList<IItem>();
+	private final String sFilename;
+	private final Collection<IItem> items = new ArrayList<IItem>();
 	
-	public XmlInputReader(String file) {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		String sPath = root.getLocation().toString();
+	public XmlInputReader(final String file) {
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		final String sPath = root.getLocation().toString();
 		sFilename = sPath + "/" + file;
 
 		CinderLog.logInfo("XIR:path:" + sPath + "_" + sFilename);
-
-		readFile(sFilename);
 	}
 
 	@Override
@@ -39,15 +37,15 @@ public class XmlInputReader implements IInputHandler {
 	}
 
 	@Override
-	public void readFile(String sFilename) {		
-		File fXml = new File(sFilename);
+	public void readFile() {		
+		final File fXml = new File(sFilename);
 		CinderLog.logInfo("XIR:len:"+fXml.length());
-		DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
+		final DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 		try {
-			DocumentBuilder builder	= fac.newDocumentBuilder();
+			final DocumentBuilder builder	= fac.newDocumentBuilder();
 			Document doc = builder.parse(fXml);
 
-			PropertiesItem xi;
+			PropertiesItem xItem;
 			NodeList fileNodes, errorNodes;
 			Integer eLine, eColumn;
 			String eSeverity, eMessage, ePattern, sTargetFileName;			
@@ -74,11 +72,11 @@ public class XmlInputReader implements IInputHandler {
 							eMessage = error.getAttribute("message");
 							ePattern = error.getAttribute("pattern");
 							
-							xi = new PropertiesItem(ePattern, sTargetFileName,
+							xItem = new PropertiesItem(ePattern, sTargetFileName,
 									CinderTools.chooseType(eSeverity),
 									eLine.intValue(), eColumn.intValue());
-							xi.setMessage(eMessage);
-							items.add(xi);
+							xItem.setMessage(eMessage);
+							items.add(xItem);
 						}
 					}
 				}
@@ -93,6 +91,11 @@ public class XmlInputReader implements IInputHandler {
 	@Override
 	public Collection<IItem> getItems() {
 		return this.items;
+	}
+	
+	@Override
+	public String getFilename() {
+		return this.sFilename;
 	}
 
 }

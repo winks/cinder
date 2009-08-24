@@ -24,15 +24,15 @@ public class PropertiesItem implements IItem {
 	/*
 	 * These are the Constructors
 	 */
-	public PropertiesItem(String name) {
+	public PropertiesItem(final String name) {
 		this(name, "empty", DEFAULT_TYPE, DEFAULT_LINE, DEFAULT_OFFSET);
 	}
 	
-	public PropertiesItem(String name, String loc) {
+	public PropertiesItem(final String name, final String loc) {
 		this(name, loc, DEFAULT_TYPE, DEFAULT_LINE, DEFAULT_OFFSET);
 	}
 	
-	public PropertiesItem(String name, String loc, ItemType ty) {
+	public PropertiesItem(final String name, final String loc, final ItemType ty) {
 		this(name, loc, ty, DEFAULT_LINE, DEFAULT_OFFSET);
 	}
 	
@@ -40,7 +40,7 @@ public class PropertiesItem implements IItem {
 		this(name, loc, DEFAULT_TYPE, line, DEFAULT_OFFSET);
 	}
 	
-	public PropertiesItem(String name, String loc, int line, int offset) {
+	public PropertiesItem(final String name, final String loc, final int line, final int offset) {
 		this(name, loc, DEFAULT_TYPE, line, offset);
 	}
 	
@@ -52,10 +52,10 @@ public class PropertiesItem implements IItem {
 	 * @param line
 	 * @param offset
 	 */
-	public PropertiesItem(String name, String loc, ItemType ty, int line, int offset) {
+	public PropertiesItem(String name, String loc, ItemType type, int line, int offset) {
 		this.name = name;
 		this.location = loc;
-		this.type = ty;
+		this.type = type;
 		this.line = line;
 		this.offset = offset;
 	}
@@ -94,13 +94,19 @@ public class PropertiesItem implements IItem {
 	}
 	
 	public String toString() {
-		String s = "";
-		s += this.name + ":";
-		s += this.location + ":";
-		s += this.line + ":";
-		s += this.offset + ":";
-		s += this.type.toString();
-		return s;
+		String sSep;
+		sSep = ":";
+		final StringBuilder str = new StringBuilder("");
+		str.append(this.name);
+		str.append(sSep);
+		str.append(this.location);
+		str.append(sSep);
+		str.append(this.line);
+		str.append(sSep);
+		str.append(this.offset);
+		str.append(sSep);
+		str.append(this.type.toString());
+		return str.toString();
 	}
 
 	// For now, this is how we suppress a warning that we cannot fix

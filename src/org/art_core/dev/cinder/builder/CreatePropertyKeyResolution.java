@@ -41,13 +41,13 @@ public class CreatePropertyKeyResolution
       return "Create a new property key";
    }
 
-   public void run(IMarker marker) {
+   public void run(final IMarker marker) {
 
       // Get the corresponding plugin.properties.
-      IFile file =
+      final IFile file =
             marker.getResource().getParent().getFile(new Path("plugin.properties"));
       if (!file.exists()) {
-         ByteArrayInputStream stream = new ByteArrayInputStream(new byte[] {});
+         final ByteArrayInputStream stream = new ByteArrayInputStream(new byte[] {});
          try {
             file.create(stream, false, null);
          }
@@ -58,7 +58,7 @@ public class CreatePropertyKeyResolution
       }
 
       // Open or activate the editor.
-      IWorkbenchPage page =
+      final IWorkbenchPage page =
             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
       IEditorPart part;
       try {
@@ -70,10 +70,11 @@ public class CreatePropertyKeyResolution
       }
 
       // Get the editor’s document.
-      if (!(part instanceof ITextEditor))
+      if (!(part instanceof ITextEditor)) {
          return;
-      ITextEditor editor = (ITextEditor) part;
-      IDocument doc = editor.getDocumentProvider().getDocument(new FileEditorInput(file));
+      }
+      final ITextEditor editor = (ITextEditor) part;
+      final IDocument doc = editor.getDocumentProvider().getDocument(new FileEditorInput(file));
 
       // Determine the text to be added.
       String key;
@@ -89,16 +90,17 @@ public class CreatePropertyKeyResolution
       // If necessary, add a newline.
       int index = doc.getLength();
       if (index > 0) {
-         char ch;
+         char cTest;
          try {
-            ch = doc.getChar(index - 1);
+            cTest = doc.getChar(index - 1);
          }
          catch (BadLocationException e) {
             CinderLog.logError(e);
             return;
          }
-         if (ch != '\r' || ch != '\n')
+         if (cTest != '\r' || cTest != '\n') {
             text = System.getProperty("line.separator") + text;
+         }
       }
 
       // Append the new text.

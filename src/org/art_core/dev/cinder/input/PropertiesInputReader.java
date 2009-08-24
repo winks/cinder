@@ -21,17 +21,15 @@ import org.eclipse.core.runtime.Path;*/
 
 
 public class PropertiesInputReader implements IInputHandler {
-	private String sFilename;
-	private Collection<IItem> items = new ArrayList<IItem>();
+	private final String sFilename;
+	private final Collection<IItem> items = new ArrayList<IItem>();
 	
-	public PropertiesInputReader(String file) {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		String sPath = root.getLocation().toString();
+	public PropertiesInputReader(final String file) {
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		final String sPath = root.getLocation().toString();
 		sFilename = sPath + "/" + file;
-
 		CinderLog.logInfo("PIR:path:" + sPath + "_" + sFilename);
-		
-		readFile(sFilename);
+		//readFile(sFilename);
 	}
 
 	@Override
@@ -41,22 +39,22 @@ public class PropertiesInputReader implements IInputHandler {
 	}
 
 	@Override
-	public void readFile(String sFilename) {
-		PropertiesItem pi;
+	public void readFile() {
+		PropertiesItem pItem;
 		
-		Properties prop = new Properties();
+		final Properties prop = new Properties();
 		try {
-			FileInputStream stream = new FileInputStream(sFilename);
+			final FileInputStream stream = new FileInputStream(this.sFilename);
 			prop.load(stream);
 			stream.close();
-			String n = prop.getProperty("name");
-			String s = prop.getProperty("status");
-			String t = prop.getProperty("type");
-			CinderLog.logInfo("PIR::read:["+n.toString() + "][" + s.toString() + "][" + t.toString() + "]");
-			// TODO use PropertiesItem(n, s, t) if t can be be converted
-			pi = new PropertiesItem(n, s);
-			CinderLog.logInfo("PIR::read:"+pi.toString());
-			items.add(pi);
+			final String snx = prop.getProperty("name");
+			final String ssx = prop.getProperty("status");
+			final String stx = prop.getProperty("type");
+			CinderLog.logInfo("PIR::read:[" + snx + "][" + ssx  + "][" + stx + "]");
+			// TODO use PropertiesItem(snx, ssx, stx) if t can be be converted
+			pItem = new PropertiesItem(snx, ssx);
+			CinderLog.logInfo("PIR::read:" + pItem.toString());
+			items.add(pItem);
 		} catch (Exception e) {
 			// TODO: handle exception
 			CinderLog.logError(e);
@@ -66,6 +64,11 @@ public class PropertiesInputReader implements IInputHandler {
 	@Override
 	public Collection<IItem> getItems() {
 		return this.items;
+	}
+	
+	@Override
+	public String getFilename() {
+		return this.sFilename;
 	}
 }
 /*

@@ -8,19 +8,19 @@ import java.util.List;
 import org.art_core.dev.cinder.input.PropertiesInputReader;
 import org.art_core.dev.cinder.input.XmlInputReader;
 
-public class ItemManager {
-	private static ItemManager manager;
+public final class ItemManager {
+	//private static ItemManager manager = null;
+	private static ItemManager manager = new ItemManager();
 	private Collection<IItem> items;
 	private List<ItemManagerListener> listeners =
         new ArrayList<ItemManagerListener>();
 	
-	private ItemManager() {
-	}
+	private ItemManager() {}
 	
 	public static ItemManager getManager() {
-		if (manager == null){
-			manager = new ItemManager();
-		}
+		//if (manager == null){
+		//	manager = new ItemManager();
+		//}
 		return manager;
 	}
 	
@@ -43,14 +43,16 @@ public class ItemManager {
 			// end bogus list
 			
 			// read from properties file
-			PropertiesInputReader pir = new PropertiesInputReader("cinder.properties");
+			final PropertiesInputReader pir = new PropertiesInputReader("cinder.properties");
+			pir.readFile();
 			Collection<IItem> coll = pir.getItems();
 			for(IItem item : coll) {
 				items.add(item);
 			}
 			
 			// read from XML file
-			XmlInputReader xir = new XmlInputReader("cinder.xml");
+			final XmlInputReader xir = new XmlInputReader("cinder.xml");
+			xir.readFile();
 			coll = xir.getItems();
 			for(IItem item : coll) {
 				items.add(item);
@@ -65,12 +67,13 @@ public class ItemManager {
 	//
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public void addItemManagerListener(ItemManagerListener listener) {
-		if (!listeners.contains(listener))
+	public void addItemManagerListener(final ItemManagerListener listener) {
+		if (!listeners.contains(listener)) {
 			listeners.add(listener);
+		}
 	}
 	
-	public void removeItemManagerListener(ItemManagerListener listener) {
+	public void removeItemManagerListener(final ItemManagerListener listener) {
 		listeners.remove(listener);
 	}
 	

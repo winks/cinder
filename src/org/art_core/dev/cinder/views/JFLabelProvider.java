@@ -9,29 +9,38 @@ import org.eclipse.ui.PlatformUI;
 
 class JFLabelProvider extends LabelProvider	implements ITableLabelProvider {
 	
-	public String getColumnText(Object obj, int index) {
+	public String getColumnText(final Object obj, final int index) {
+		String sResult;
 		switch(index) {
 			case 0: // type column
-				return "";
+				sResult = "";
+				break;
 			case 1: // name column
-				return ((IItem) obj).getName();
+				sResult = ((IItem) obj).getName();
+				break;
 			case 2: // location column
-				return ((IItem) obj).getLocation();
+				sResult = ((IItem) obj).getLocation();
+				break;
 			case 3: // line number column
-				return String.valueOf(((IItem) obj).getLine());
+				sResult = String.valueOf(((IItem) obj).getLine());
+				break;
 			case 4: // offset column
-				return String.valueOf(((IItem) obj).getOffset());
+				sResult = String.valueOf(((IItem) obj).getOffset());
+				break;
 			default:
-				return "";
+				sResult = "";
+			
 		}
+		return sResult;
 	}
-	public Image getColumnImage(Object obj, int index) {
+	public Image getColumnImage(final Object obj, final int index) {
 		if ((index == 0) && (obj instanceof IItem)) {
 			return ((IItem) obj).getType().getImage();
 		}
 		return null;
 	}
-	public Image getImage(Object obj) {
+	
+	public Image getImage(final Object obj) {
 		return PlatformUI.getWorkbench().
 				getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 	}

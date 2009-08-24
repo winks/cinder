@@ -23,7 +23,7 @@ public class DeletePropertyKeyResolution
       return "Delete the property key";
    }
 
-   public void run(IMarker marker) {
+   public void run(final IMarker marker) {
       MessageDialog.openConfirm(null, "Delete property", DESCRIPTION
             + "... not implemented yet");
    }

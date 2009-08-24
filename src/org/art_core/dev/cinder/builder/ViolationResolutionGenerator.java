@@ -21,15 +21,19 @@ public class ViolationResolutionGenerator
     * @return <code>true</code> if there are resolutions for the given marker,
     *         <code>false</code> if not
     */
-   public boolean hasResolutions(IMarker marker) {
+   public boolean hasResolutions(final IMarker marker) {
+	   boolean bStatus;
       switch (getViolation(marker)) {
-      case PropertiesFileAuditor.MISSING_KEY_VIOLATION:
-         return true;
-      case PropertiesFileAuditor.UNUSED_KEY_VIOLATION:
-         return true;
-      default:
-         return false;
+      	case PropertiesFileAuditor.MISSING_KEY_VIOLATION:
+      		bStatus = true;
+      		break;
+      	case PropertiesFileAuditor.UNUSED_KEY_VIOLATION:
+      		bStatus = true;
+      		break;
+      	default:
+      		bStatus = false;
       }
+      return bStatus;
    }
 
    /**
@@ -37,8 +41,8 @@ public class ViolationResolutionGenerator
     * 
     * @return resolutions for the given marker
     */
-   public IMarkerResolution[] getResolutions(IMarker marker) {
-      List<IMarkerResolution2> resolutions = new ArrayList<IMarkerResolution2>();
+   public IMarkerResolution[] getResolutions(final IMarker marker) {
+      final List<IMarkerResolution2> resolutions = new ArrayList<IMarkerResolution2>();
       switch (getViolation(marker)) {
       case PropertiesFileAuditor.MISSING_KEY_VIOLATION:
          resolutions.add(new CreatePropertyKeyResolution());
@@ -60,7 +64,7 @@ public class ViolationResolutionGenerator
     *           the marker to test
     * @return the violation attribute or <code>0</code> if none
     */
-   private int getViolation(IMarker marker) {
+   private int getViolation(final IMarker marker) {
       return marker.getAttribute(PropertiesFileAuditor.VIOLATION, 0);
    }
 }

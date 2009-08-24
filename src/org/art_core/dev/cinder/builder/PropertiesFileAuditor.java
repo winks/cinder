@@ -1,6 +1,7 @@
 package org.art_core.dev.cinder.builder;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -101,16 +102,17 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
     * @see IProject#build(int, String, Map, IProgressMonitor)
     */
    @SuppressWarnings("unchecked")
-   protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
+   protected IProject[] build(final int kind, final Map args, final IProgressMonitor monitor)
          throws CoreException {
+	   
       if (shouldAudit(kind)) {
          ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-            public void run(IProgressMonitor monitor) throws CoreException {
+            public void run(final IProgressMonitor monitor) throws CoreException {
                auditPluginManifest(monitor);
             }
          }, monitor);
       }
-      return null;
+      return new IProject[0];
    }
 
    /**
@@ -125,7 +127,7 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
     * In our case, we already scrub the project as part of the FULL_BUILD so no
     * additional work needed.
     */
-   protected void clean(IProgressMonitor monitor) throws CoreException {
+   protected void clean(final IProgressMonitor monitor) throws CoreException {
       // no additional work needed here
    }
 
@@ -138,20 +140,25 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
     * @return <code>true</code> if files should be audited, else
     *         <code>false</code>.
     */
-   private boolean shouldAudit(int kind) {
-      if (kind == FULL_BUILD)
-         return true;
-      IResourceDelta delta = getDelta(getProject());
-      if (delta == null)
-         return false;
-      IResourceDelta[] children = delta.getAffectedChildren();
-      for (int i = 0; i < children.length; i++) {
-         IResourceDelta child = children[i];
-         String fileName = child.getProjectRelativePath().lastSegment();
-         if (fileName.equals("HelloWorldOutput.java") || fileName.equals("HelloWorldASD.java"))
-            return true;
+
+   private boolean shouldAudit(final int kind) {
+	   boolean bResult = false;
+      if (kind == FULL_BUILD) {
+         bResult = true;
       }
-      return false;
+      final IResourceDelta delta = getDelta(getProject());
+      if (delta == null) {
+         bResult = false;
+      }
+      final IResourceDelta[] children = delta.getAffectedChildren();
+      for (int i = 0; i < children.length; i++) {
+         final IResourceDelta child = children[i];
+         final String sFileName = child.getProjectRelativePath().lastSegment();
+         if ("HelloWorldOutput.java".equals(sFileName) || "HelloWorldASD.java".equals(sFileName)) {
+            bResult = true;
+         }
+      }
+      return bResult;
    }
 
    /**
@@ -167,42 +174,49 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
     * @param monitor
     *           the progress monitor
     */
-   private void auditPluginManifest(IProgressMonitor monitor) {
+   private void auditPluginManifest(final IProgressMonitor monitor) {
       monitor.beginTask("Audit plugin manifest", 4);
 
-      if (!deleteAuditMarkers(getProject()))
+      if (!deleteAuditMarkers(getProject())) {
          return;
+      }
 
-      if (checkCancel(monitor))
+      if (checkCancel(monitor)) {
          return;
-      Map<String, Location> pluginKeys = scanPlugin(getProject().getFile("HelloWorldOutput.java"));
+      }
+      final Map<String, Location> pluginKeys = scanPlugin(getProject().getFile("HelloWorldOutput.java"));
       monitor.worked(1);
 
-      if (checkCancel(monitor))
+      if (checkCancel(monitor)) {
          return;
-      Map<String, Location> propertyKeys =
+      }
+      final Map<String, Location> propertyKeys =
             scanProperties(getProject().getFile("HelloWorldASD.java"));
       monitor.worked(1);
 
-      if (checkCancel(monitor))
+      if (checkCancel(monitor)) {
          return;
+      }
       Iterator<Map.Entry<String, Location>> iter = pluginKeys.entrySet().iterator();
       while (iter.hasNext()) {
-         Map.Entry<String, Location> entry = iter.next();
-         if (!propertyKeys.containsKey(entry.getKey()))
+         final Map.Entry<String, Location> entry = iter.next();
+         if (!propertyKeys.containsKey(entry.getKey())) {
             reportProblem("Missing property key", ((Location) entry.getValue()),
                   MISSING_KEY_VIOLATION, true);
+         }
       }
       monitor.worked(1);
 
-      if (checkCancel(monitor))
+      if (checkCancel(monitor)) {
          return;
+      }
       iter = propertyKeys.entrySet().iterator();
       while (iter.hasNext()) {
-         Map.Entry<String, Location> entry = iter.next();
-         if (!pluginKeys.containsKey(entry.getKey()))
+         final Map.Entry<String, Location> entry = iter.next();
+         if (!pluginKeys.containsKey(entry.getKey())) {
             reportProblem("Unused property key", ((Location) entry.getValue()),
                   UNUSED_KEY_VIOLATION, false);
+         }
       }
       monitor.done();
    }
@@ -216,7 +230,8 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
     *           the progress monitor
     * @return <code>true</code> if the build operation should stop
     */
-   private boolean checkCancel(IProgressMonitor monitor) {
+   private boolean checkCancel(final IProgressMonitor monitor) {
+	   boolean bCheck = false;
       if (monitor.isCanceled()) {
          // Discard build state if necessary.
          throw new OperationCanceledException();
@@ -224,9 +239,9 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
 
       if (isInterrupted()) {
          // Discard build state if necessary.
-         return true;
+         bCheck = true;
       }
-      return false;
+      return bCheck;
    }
 
    /**
@@ -237,18 +252,21 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
     *           the plugin.xml file to be scanned
     * @return a mapping of keys (String) to location (Location)
     */
-   private Map<String, Location> scanPlugin(IFile file) {
-      Map<String, Location> keys = new HashMap<String, Location>();
+   private Map<String, Location> scanPlugin(final IFile file) {
+      final Map<String, Location> keys = new HashMap<String, Location>();
       String content = readFile(file);
       int start = 0;
+      Location loc;
       while (true) {
          start = content.indexOf("\"%", start);
-         if (start < 0)
+         if (start < 0) {
             break;
-         int end = content.indexOf('"', start + 2);
-         if (end < 0)
+         }
+         final int end = content.indexOf('"', start + 2);
+         if (end < 0) {
             break;
-         Location loc = new Location();
+         }
+         loc = new Location();
          loc.file = file;
          loc.key = content.substring(start + 2, end);
          loc.charStart = start + 1;
@@ -267,26 +285,32 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
     *           the plugin.properties file to be scanned
     * @return a mapping of keys (String) to location (Location)
     */
-   private Map<String, Location> scanProperties(IFile file) {
-      Map<String, Location> keys = new HashMap<String, Location>();
-      String content = readFile(file);
+   private Map<String, Location> scanProperties(final IFile file) {
+      final Map<String, Location> keys = new HashMap<String, Location>();
+      final String content = readFile(file);
       int end = 0;
+      Location loc;
+      String found;
       while (true) {
          end = content.indexOf('=', end);
-         if (end < 0)
+         if (end < 0) {
             break;
+         }
          int start = end - 1;
+         char cXX;
          while (start >= 0) {
-            char ch = content.charAt(start);
-            if (ch == '\r' || ch == '\n')
+            cXX = content.charAt(start);
+            if (cXX == '\r' || cXX == '\n') {
                break;
+            }
             start--;
          }
          start++;
-         String found = content.substring(start, end).trim();
-         if (found.length() == 0 || found.charAt(0) == '#' || found.indexOf('=') != -1)
+         found = content.substring(start, end).trim();
+         if (found.length() == 0 || found.charAt(0) == '#' || found.indexOf('=') != -1) {
             continue;
-         Location loc = new Location();
+         }
+         loc = new Location();
          loc.file = file;
          loc.key = found;
          loc.charStart = start;
@@ -304,45 +328,53 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
     *           the file to be read
     * @return the file content as a string
     */
-   private String readFile(IFile file) {
-      if (!file.exists())
-         return "";
+   private String readFile(final IFile file) {
+	   String sResult = "";
       InputStream stream = null;
       try {
+    	 if (!file.exists()) {
+    	     throw new FileNotFoundException(file.toString());
+    	 }
          stream = file.getContents();
-         Reader reader = new BufferedReader(new InputStreamReader(stream));
-         StringBuffer result = new StringBuffer(2048);
-         char[] buf = new char[2048];
+         final Reader reader = new BufferedReader(new InputStreamReader(stream));
+         final StringBuffer result = new StringBuffer(2048);
+         final char[] buf = new char[2048];
+         int iCount;
          while (true) {
-            int count = reader.read(buf);
-            if (count < 0)
+            iCount = reader.read(buf);
+            if (iCount < 0) {
                break;
-            result.append(buf, 0, count);
+            }
+            result.append(buf, 0, iCount);
          }
-         return result.toString();
+         sResult = result.toString();
+         if (stream != null) {
+             stream.close();
+         }
+      }
+      catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			CinderLog.logError(e);
+			sResult = "";
+		}
+      catch (IOException e) {
+     	 CinderLog.logError(e);
+         sResult = "";
       }
       catch (Exception e) {
          CinderLog.logError(e);
-         return "";
+         sResult = "";
       }
-      finally {
-         try {
-            if (stream != null)
-               stream.close();
-         }
-         catch (IOException e) {
-        	 CinderLog.logError(e);
-            return "";
-         }
-      }
+
+      return sResult;
    }
 
    /**
     * Report the specified problem to the user.
     */
-   private void reportProblem(String msg, Location loc, int violation, boolean isError) {
+   private void reportProblem(final String msg, final Location loc, final int violation, final boolean isError) {
       try {
-         IMarker marker = loc.file.createMarker(MARKER_ID);
+         final IMarker marker = loc.file.createMarker(MARKER_ID);
          marker.setAttribute(IMarker.MESSAGE, msg + ": " + loc.key);
          marker.setAttribute(IMarker.CHAR_START, loc.charStart);
          marker.setAttribute(IMarker.CHAR_END, loc.charEnd);
@@ -351,8 +383,8 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
          marker.setAttribute(KEY, loc.key);
          marker.setAttribute(VIOLATION, violation);
          
-         CinderLog.logInfo("rP: "+marker.toString());
-         CinderLog.logInfo("rP: "+marker.getAttribute(IMarker.SEVERITY, 666)+"");
+         CinderLog.logInfo("rP: " + marker.toString());
+         CinderLog.logInfo("rP: " + marker.getAttribute(IMarker.SEVERITY, 666));
       }
       catch (CoreException e) {
     	  CinderLog.logError(e);
@@ -373,15 +405,17 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
     *           the project to be modified
     * @return <code>true</code> if successful, else <code>false</code>
     */
-   public static boolean deleteAuditMarkers(IProject project) {
+   public static boolean deleteAuditMarkers(final IProject project) {
+	   boolean bStatus = false;
       try {
          project.deleteMarkers(MARKER_ID, false, IResource.DEPTH_INFINITE);
-         return true;
+         bStatus = true;
       }
       catch (CoreException e) {
     	  CinderLog.logError(e);
-         return false;
+         bStatus = false;
       }
+      return bStatus;
    }
 
    // //////////////////////////////////////////////////////////////////////////
@@ -397,11 +431,12 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
     * @param project
     *           the project (not <code>null</code>)
     */
-   public static void addBuilderToProject(IProject project) {
+   public static void addBuilderToProject(final IProject project) {
 
       // Cannot modify closed projects.
-      if (!project.isOpen())
+      if (!project.isOpen()) {
          return;
+      }
 
       // Get the description.
       IProjectDescription description;
@@ -414,15 +449,17 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
       }
 
       // Look for builder already associated.
-      ICommand[] cmds = description.getBuildSpec();
-      for (int j = 0; j < cmds.length; j++)
-         if (cmds[j].getBuilderName().equals(BUILDER_ID))
+      final ICommand[] cmds = description.getBuildSpec();
+      for (int j = 0; j < cmds.length; j++) {
+         if (cmds[j].getBuilderName().equals(BUILDER_ID)) {
             return;
+         }
+      }
 
       // Associate builder with project.
-      ICommand newCmd = description.newCommand();
+      final ICommand newCmd = description.newCommand();
       newCmd.setBuilderName(BUILDER_ID);
-      List<ICommand> newCmds = new ArrayList<ICommand>();
+      final List<ICommand> newCmds = new ArrayList<ICommand>();
       newCmds.addAll(Arrays.asList(cmds));
       newCmds.add(newCmd);
       description.setBuildSpec((ICommand[]) newCmds.toArray(new ICommand[newCmds.size()]));
@@ -442,11 +479,12 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
     * @return <code>true</code> if the specified project is open and accessible
     *         and has the builder associated with it, else <code>false</code>
     */
-   public static boolean hasBuilder(IProject project) {
+   public static boolean hasBuilder(final IProject project) {
 
       // Cannot modify closed projects.
-      if (!project.isOpen())
+      if (!project.isOpen()) {
          return false;
+      }
 
       // Get the description.
       IProjectDescription description;
@@ -459,10 +497,12 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
       }
 
       // Look for builder already associated.
-      ICommand[] cmds = description.getBuildSpec();
-      for (int j = 0; j < cmds.length; j++)
-         if (cmds[j].getBuilderName().equals(BUILDER_ID))
+      final ICommand[] cmds = description.getBuildSpec();
+      for (int j = 0; j < cmds.length; j++) {
+         if (cmds[j].getBuilderName().equals(BUILDER_ID)) {
             return true;
+         }
+      }
       return false;
    }
 
@@ -473,11 +513,12 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
     * @param project
     *           the project (not <code>null</code>)
     */
-   public static void removeBuilderFromProject(IProject project) {
+   public static void removeBuilderFromProject(final IProject project) {
 
       // Cannot modify closed projects.
-      if (!project.isOpen())
+      if (!project.isOpen()) {
          return;
+      }
 
       // Get the description.
       IProjectDescription description;
@@ -491,18 +532,19 @@ public class PropertiesFileAuditor extends IncrementalProjectBuilder
 
       // Look for builder.
       int index = -1;
-      ICommand[] cmds = description.getBuildSpec();
+      final ICommand[] cmds = description.getBuildSpec();
       for (int j = 0; j < cmds.length; j++) {
          if (cmds[j].getBuilderName().equals(BUILDER_ID)) {
             index = j;
             break;
          }
       }
-      if (index == -1)
+      if (index == -1) {
          return;
+      }
 
       // Remove builder from project.
-      List<ICommand> newCmds = new ArrayList<ICommand>();
+      final List<ICommand> newCmds = new ArrayList<ICommand>();
       newCmds.addAll(Arrays.asList(cmds));
       newCmds.remove(index);
       description.setBuildSpec((ICommand[]) newCmds.toArray(new ICommand[newCmds.size()]));

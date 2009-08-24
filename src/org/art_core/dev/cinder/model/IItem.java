@@ -16,5 +16,5 @@ public interface IItem
 	ItemType getType();
 	
 	
-	static IItem[] NONE = new IItem[] {};
+	IItem[] NONE = new IItem[] {};
 }

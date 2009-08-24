@@ -46,7 +46,7 @@ public class JFInputView extends ViewPart {
 	 * This is a callback that will allow us
 	 * to create the viewer and initialize it.
 	 */
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		createTableViewer(parent);
 		makeActions();
 		hookContextMenu();
@@ -58,7 +58,7 @@ public class JFInputView extends ViewPart {
 	 * Creates the TableViewer
 	 * @param parent
 	 */
-	private void createTableViewer(Composite parent) {
+	private void createTableViewer(final Composite parent) {
 		viewer = new TableViewer(
 			parent, 
 			SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION
@@ -103,14 +103,14 @@ public class JFInputView extends ViewPart {
 	 * Adds actions to the context menu
 	 */
 	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
+		final MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
+			public void menuAboutToShow(final IMenuManager manager) {
 				JFInputView.this.fillContextMenu(manager);
 			}
 		});
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		final Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
@@ -120,32 +120,32 @@ public class JFInputView extends ViewPart {
 	 */
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
+			public void doubleClick(final DoubleClickEvent event) {
 				doubleClickAction.run();
 			}
 		});
 	}
 
 	private void contributeToActionBars() {
-		IActionBars bars = getViewSite().getActionBars();
+		final IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
 	}
 
-	private void fillLocalPullDown(IMenuManager manager) {
+	private void fillLocalPullDown(final IMenuManager manager) {
 		manager.add(action1);
 		manager.add(new Separator());
 		manager.add(action2);
 	}
 
-	private void fillContextMenu(IMenuManager manager) {
+	private void fillContextMenu(final IMenuManager manager) {
 		manager.add(action1);
 		manager.add(action2);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
-	private void fillLocalToolBar(IToolBarManager manager) {
+	private void fillLocalToolBar(final IToolBarManager manager) {
 		manager.add(action1);
 		manager.add(action2);
 	}
@@ -176,13 +176,13 @@ public class JFInputView extends ViewPart {
 		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		
-		// doubleclick - generic
+		// double click - generic
 		doubleClickAction = new Action() {
 			public void run() {
 				// select the clicked item from the view
-				ISelection selection = viewer.getSelection();
-				PropertiesItem pi = (PropertiesItem)((IStructuredSelection)selection).getFirstElement();
-				if (pi == null)  {
+				final ISelection selection = viewer.getSelection();
+				PropertiesItem pItem = (PropertiesItem)((IStructuredSelection)selection).getFirstElement();
+				if (pItem == null)  {
 					return;
 				}
 				//String msg = "Double-click detected on "+pi.toString()+"\n\n";
@@ -190,10 +190,10 @@ public class JFInputView extends ViewPart {
 				
 				AbstractTextEditor editor = null;
 				
-				String sMyLoc = pi.getLocation();
+				final String sMyLoc = pItem.getLocation();
 				// find the correct editor window, based on the name
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				IProject[] projects = root.getProjects();
+				final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				final IProject[] projects = root.getProjects();
 				
 				try {
 					CinderLog.logInfo("JFIV_start");
@@ -202,15 +202,15 @@ public class JFInputView extends ViewPart {
 					String sProjName = "";
 					for (int i = 0; i < projects.length; i++) {
 						sProjName = projects[i].getName();
-						CinderLog.logInfo("JFIV:DBG: "+sProjName);
+						CinderLog.logInfo("JFIV:DBG: " + sProjName);
 						Thread.sleep(200);
-						res = (IFile)root.findMember(sProjName+"/"+sMyLoc);
+						res = (IFile)root.findMember(sProjName + "/" + sMyLoc);
 						if (res == null) {
 							CinderLog.logInfo("JFIV_notfound:NULL");
 							Thread.sleep(100);
 							continue;
 						} else {
-							CinderLog.logInfo("JFIV____found:"+res.toString());
+							CinderLog.logInfo("JFIV____found:" + res.toString());
 							Thread.sleep(100);
 							break;
 						}
@@ -218,25 +218,25 @@ public class JFInputView extends ViewPart {
 					CinderLog.logInfo("JFIV_start");
 					Thread.sleep(100);
 					
-					FileEditorInput fileinput = new FileEditorInput(res);
+					final FileEditorInput fileinput = new FileEditorInput(res);
 					editor = (AbstractTextEditor)PlatformUI.getWorkbench().getActiveWorkbenchWindow().
 							getActivePage().openEditor(fileinput, JAVAEDITORID);
 					
 					IMarker marker = res.createMarker(IMarker.TASK);
 					marker.setAttribute(IMarker.MESSAGE, 
-							pi.getName() + "(" + pi.getMessage() + "): " + pi.getLine());
+							pItem.getName() + "(" + pItem.getMessage() + "): " + pItem.getLine());
 					//marker.setAttribute(IMarker.CHAR_START, 50);
 					//marker.setAttribute(IMarker.CHAR_END, 70);
-					marker.setAttribute(IMarker.LINE_NUMBER, pi.getLine());
+					marker.setAttribute(IMarker.LINE_NUMBER, pItem.getLine());
 					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-					marker.setAttribute("key", pi.getName());
-			        marker.setAttribute("violation", pi.getMessage());
+					marker.setAttribute("key", pItem.getName());
+			        marker.setAttribute("violation", pItem.getMessage());
 			        
-			        CinderLog.logInfo("JFIV:MARKER:"+marker.getType());
-			        CinderLog.logInfo("JFIV:MARKER:"+marker.getAttribute(IMarker.LINE_NUMBER, 666));
+			        CinderLog.logInfo("JFIV:MARKER:" + marker.getType());
+			        CinderLog.logInfo("JFIV:MARKER:" + marker.getAttribute(IMarker.LINE_NUMBER, 666));
 				} catch (Exception e) {
 					//resourceMessage("AV_W_FILENOTFOUND", projectName+pi.getLocation());
-					CinderLog.logError("JFIV:E:"+sMyLoc, e);
+					CinderLog.logError("JFIV:E:" + sMyLoc, e);
 					
 					return;
 				}
@@ -246,14 +246,18 @@ public class JFInputView extends ViewPart {
 					IDocument doc = ((ITextEditor)editor).getDocumentProvider().getDocument(input);
 					int iLineOffset = -1;
 					int iLineLength = -1;
-					int iOff = pi.getOffset();
+					int iOff = pItem.getOffset();
 					int iLen = 5;
 					try {
-						iLineOffset = doc.getLineOffset(pi.getLine());
-						iLineLength = doc.getLineLength(pi.getLine());
-						CinderLog.logInfo("JFIV:LineOff:"+iLineOffset+" LineLen: "+iLineLength);
+						iLineOffset = doc.getLineOffset(pItem.getLine()-1);
+						iLineLength = doc.getLineLength(pItem.getLine()-1);
+						CinderLog.logInfo("JFIV:LineOff:" + iLineOffset + " LineLen: "+iLineLength);
 						if (iLineOffset >= 0) {
 							iOff += iLineOffset;
+							CinderLog.logInfo("JFIV:getLine:" + pItem.getLine() + " iOff: "+iOff);
+							StringBuilder x = new StringBuilder();
+							x.append(doc.get(iOff, 3));
+							CinderLog.logInfo("JFIV:numLines:" + doc.getNumberOfLines() + " t: "+x.toString());
 							if (iLineLength >= 0) {
 								iLen = iLineLength;
 								
@@ -262,7 +266,7 @@ public class JFInputView extends ViewPart {
 								String test = "";
 								for(int i = 0; i <= iLineLength; i++) {
 									test = doc.get(iLineOffset+i, 1);
-									if (test.equals(" ") || test.equals("\t")) {
+									if (" ".equals(test) || "\t".equals(test)) {
 										iCounter++;
 									} else {
 										break;
@@ -277,7 +281,7 @@ public class JFInputView extends ViewPart {
 						CinderLog.logInfo("JFIV:E:"+e.getMessage());
 					}
 					
-					// avoid to select the linebreak at the end
+					// avoid to select the line break at the end
 					iLen -= 1;
 					TextSelection sel = new TextSelection(iOff, iLen);
 					editor.getSelectionProvider().setSelection(sel);

@@ -24,23 +24,24 @@ public class JFContentProvider
 	private TableViewer viewer;
 	private ItemManager manager;
 
-	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-		this.viewer = (TableViewer) v;
-		if (manager != null)
+	public void inputChanged(final Viewer vViewer, final Object oldInput, final Object newInput) {
+		this.viewer = (TableViewer) vViewer;
+		if (manager != null) {
 			manager.removeItemManagerListener(this);
+		}
 		manager = (ItemManager) newInput;
-		if (manager != null)
+		if (manager != null) {
 			manager.addItemManagerListener(this);
+		}
 	}
+
+	public void dispose() {}
 	
-	public void dispose() {
-	}
-	
-	public Object[] getElements(Object parent) {
+	public Object[] getElements(final Object parent) {
 		return manager.getItems();
 	}
 	
-	public void itemsChanged(ItemManagerEvent event) {
+	public void itemsChanged(final ItemManagerEvent event) {
 		viewer.getTable().setRedraw(false);
 		try {
 			viewer.remove(event.getItemsRemoved());

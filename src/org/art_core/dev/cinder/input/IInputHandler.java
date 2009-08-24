@@ -6,10 +6,11 @@ import org.art_core.dev.cinder.model.IItem;
 
 public interface IInputHandler {
 	
-	public boolean isReadable();
+	boolean isReadable();
 	
-	public void readFile(String fileName);
+	void readFile();
 	
-	public Collection<IItem> getItems();
+	Collection<IItem> getItems();
 	
+	String getFilename();
 }

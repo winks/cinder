@@ -6,14 +6,15 @@ import org.eclipse.core.runtime.Status;
 /**
  * The logger of convenience for the Cinder plug-in.
  */
-public class CinderLog {
+public final class CinderLog {
+	private CinderLog() {}
    /**
     * Log the specified information.
     * 
     * @param message, a human-readable message, localized to the
     *           current locale.
     */
-	public static void logInfo(String message) {
+	public static void logInfo(final String message) {
 		log(IStatus.INFO, IStatus.OK, message, null);
 	}
 
@@ -22,7 +23,7 @@ public class CinderLog {
     * 
     * @param exception, a low-level exception.
     */
-	public static void logError(Throwable exception) {
+	public static void logError(final Throwable exception) {
 		logError("Unexpected Exception", exception);
 	}
 
@@ -34,7 +35,7 @@ public class CinderLog {
     * @param exception, a low-level exception, or <code>null</code>
     *           if not applicable.
     */
-	public static void logError(String message, Throwable exception) {
+	public static void logError(final String message, final Throwable exception) {
 		log(IStatus.ERROR, IStatus.OK, message, exception);
 	}
 
@@ -55,8 +56,8 @@ public class CinderLog {
     * @param exception, a low-level exception, or <code>null</code>
     *           if not applicable.
     */
-	public static void log(int severity, int code, String message,
-			Throwable exception) {
+	public static void log(final int severity, final int code, final String message,
+			final Throwable exception) {
 		log(createStatus(severity, code, message, exception));
 	}
 
@@ -78,8 +79,8 @@ public class CinderLog {
     *           if not applicable.
     * @return, the status object (not <code>null</code>).
     */
-   public static IStatus createStatus(int severity, int code, String message,
-			Throwable exception) {
+   public static IStatus createStatus(final int severity, final int code, final String message,
+			final Throwable exception) {
 		return new Status(severity, CinderPlugin.PLUGIN_ID, code,
 				message, exception);
 	}
@@ -89,7 +90,7 @@ public class CinderLog {
     * 
     * @param status, the status to log.
     */
-	public static void log(IStatus status) {
+	public static void log(final IStatus status) {
 		CinderPlugin.getDefault().getLog().log(status);
 	}
 }

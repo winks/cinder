@@ -14,12 +14,6 @@ public class CinderPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static CinderPlugin plugin;
-	
-	/**
-	 * The constructor
-	 */
-	public CinderPlugin() {
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -55,7 +49,7 @@ public class CinderPlugin extends AbstractUIPlugin {
 	 * @param path the path
 	 * @return the image descriptor
 	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
+	public static ImageDescriptor getImageDescriptor(final String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
 }
