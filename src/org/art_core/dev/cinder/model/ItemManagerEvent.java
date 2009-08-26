@@ -1,6 +1,5 @@
 package org.art_core.dev.cinder.model;
 
-import java.util.Arrays;
 import java.util.EventObject;
 
 public class ItemManagerEvent extends EventObject  {

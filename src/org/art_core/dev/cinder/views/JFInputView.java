@@ -9,11 +9,13 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.*;
@@ -32,8 +34,8 @@ public class JFInputView extends ViewPart {
 	private TableViewer viewer;
 	private TableColumn tCol, nCol, sCol, lineCol, offCol;
 	
-	private Action action1;
-	private Action action2;
+	private Action deleteAction;
+	private Action markAction;
 	private Action doubleClickAction;
 
 	/**
@@ -48,10 +50,12 @@ public class JFInputView extends ViewPart {
 	 */
 	public void createPartControl(final Composite parent) {
 		createTableViewer(parent);
-		makeActions();
+		createActions();
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
+		executeDelete();
+		executeMark();
 	}
 
 	/**
@@ -133,113 +137,108 @@ public class JFInputView extends ViewPart {
 	}
 
 	private void fillLocalPullDown(final IMenuManager manager) {
-		manager.add(action1);
+		manager.add(deleteAction);
 		manager.add(new Separator());
-		manager.add(action2);
+		manager.add(markAction);
 	}
 
 	private void fillContextMenu(final IMenuManager manager) {
-		manager.add(action1);
-		manager.add(action2);
-		// Other plug-ins can contribute there actions here
+		manager.add(deleteAction);
+		manager.add(markAction);
+		// Other plug-ins can contribute their actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
 	private void fillLocalToolBar(final IToolBarManager manager) {
-		manager.add(action1);
-		manager.add(action2);
+		manager.add(deleteAction);
+		manager.add(markAction);
 	}
-
-	/**
-	 * Initialize the actions needed
-	 */
-	private void makeActions() {
-		// action1 - generic
-		action1 = new Action() {
-			public void run() {
-				showMessage("Action 1 executed", "Action Title");
-			}
-		};
-		action1.setText("Action 1");
-		action1.setToolTipText("Action 1 tooltip");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	
+	private void executeMark() {
+		final JFContentProvider cpMine = (JFContentProvider) viewer.getContentProvider();
+		//final PropertiesItem[] items = (PropertiesItem[]) cpMine.getElements(null);
+		final Object[] items = cpMine.getElements(null);
+		String sMyLoc;
+		IFile res;
+		PropertiesItem pItem;
 		
-		// action2 - generic
-		action2 = new Action() {
-			public void run() {
-				showMessage("Action 2 executed", "Action Title");
+		for (Object oItem : items) {
+			pItem = (PropertiesItem) oItem;
+			sMyLoc =  pItem.getLocation();
+			res = getResource(sMyLoc);
+			
+			try {
+				IMarker marker = res.createMarker(IMarker.TASK);
+				marker.setAttribute(IMarker.MESSAGE, 
+					pItem.getName() + "(" + pItem.getMessage() + "): " + pItem.getLine());
+				//marker.setAttribute(IMarker.CHAR_START, 50);
+				//marker.setAttribute(IMarker.CHAR_END, 70);
+				marker.setAttribute(IMarker.LINE_NUMBER, pItem.getLine());
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+				marker.setAttribute("key", pItem.getName());
+	        	marker.setAttribute("violation", pItem.getMessage());
+	        	CinderLog.logInfo("JFIV:MARKER:" + marker.getType());
+	        	CinderLog.logInfo("JFIV:MARKER:" + marker.getAttribute(IMarker.LINE_NUMBER, 666));
 			}
-		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Action 2 tooltip");
-		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+			catch (Exception e) {
+				CinderLog.logError(e);
+			}
+	        
+		}
+	}
+	
+	private IFile getResource(final String sFile) {
+		IFile res = null;
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		final IProject[] projects = root.getProjects();
 		
-		// double click - generic
-		doubleClickAction = new Action() {
-			public void run() {
+		try {
+			CinderLog.logInfo("JFIV_GR_start");
+			String sProjName = "";
+			for (int i = 0; i < projects.length; i++) {
+				sProjName = projects[i].getName();
+				CinderLog.logInfo("JFIV_GR:DBG: " + sProjName);
+				res = (IFile)root.findMember(sProjName + "/" + sFile);
+				if (res == null) {
+					CinderLog.logInfo("JFIV_GR_notfound:NULL");
+					continue;
+				} else {
+					CinderLog.logInfo("JFIV_GR___found:" + res.toString());
+					break;
+				}
+			}
+		} catch (Exception e) {
+			CinderLog.logError("JFIV_GR:E:" + sFile, e);			
+		}
+		return res;
+	}
+	
+	private void executeSelect() {			
 				// select the clicked item from the view
 				final ISelection selection = viewer.getSelection();
 				PropertiesItem pItem = (PropertiesItem)((IStructuredSelection)selection).getFirstElement();
 				if (pItem == null)  {
 					return;
 				}
-				//String msg = "Double-click detected on "+pi.toString()+"\n\n";
-				//showMessage(msg, "Action Title");
-				
-				AbstractTextEditor editor = null;
 				
 				final String sMyLoc = pItem.getLocation();
-				// find the correct editor window, based on the name
-				final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				final IProject[] projects = root.getProjects();
+				final IFile res = getResource(sMyLoc);
+				AbstractTextEditor editor = null;
+				FileEditorInput fileInput;
 				
 				try {
-					CinderLog.logInfo("JFIV_start");
-					Thread.sleep(200);
-					IFile res = null;
-					String sProjName = "";
-					for (int i = 0; i < projects.length; i++) {
-						sProjName = projects[i].getName();
-						CinderLog.logInfo("JFIV:DBG: " + sProjName);
-						Thread.sleep(200);
-						res = (IFile)root.findMember(sProjName + "/" + sMyLoc);
-						if (res == null) {
-							CinderLog.logInfo("JFIV_notfound:NULL");
-							Thread.sleep(100);
-							continue;
-						} else {
-							CinderLog.logInfo("JFIV____found:" + res.toString());
-							Thread.sleep(100);
-							break;
-						}
+					if (null == res) {
+						throw new Exception("resource not found");
 					}
-					CinderLog.logInfo("JFIV_start");
-					Thread.sleep(100);
-					
-					final FileEditorInput fileinput = new FileEditorInput(res);
+					fileInput = new FileEditorInput(res);
 					editor = (AbstractTextEditor)PlatformUI.getWorkbench().getActiveWorkbenchWindow().
-							getActivePage().openEditor(fileinput, JAVAEDITORID);
-					
-					IMarker marker = res.createMarker(IMarker.TASK);
-					marker.setAttribute(IMarker.MESSAGE, 
-							pItem.getName() + "(" + pItem.getMessage() + "): " + pItem.getLine());
-					//marker.setAttribute(IMarker.CHAR_START, 50);
-					//marker.setAttribute(IMarker.CHAR_END, 70);
-					marker.setAttribute(IMarker.LINE_NUMBER, pItem.getLine());
-					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-					marker.setAttribute("key", pItem.getName());
-			        marker.setAttribute("violation", pItem.getMessage());
-			        
-			        CinderLog.logInfo("JFIV:MARKER:" + marker.getType());
-			        CinderLog.logInfo("JFIV:MARKER:" + marker.getAttribute(IMarker.LINE_NUMBER, 666));
+							getActivePage().openEditor(fileInput, JAVAEDITORID);
+				} catch (PartInitException e1) {
+					CinderLog.logError(e1);
 				} catch (Exception e) {
-					//resourceMessage("AV_W_FILENOTFOUND", projectName+pi.getLocation());
-					CinderLog.logError("JFIV:E:" + sMyLoc, e);
-					
-					return;
+					CinderLog.logError(e);;
 				}
+				
 				if(editor != null){
 					// convert line numbers to offset numbers (eclipse internal)
 					IEditorInput input = editor.getEditorInput();
@@ -286,10 +285,80 @@ public class JFInputView extends ViewPart {
 					TextSelection sel = new TextSelection(iOff, iLen);
 					editor.getSelectionProvider().setSelection(sel);
 				}
+	}
+	
+	/**
+	 * Initialize the actions needed
+	 */
+	private void createActions() {
+		// double click - generic
+		doubleClickAction = new Action() {
+			public void run() {
+				executeSelect();
 			}
 		};
+		
+		// delete - generic
+		deleteAction = new Action() {
+			public void run() {
+				executeDelete();
+			}
+		};
+		// set - generic
+		markAction = new Action() {
+			public void run() {
+				executeMark();
+			}
+		};
+		
+		deleteAction.setText("Delete Markers");
+		deleteAction.setToolTipText("Delete all Marksers");
+		deleteAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+			getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+		
+		
+		markAction.setText("Set Markers");
+		markAction.setToolTipText("Set All Markers");
+		markAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+				getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		
 	}
 
+	private void executeDelete() {
+		// select the clicked item from the view
+		final ISelection selection = viewer.getSelection();
+		PropertiesItem pItem = (PropertiesItem)((IStructuredSelection)selection).getFirstElement();
+		if (pItem == null)  {
+			return;
+		}
+					
+		final String sMyLoc = pItem.getLocation();
+		// find the correct editor window, based on the name
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		final IProject[] projects = root.getProjects();
+		IFile res = null;
+		String sProjName = "";
+		for (int i = 0; i < projects.length; i++) {
+			sProjName = projects[i].getName();
+			CinderLog.logInfo("JFIV_D:DBG: " + sProjName);
+			res = (IFile)root.findMember(sProjName + "/" + sMyLoc);
+			if (res == null) {
+				CinderLog.logInfo("JFIV_D_notfound:NULL");
+				continue;
+			} else {
+				CinderLog.logInfo("JFIV_D____found:" + res.toString());
+				break;
+			}
+		}
+		CinderLog.logInfo("JFIV_D_start2");
+					
+		try {
+			res.deleteMarkers(null, true, 2);
+		} catch (CoreException e) {
+			CinderLog.logError(e);					
+		}
+	}
+	
 	/**
 	 * Show a popup message
 	 * @param message

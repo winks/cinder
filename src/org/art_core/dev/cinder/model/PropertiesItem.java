@@ -19,7 +19,7 @@ public class PropertiesItem implements IItem {
 	
 	public static final ItemType DEFAULT_TYPE = ItemType.JAVA_PACKAGE;
 	public static final int DEFAULT_LINE = 0;
-	public static final int DEFAULT_OFFSET = -1;
+	public static final int DEFAULT_OFFSET = 0;
 	
 	/*
 	 * These are the Constructors

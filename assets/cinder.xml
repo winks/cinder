@@ -5,5 +5,6 @@
 </file>
 <file name="src/HelloWorldOutput.java">
   <error line="9" column="0" severity="warning" message="unneeded loop" pattern="LoopPattern" />
+  <error line="11" column="0" severity="warning" message="duplicate code" pattern="DuplicateCodePattern" />
 </file>
 </files>

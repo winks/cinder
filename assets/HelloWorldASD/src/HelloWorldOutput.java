@@ -8,6 +8,7 @@ public class HelloWorldOutput {
 		al.add("\n");
 		for (String s : al) {
 			System.out.print(s);
+			System.out.print(s);
 		}
 	}
 }
