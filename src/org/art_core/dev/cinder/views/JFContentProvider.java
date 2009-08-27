@@ -7,7 +7,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-
 /*
  * The content provider class is responsible for
  * providing objects to the view. It can wrap
@@ -17,14 +16,14 @@ import org.eclipse.jface.viewers.Viewer;
  * it and always show the same content 
  * (like Task List, for example).
  */
- 
-public class JFContentProvider 
-	implements IStructuredContentProvider, ItemManagerListener
-{
+
+public class JFContentProvider implements IStructuredContentProvider,
+		ItemManagerListener {
 	private TableViewer viewer;
 	private ItemManager manager;
 
-	public void inputChanged(final Viewer vViewer, final Object oldInput, final Object newInput) {
+	public void inputChanged(final Viewer vViewer, final Object oldInput,
+			final Object newInput) {
 		this.viewer = (TableViewer) vViewer;
 		if (manager != null) {
 			manager.removeItemManagerListener(this);
@@ -35,12 +34,13 @@ public class JFContentProvider
 		}
 	}
 
-	public void dispose() {}
-	
+	public void dispose() {
+	}
+
 	public Object[] getElements(final Object parent) {
 		return manager.getItems();
 	}
-	
+
 	public void itemsChanged(final ItemManagerEvent event) {
 		viewer.getTable().setRedraw(false);
 		try {

@@ -13,7 +13,8 @@ public class CinderPrefInit extends AbstractPreferenceInitializer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
+	 * @seeorg.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#
+	 * initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = CinderPlugin.getDefault().getPreferenceStore();

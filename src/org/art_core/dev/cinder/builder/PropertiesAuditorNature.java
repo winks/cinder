@@ -25,18 +25,18 @@ public class PropertiesAuditorNature implements IProjectNature {
 	@Override
 	public void configure() throws CoreException {
 		PropertiesFileAuditor.addBuilderToProject(project);
-	      new Job("Properties File Audit") {
-	         protected final IStatus run(IProgressMonitor monitor) {
-	            try {
-	               project.build(PropertiesFileAuditor.FULL_BUILD,
-	                     PropertiesFileAuditor.BUILDER_ID, null, monitor);
-	            }
-	            catch (CoreException e) {
-	               CinderLog.logError(e);
-	            }
-	            return Status.OK_STATUS;
-	         }
-	      }.schedule();
+		new Job("Properties File Audit") {
+			protected final IStatus run(IProgressMonitor monitor) {
+				try {
+					project.build(PropertiesFileAuditor.FULL_BUILD,
+							PropertiesFileAuditor.BUILDER_ID, null, monitor);
+				}
+				catch (CoreException e) {
+					CinderLog.logError(e);
+				}
+				return Status.OK_STATUS;
+			}
+		}.schedule();
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class PropertiesAuditorNature implements IProjectNature {
 		if (!project.isOpen()) {
 			return;
 		}
-	
+
 		// Get the description.
 		IProjectDescription description;
 		try {
@@ -83,7 +83,7 @@ public class PropertiesAuditorNature implements IProjectNature {
 			CinderLog.logError(e);
 			return;
 		}
-	
+
 		// Determine if the project already has the nature.
 		final List<String> newIds = new ArrayList<String>();
 		newIds.addAll(Arrays.asList(description.getNatureIds()));
@@ -104,7 +104,7 @@ public class PropertiesAuditorNature implements IProjectNature {
 			CinderLog.logError(e);
 		}
 	}
-	
+
 	/**
 	* Determine if the specified project has the receiver's nature associated
 	* with it.
@@ -124,7 +124,7 @@ public class PropertiesAuditorNature implements IProjectNature {
 		}
 		return bStatus;
 	}
-	
+
 	/**
 	* Remove the nature from the specified project if it has the nature
 	* associated.
@@ -138,7 +138,7 @@ public class PropertiesAuditorNature implements IProjectNature {
 		if (!project.isOpen()) {
 			return;
 		}
-	
+
 		// Get the description.
 		IProjectDescription description;
 		try {
@@ -148,7 +148,7 @@ public class PropertiesAuditorNature implements IProjectNature {
 			CinderLog.logError(e);
 			return;
 		}
-	
+
 		// Determine if the project has the nature.
 		final List<String> newIds = new ArrayList<String>();
 		newIds.addAll(Arrays.asList(description.getNatureIds()));
@@ -156,11 +156,11 @@ public class PropertiesAuditorNature implements IProjectNature {
 		if (index == -1) {
 			return;
 		}
-	  
+
 		// Remove the nature
 		newIds.remove(index);
 		description.setNatureIds(newIds.toArray(new String[newIds.size()]));
-	
+
 		// Save the description.
 		try {
 			project.setDescription(description, null);

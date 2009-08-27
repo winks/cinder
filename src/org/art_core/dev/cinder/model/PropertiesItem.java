@@ -1,10 +1,8 @@
 package org.art_core.dev.cinder.model;
 
-//
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
-
 
 public class PropertiesItem implements IItem {
 	private ItemType type;
@@ -14,57 +12,60 @@ public class PropertiesItem implements IItem {
 	private int line;
 	private int offset;
 	public IFile rFile;
-	
+
 	private IResource resource;
-	
+
 	public static final ItemType DEFAULT_TYPE = ItemType.JAVA_PACKAGE;
 	public static final int DEFAULT_LINE = 0;
 	public static final int DEFAULT_OFFSET = 0;
-	
+
 	/*
 	 * These are the Constructors
 	 */
 	public PropertiesItem(final String name) {
 		this(name, "empty", DEFAULT_TYPE, DEFAULT_LINE, DEFAULT_OFFSET);
 	}
-	
+
 	public PropertiesItem(final String name, final String loc) {
 		this(name, loc, DEFAULT_TYPE, DEFAULT_LINE, DEFAULT_OFFSET);
 	}
-	
+
 	public PropertiesItem(final String name, final String loc, final ItemType ty) {
 		this(name, loc, ty, DEFAULT_LINE, DEFAULT_OFFSET);
 	}
-	
+
 	public PropertiesItem(String name, String loc, int line) {
 		this(name, loc, DEFAULT_TYPE, line, DEFAULT_OFFSET);
 	}
-	
-	public PropertiesItem(final String name, final String loc, final int line, final int offset) {
+
+	public PropertiesItem(final String name, final String loc, final int line,
+			final int offset) {
 		this(name, loc, DEFAULT_TYPE, line, offset);
 	}
-	
+
 	/**
 	 * Full constructor
+	 * 
 	 * @param name
 	 * @param loc
 	 * @param ty
 	 * @param line
 	 * @param offset
 	 */
-	public PropertiesItem(String name, String loc, ItemType type, int line, int offset) {
+	public PropertiesItem(String name, String loc, ItemType type, int line,
+			int offset) {
 		this.name = name;
 		this.location = loc;
 		this.type = type;
 		this.line = line;
 		this.offset = offset;
 	}
-	
+
 	@Override
 	public String getName() {
 		return this.name;
 	}
-	
+
 	@Override
 	public String getLocation() {
 		return this.location;
@@ -74,7 +75,7 @@ public class PropertiesItem implements IItem {
 	public ItemType getType() {
 		return this.type;
 	}
-	
+
 	@Override
 	public int getLine() {
 		return this.line;
@@ -84,15 +85,15 @@ public class PropertiesItem implements IItem {
 	public int getOffset() {
 		return this.offset;
 	}
-	
+
 	public String getMessage() {
 		return this.message;
 	}
-	
-	public void setMessage (String msg) {
+
+	public void setMessage(String msg) {
 		this.message = msg;
 	}
-	
+
 	public String toString() {
 		String sSep;
 		sSep = ":";
