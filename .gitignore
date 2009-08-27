@@ -1,2 +1,4 @@
 #ignore bin dirs
 bin/
+#ignore assets-workspace
+assets/.metadata/
