@@ -5,6 +5,9 @@ import org.art_core.dev.cinder.CinderTools;
 import org.art_core.dev.cinder.model.ItemManager;
 import org.art_core.dev.cinder.model.PropertiesItem;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.*;
@@ -15,6 +18,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
@@ -28,11 +32,14 @@ public class JFInputView extends ViewPart {
 	private final boolean TOGGLE_ON = true;
 
 	private TableViewer viewer;
+	private JFContentProvider cpDefault;
 	private TableColumn tCol, nCol, sCol, lineCol, offCol;
 
 	private Action aRemoveMarkersGlobal;
 	private Action aSetMarkersGlobal;
 	private Action aSelect;
+	private Action aOpenFile;
+	private Action aOpenUrl;
 
 	/**
 	 * The constructor.
@@ -92,10 +99,10 @@ public class JFInputView extends ViewPart {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		final JFContentProvider cpNew = new JFContentProvider();
-		cpNew.insertExampleValues();
+		cpDefault = new JFContentProvider();
+		cpDefault.insertExampleValues();
 
-		viewer.setContentProvider(cpNew);
+		viewer.setContentProvider(cpDefault);
 		viewer.setLabelProvider(new JFLabelProvider());
 		viewer.setSorter(new JFSorter());
 		viewer.setInput(ItemManager.getManager());
@@ -103,6 +110,7 @@ public class JFInputView extends ViewPart {
 
 	/**
 	 * Discover the item selected in the TableViwer
+	 * 
 	 * @return {@link PropertiesItem}
 	 */
 	private PropertiesItem getSelectedItem() {
@@ -114,29 +122,71 @@ public class JFInputView extends ViewPart {
 
 	/**
 	 * Executes the creation and deletion of Markers.
+	 * 
 	 * @param bEnable
 	 */
 	private void executeMarkerToggle(boolean bEnable) {
-		final JFContentProvider cpMine = (JFContentProvider) viewer
-				.getContentProvider();
 		PropertiesItem pItem = this.getSelectedItem();
 
 		if (pItem == null) {
 			if (bEnable == TOGGLE_ON) {
-				cpMine.setMarkersGlobal();
+				cpDefault.setMarkersGlobal();
 			} else {
-				cpMine.removeMarkersGlobal();
+				cpDefault.removeMarkersGlobal();
 			}
 		} else {
 			// TODO
-			if (bEnable== TOGGLE_ON) {
-				cpMine.setMarkersSingle(pItem);
+			if (bEnable == TOGGLE_ON) {
+				cpDefault.setMarkersSingle(pItem);
 			} else {
-				cpMine.removeMarkersSingle(pItem);	
+				cpDefault.removeMarkersSingle(pItem);
 			}
 		}
 	}
 
+	private void executeOpenFile() {
+		String sFile = getOpenFile();
+		if (sFile.length() > 0) {
+			cpDefault.insertFromFile(sFile);
+		}
+	}
+	
+	private void executeOpenUrl() {
+		String sFile = getOpenUrl();
+		if (sFile.length() > 0) {
+			cpDefault.insertFromUrl(sFile);
+		}
+	}
+
+	private String getOpenFile() {
+		String sResult = "";
+		try {
+			Display display = Display.getCurrent();
+			Shell shell = new Shell(display);
+			FileDialog dlg = new FileDialog(shell);
+			sResult = dlg.open();
+			CinderLog.logInfo("JF_OF:" + sResult);
+		} catch (Exception e) {
+			// TODO: handle exception
+			CinderLog.logError(e);
+		}
+		return sResult;
+	}
+
+	private String getOpenUrl() {
+		String sResult = "";
+		String dialogTitle = "Read XML from URL";
+		String dialogMessage = "Please enter the URL of the XML file to open:";
+
+		Display display = Display.getCurrent();
+		Shell shell = new Shell(display);
+		InputDialog dlg = new InputDialog(shell, dialogTitle, dialogMessage, "", null);
+		dlg.open();
+		sResult = dlg.getValue();
+		
+		return sResult;
+	}
+	
 	/**
 	 * Executes the text selection.
 	 */
@@ -244,6 +294,18 @@ public class JFInputView extends ViewPart {
 			}
 		};
 
+		aOpenFile = new Action() {
+			public void run() {
+				executeOpenFile();
+			}
+		};
+		
+		aOpenUrl = new Action() {
+			public void run() {
+				executeOpenUrl();
+			}
+		};
+
 		aRemoveMarkersGlobal.setText("Remove all Markers");
 		aRemoveMarkersGlobal.setToolTipText("Remove all Markers");
 		aRemoveMarkersGlobal.setImageDescriptor(PlatformUI.getWorkbench()
@@ -256,6 +318,17 @@ public class JFInputView extends ViewPart {
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_NEW_WIZARD));
 
+		aOpenFile.setText("Open File");
+		aOpenFile.setToolTipText("Open File");
+		aOpenFile.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(
+						ISharedImages.IMG_OBJ_FOLDER));
+		
+		aOpenUrl.setText("Open URL");
+		aOpenUrl.setToolTipText("Open URL");
+		aOpenUrl.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(
+						org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_BKMRK_TSK));
 	}
 
 	/**
@@ -305,6 +378,8 @@ public class JFInputView extends ViewPart {
 	}
 
 	private void fillLocalToolBar(final IToolBarManager manager) {
+		manager.add(aOpenFile);
+		manager.add(aOpenUrl);
 		manager.add(aRemoveMarkersGlobal);
 		manager.add(aSetMarkersGlobal);
 	}

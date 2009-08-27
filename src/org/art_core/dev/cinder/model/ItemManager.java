@@ -28,7 +28,7 @@ public final class ItemManager {
 	public void reset() {
 		this.items = new ArrayList<IItem>();
 	}
-	
+
 	public void add(IItem iiNewItem) {
 		items.add(iiNewItem);
 	}

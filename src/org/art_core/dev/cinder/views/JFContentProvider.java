@@ -1,5 +1,6 @@
 package org.art_core.dev.cinder.views;
 
+import java.net.URL;
 import java.util.Collection;
 
 import org.art_core.dev.cinder.CinderLog;
@@ -127,7 +128,7 @@ public class JFContentProvider implements IStructuredContentProvider,
 	public void setMarkersSingle(PropertiesItem pItem) {
 		this.setMarkersGlobal();
 	}
-	
+
 	/**
 	 * Inserts example values.
 	 */
@@ -171,6 +172,44 @@ public class JFContentProvider implements IStructuredContentProvider,
 		coll = xir.getItems();
 		for (IItem item : coll) {
 			manager.add(item);
+		}
+	}
+
+	public void insertFromFile(String sFile) {
+		try {
+			XmlInputReader xir = new XmlInputReader();
+			xir.setFile(sFile);
+			xir.readFile();
+			Collection<IItem> coll = xir.getItems();
+			CinderLog.logInfo("JFCP_IFF:" + coll.size());
+
+			for (IItem item : coll) {
+				manager.add(item);
+			}
+			this.viewer.refresh();
+		} catch (Exception e) {
+			// TODO: handle exception
+			CinderLog.logError(e);
+		}
+	}
+
+	public void insertFromUrl(String sFile) {
+		try {
+			CinderLog.logInfo("JFCP_IFU:" + sFile);
+			URL uOpen = new URL(sFile);
+			XmlInputReader xir = new XmlInputReader();
+			xir.setStream(uOpen.openStream());
+			xir.readStream();
+			Collection<IItem> coll = xir.getItems();
+			CinderLog.logInfo("JFCP_IFF:" + coll.size());
+
+			for (IItem item : coll) {
+				manager.add(item);
+			}
+			this.viewer.refresh();
+		} catch (Exception e) {
+			// TODO: handle exception
+			CinderLog.logError(e);
 		}
 	}
 

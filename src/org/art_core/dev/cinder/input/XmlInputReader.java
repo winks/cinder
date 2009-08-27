@@ -1,6 +1,7 @@
 package org.art_core.dev.cinder.input;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -19,31 +20,62 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class XmlInputReader implements IInputHandler {
-	private final String sFilename;
+	private String sFilename = null;
+	private InputStream sStream = null;
 	private final Collection<IItem> items = new ArrayList<IItem>();
 
-	public XmlInputReader(final String file) {
+	public XmlInputReader() {
+		sFilename = "";
+	}
+
+	public XmlInputReader(final String sFile) {
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final String sPath = root.getLocation().toString();
-		sFilename = sPath + "/" + file;
+		sFilename = sPath + "/" + sFile;
 
 		CinderLog.logInfo("XIR:path:" + sPath + "_" + sFilename);
 	}
 
-	@Override
-	public boolean isReadable() {
-		// TODO Auto-generated method stub
-		return false;
+	public void setFile(final String sFile) {
+		this.sFilename = sFile;
+	}
+
+	public void setStream(InputStream sNew) {
+		this.sStream = sNew;
+	}
+
+	public void readStream() {
+		Document doc = null;
+		final DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
+		try {
+			final DocumentBuilder builder = fac.newDocumentBuilder();
+			doc = builder.parse(sStream);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		this.parseFile(doc);
 	}
 
 	@Override
 	public void readFile() {
-		final File fXml = new File(sFilename);
+		File fXml = null;
+		Document doc = null;
+		if (sFilename != null) {
+			fXml = new File(sFilename);
+		}
 		CinderLog.logInfo("XIR:len:" + fXml.length());
 		final DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 		try {
 			final DocumentBuilder builder = fac.newDocumentBuilder();
-			Document doc = builder.parse(fXml);
+			doc = builder.parse(fXml);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		this.parseFile(doc);
+	}
+
+	public void parseFile(Document doc) {
+		try {
 
 			PropertiesItem xItem;
 			NodeList fileNodes, errorNodes;
@@ -55,7 +87,8 @@ public class XmlInputReader implements IInputHandler {
 			// handle all <file name=""> sections
 			for (int fIndex = 0; fIndex < fileNodes.getLength(); fIndex++) {
 				// ignore whitespace
-				if (fileNodes.item(fIndex).getNodeType() == Node.ELEMENT_NODE) {
+				short x = fileNodes.item(fIndex).getNodeType();
+				if (x == Node.ELEMENT_NODE) {
 					fileElement = (Element) fileNodes.item(fIndex);
 					sTargetFileName = fileElement.getAttribute("name");
 					CinderLog.logInfo("XIR::read:" + sTargetFileName);
@@ -73,6 +106,8 @@ public class XmlInputReader implements IInputHandler {
 							eSeverity = error.getAttribute("severity");
 							eMessage = error.getAttribute("message");
 							ePattern = error.getAttribute("pattern");
+							CinderLog.logInfo("XIR:" + eLine + ":" + eColumn
+									+ ":" + eSeverity);
 
 							xItem = new PropertiesItem(ePattern,
 									sTargetFileName, CinderTools
@@ -89,6 +124,12 @@ public class XmlInputReader implements IInputHandler {
 			CinderLog.logError(e);
 		}
 
+	}
+
+	@Override
+	public boolean isReadable() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
