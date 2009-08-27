@@ -1,6 +1,7 @@
 package org.art_core.dev.cinder.views;
 
 import org.art_core.dev.cinder.CinderLog;
+import org.art_core.dev.cinder.CinderTools;
 import org.art_core.dev.cinder.model.ItemManager;
 import org.art_core.dev.cinder.model.PropertiesItem;
 import org.eclipse.swt.widgets.Composite;
@@ -10,11 +11,6 @@ import org.eclipse.ui.part.*;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.*;
@@ -25,18 +21,18 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
 public class JFInputView extends ViewPart {
-	// private static final String MONKEY_VIEW_ID =
-	// "org.art_core.dev.cinder.views.JFMonkeyView";
 
 	private final String JAVAEDITORID = "org.eclipse.jdt.ui.CompilationUnitEditor";
 	private final String[] colNames = { "", "Name", "Status", "Line", "Offset" };
+	private final boolean TOGGLE_OFF = false;
+	private final boolean TOGGLE_ON = true;
 
 	private TableViewer viewer;
 	private TableColumn tCol, nCol, sCol, lineCol, offCol;
 
-	private Action deleteAction;
-	private Action markAction;
-	private Action doubleClickAction;
+	private Action aRemoveMarkersGlobal;
+	private Action aSetMarkersGlobal;
+	private Action aSelect;
 
 	/**
 	 * The constructor.
@@ -54,8 +50,8 @@ public class JFInputView extends ViewPart {
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
-		executeDelete();
-		executeMark();
+		executeMarkerToggle(TOGGLE_OFF);
+		executeMarkerToggle(TOGGLE_ON);
 	}
 
 	/**
@@ -96,124 +92,54 @@ public class JFInputView extends ViewPart {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		viewer.setContentProvider(new JFContentProvider());
+		final JFContentProvider cpNew = new JFContentProvider();
+		cpNew.insertExampleValues();
+
+		viewer.setContentProvider(cpNew);
 		viewer.setLabelProvider(new JFLabelProvider());
 		viewer.setSorter(new JFSorter());
 		viewer.setInput(ItemManager.getManager());
 	}
 
 	/**
-	 * Adds actions to the context menu
+	 * Discover the item selected in the TableViwer
+	 * @return {@link PropertiesItem}
 	 */
-	private void hookContextMenu() {
-		final MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(final IMenuManager manager) {
-				JFInputView.this.fillContextMenu(manager);
-			}
-		});
-		final Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
+	private PropertiesItem getSelectedItem() {
+		final ISelection selection = viewer.getSelection();
+		PropertiesItem pItem = (PropertiesItem) ((IStructuredSelection) selection)
+				.getFirstElement();
+		return pItem;
 	}
 
 	/**
-	 * Adds actions to a double click
+	 * Executes the creation and deletion of Markers.
+	 * @param bEnable
 	 */
-	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(final DoubleClickEvent event) {
-				doubleClickAction.run();
-			}
-		});
-	}
-
-	private void contributeToActionBars() {
-		final IActionBars bars = getViewSite().getActionBars();
-		fillLocalPullDown(bars.getMenuManager());
-		fillLocalToolBar(bars.getToolBarManager());
-	}
-
-	private void fillLocalPullDown(final IMenuManager manager) {
-		manager.add(deleteAction);
-		manager.add(new Separator());
-		manager.add(markAction);
-	}
-
-	private void fillContextMenu(final IMenuManager manager) {
-		manager.add(deleteAction);
-		manager.add(markAction);
-		// Other plug-ins can contribute their actions here
-		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	}
-
-	private void fillLocalToolBar(final IToolBarManager manager) {
-		manager.add(deleteAction);
-		manager.add(markAction);
-	}
-
-	private void executeMark() {
+	private void executeMarkerToggle(boolean bEnable) {
 		final JFContentProvider cpMine = (JFContentProvider) viewer
 				.getContentProvider();
-		// final PropertiesItem[] items = (PropertiesItem[])
-		// cpMine.getElements(null);
-		final Object[] items = cpMine.getElements(null);
-		String sMyLoc;
-		IFile res;
-		PropertiesItem pItem;
+		PropertiesItem pItem = this.getSelectedItem();
 
-		for (Object oItem : items) {
-			pItem = (PropertiesItem) oItem;
-			sMyLoc = pItem.getLocation();
-			res = getResource(sMyLoc);
-
-			try {
-				IMarker marker = res.createMarker(IMarker.TASK);
-				marker.setAttribute(IMarker.MESSAGE, pItem.getName() + "("
-						+ pItem.getMessage() + "): " + pItem.getLine());
-				// marker.setAttribute(IMarker.CHAR_START, 50);
-				// marker.setAttribute(IMarker.CHAR_END, 70);
-				marker.setAttribute(IMarker.LINE_NUMBER, pItem.getLine());
-				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-				marker.setAttribute("key", pItem.getName());
-				marker.setAttribute("violation", pItem.getMessage());
-				CinderLog.logInfo("JFIV:MARKER:" + marker.getType());
-				CinderLog.logInfo("JFIV:MARKER:"
-						+ marker.getAttribute(IMarker.LINE_NUMBER, 666));
-			} catch (Exception e) {
-				CinderLog.logError(e);
+		if (pItem == null) {
+			if (bEnable == TOGGLE_ON) {
+				cpMine.setMarkersGlobal();
+			} else {
+				cpMine.removeMarkersGlobal();
 			}
-
+		} else {
+			// TODO
+			if (bEnable== TOGGLE_ON) {
+				cpMine.setMarkersSingle(pItem);
+			} else {
+				cpMine.removeMarkersSingle(pItem);	
+			}
 		}
 	}
 
-	private IFile getResource(final String sFile) {
-		IFile res = null;
-		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		final IProject[] projects = root.getProjects();
-
-		try {
-			CinderLog.logInfo("JFIV_GR_start");
-			String sProjName = "";
-			for (int i = 0; i < projects.length; i++) {
-				sProjName = projects[i].getName();
-				CinderLog.logInfo("JFIV_GR:DBG: " + sProjName);
-				res = (IFile) root.findMember(sProjName + "/" + sFile);
-				if (res == null) {
-					CinderLog.logInfo("JFIV_GR_notfound:NULL");
-					continue;
-				} else {
-					CinderLog.logInfo("JFIV_GR___found:" + res.toString());
-					break;
-				}
-			}
-		} catch (Exception e) {
-			CinderLog.logError("JFIV_GR:E:" + sFile, e);
-		}
-		return res;
-	}
-
+	/**
+	 * Executes the text selection.
+	 */
 	private void executeSelect() {
 		// select the clicked item from the view
 		final ISelection selection = viewer.getSelection();
@@ -224,7 +150,7 @@ public class JFInputView extends ViewPart {
 		}
 
 		final String sMyLoc = pItem.getLocation();
-		final IFile res = getResource(sMyLoc);
+		final IFile res = CinderTools.getResource(sMyLoc);
 		AbstractTextEditor editor = null;
 		FileEditorInput fileInput;
 
@@ -240,7 +166,6 @@ public class JFInputView extends ViewPart {
 			CinderLog.logError(e1);
 		} catch (Exception e) {
 			CinderLog.logError(e);
-			;
 		}
 
 		if (editor != null) {
@@ -300,73 +225,88 @@ public class JFInputView extends ViewPart {
 	 */
 	private void createActions() {
 		// double click - generic
-		doubleClickAction = new Action() {
+		aSelect = new Action() {
 			public void run() {
 				executeSelect();
 			}
 		};
 
 		// delete - generic
-		deleteAction = new Action() {
+		aRemoveMarkersGlobal = new Action() {
 			public void run() {
-				executeDelete();
+				executeMarkerToggle(TOGGLE_OFF);
 			}
 		};
 		// set - generic
-		markAction = new Action() {
+		aSetMarkersGlobal = new Action() {
 			public void run() {
-				executeMark();
+				executeMarkerToggle(TOGGLE_ON);
 			}
 		};
 
-		deleteAction.setText("Delete Markers");
-		deleteAction.setToolTipText("Delete all Marksers");
-		deleteAction.setImageDescriptor(PlatformUI.getWorkbench()
+		aRemoveMarkersGlobal.setText("Remove all Markers");
+		aRemoveMarkersGlobal.setToolTipText("Remove all Markers");
+		aRemoveMarkersGlobal.setImageDescriptor(PlatformUI.getWorkbench()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_DELETE));
 
-		markAction.setText("Set Markers");
-		markAction.setToolTipText("Set All Markers");
-		markAction.setImageDescriptor(PlatformUI.getWorkbench()
+		aSetMarkersGlobal.setText("Set all Markers");
+		aSetMarkersGlobal.setToolTipText("Set all Markers");
+		aSetMarkersGlobal.setImageDescriptor(PlatformUI.getWorkbench()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_NEW_WIZARD));
 
 	}
 
-	private void executeDelete() {
-		// select the clicked item from the view
-		final ISelection selection = viewer.getSelection();
-		PropertiesItem pItem = (PropertiesItem) ((IStructuredSelection) selection)
-				.getFirstElement();
-		if (pItem == null) {
-			return;
-		}
-
-		final String sMyLoc = pItem.getLocation();
-		// find the correct editor window, based on the name
-		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		final IProject[] projects = root.getProjects();
-		IFile res = null;
-		String sProjName = "";
-		for (int i = 0; i < projects.length; i++) {
-			sProjName = projects[i].getName();
-			CinderLog.logInfo("JFIV_D:DBG: " + sProjName);
-			res = (IFile) root.findMember(sProjName + "/" + sMyLoc);
-			if (res == null) {
-				CinderLog.logInfo("JFIV_D_notfound:NULL");
-				continue;
-			} else {
-				CinderLog.logInfo("JFIV_D____found:" + res.toString());
-				break;
+	/**
+	 * Adds actions to the context menu
+	 */
+	private void hookContextMenu() {
+		final MenuManager menuMgr = new MenuManager("#PopupMenu");
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(final IMenuManager manager) {
+				JFInputView.this.fillContextMenu(manager);
 			}
-		}
-		CinderLog.logInfo("JFIV_D_start2");
+		});
+		final Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, viewer);
+	}
 
-		try {
-			res.deleteMarkers(null, true, 2);
-		} catch (CoreException e) {
-			CinderLog.logError(e);
-		}
+	/**
+	 * Adds actions to a double click
+	 */
+	private void hookDoubleClickAction() {
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(final DoubleClickEvent event) {
+				aSelect.run();
+			}
+		});
+	}
+
+	private void contributeToActionBars() {
+		final IActionBars bars = getViewSite().getActionBars();
+		fillLocalPullDown(bars.getMenuManager());
+		fillLocalToolBar(bars.getToolBarManager());
+	}
+
+	private void fillLocalPullDown(final IMenuManager manager) {
+		manager.add(aRemoveMarkersGlobal);
+		manager.add(new Separator());
+		manager.add(aSetMarkersGlobal);
+	}
+
+	private void fillContextMenu(final IMenuManager manager) {
+		manager.add(aRemoveMarkersGlobal);
+		manager.add(aSetMarkersGlobal);
+		// Other plug-ins can contribute their actions here
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+
+	private void fillLocalToolBar(final IToolBarManager manager) {
+		manager.add(aRemoveMarkersGlobal);
+		manager.add(aSetMarkersGlobal);
 	}
 
 	/**

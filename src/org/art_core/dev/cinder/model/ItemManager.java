@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection; //import java.util.Iterator;
 import java.util.List;
 
-import org.art_core.dev.cinder.input.PropertiesInputReader;
-import org.art_core.dev.cinder.input.XmlInputReader;
-
 public final class ItemManager {
 	// Singleton
 	private static ItemManager manager = new ItemManager();
@@ -14,6 +11,7 @@ public final class ItemManager {
 	private List<ItemManagerListener> listeners = new ArrayList<ItemManagerListener>();
 
 	private ItemManager() {
+		this.reset();
 	}
 
 	public static ItemManager getManager() {
@@ -21,51 +19,18 @@ public final class ItemManager {
 	}
 
 	public IItem[] getItems() {
-		if (items == null) {
-			items = new ArrayList<IItem>();
-
-			String sKey = "abc";
-			// this a bogus list for debugging
-			items.add(new PropertiesItem(sKey));
-			items.add(new PropertiesItem(sKey, "bar"));
-			items.add(new PropertiesItem(sKey, "WORKBENCH_FOLDER",
-					ItemType.WORKBENCH_FOLDER));
-			items.add(new PropertiesItem(sKey, "WORKBENCH_PROJECT",
-					ItemType.WORKBENCH_PROJECT));
-			items.add(new PropertiesItem(sKey, "JAVA_CLASS",
-					ItemType.JAVA_CLASS));
-			items.add(new PropertiesItem(sKey, "JAVA_CLASS_FILE",
-					ItemType.JAVA_CLASS_FILE));
-			items.add(new PropertiesItem(sKey, "JAVA_COMP_UNIT",
-					ItemType.JAVA_COMP_UNIT));
-			items.add(new PropertiesItem(sKey, "JAVA_INTERFACE",
-					ItemType.JAVA_INTERFACE));
-			items.add(new PropertiesItem(sKey, "JAVA_PACKAGE",
-					ItemType.JAVA_PACKAGE));
-			items.add(new PropertiesItem(sKey, "JAVA_PACKAGE_ROOT",
-					ItemType.JAVA_PACKAGE_ROOT));
-			items.add(new PropertiesItem(sKey, "JAVA_PROJECT",
-					ItemType.JAVA_PROJECT));
-			// end bogus list
-
-			// read from properties file
-			final PropertiesInputReader pir = new PropertiesInputReader(
-					"cinder.properties");
-			pir.readFile();
-			Collection<IItem> coll = pir.getItems();
-			for (IItem item : coll) {
-				items.add(item);
-			}
-
-			// read from XML file
-			final XmlInputReader xir = new XmlInputReader("cinder.xml");
-			xir.readFile();
-			coll = xir.getItems();
-			for (IItem item : coll) {
-				items.add(item);
-			}
-		}
 		return items.toArray(new IItem[items.size()]);
+	}
+
+	/**
+	 * Resets to an empty state.
+	 */
+	public void reset() {
+		this.items = new ArrayList<IItem>();
+	}
+	
+	public void add(IItem iiNewItem) {
+		items.add(iiNewItem);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
