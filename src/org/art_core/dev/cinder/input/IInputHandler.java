@@ -8,7 +8,11 @@ public interface IInputHandler {
 
 	boolean isReadable();
 
-	void readFile();
+	void readFromLocalFile(String sFile);
+	
+	void readFromUri(String sFile);
+	
+	void readFromWorkspaceFile(String sFile);
 
 	Collection<IItem> getItems();
 

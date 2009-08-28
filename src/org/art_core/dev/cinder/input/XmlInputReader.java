@@ -1,7 +1,6 @@
 package org.art_core.dev.cinder.input;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -21,62 +20,82 @@ import org.w3c.dom.NodeList;
 
 public class XmlInputReader implements IInputHandler {
 	private String sFilename = null;
-	private InputStream sStream = null;
 	private final Collection<IItem> items = new ArrayList<IItem>();
 
+	/**
+	 * Constructor.
+	 */
 	public XmlInputReader() {
-		sFilename = "";
 	}
 
-	public XmlInputReader(final String sFile) {
+	/**
+	 * Reads an XML file from an URI.
+	 * @param String the URI
+	 */
+	@Override
+	public void readFromUri(final String sUri) {
+		this.readFromFile(sUri, true);
+	}
+
+	/**
+	 * Reads an XML file from the local file system.
+	 * @param String the location of the file
+	 */
+	@Override
+	public void readFromLocalFile(final String sFile) {
+		this.readFromFile(sFile, false);
+	}
+
+	/**
+	 * Reads an XML file from the workspace.
+	 * @param String the file name
+	 */
+	@Override
+	public void readFromWorkspaceFile(final String sWorkspaceFile) {
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final String sPath = root.getLocation().toString();
-		sFilename = sPath + "/" + sFile;
+		String sFilename;
+		sFilename = sPath + "/" + sWorkspaceFile;
+		CinderLog.logInfo("XIR:RFW:" + sPath + "_" + sWorkspaceFile);
 
-		CinderLog.logInfo("XIR:path:" + sPath + "_" + sFilename);
+		this.readFromFile(sFilename, false);
 	}
 
-	public void setFile(final String sFile) {
+	/**
+	 * Reads an XML file.
+	 * @param sFile the filename
+	 * @param bRemote Whether the file is given via URI
+	 */
+	protected void readFromFile(final String sFile, boolean bRemote) {
 		this.sFilename = sFile;
-	}
-
-	public void setStream(InputStream sNew) {
-		this.sStream = sNew;
-	}
-
-	public void readStream() {
-		Document doc = null;
-		final DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
-		try {
-			final DocumentBuilder builder = fac.newDocumentBuilder();
-			doc = builder.parse(sStream);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		this.parseFile(doc);
-	}
-
-	@Override
-	public void readFile() {
 		File fXml = null;
 		Document doc = null;
-		if (sFilename != null) {
-			fXml = new File(sFilename);
-		}
-		CinderLog.logInfo("XIR:len:" + fXml.length());
+
 		final DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
+
 		try {
 			final DocumentBuilder builder = fac.newDocumentBuilder();
-			doc = builder.parse(fXml);
+			if (bRemote) {
+				doc = builder.parse(sFile);
+				CinderLog.logInfo("XIR:RFF_R:" + sFile);
+			} else {
+				fXml = new File(sFile);
+				doc = builder.parse(fXml);
+				CinderLog.logInfo("XIR:RFF_L:" + sFile + "_" + fXml.length());
+			}
+
 		} catch (Exception e) {
-			// TODO: handle exception
+			CinderLog.logError(e);
 		}
-		this.parseFile(doc);
+		this.parseDocument(doc);
 	}
 
-	public void parseFile(Document doc) {
+	/**
+	 * Parses a Document.
+	 * @param doc
+	 */
+	protected void parseDocument(Document doc) {
 		try {
-
 			PropertiesItem xItem;
 			NodeList fileNodes, errorNodes;
 			Integer eLine, eColumn;
@@ -120,23 +139,28 @@ public class XmlInputReader implements IInputHandler {
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
 			CinderLog.logError(e);
 		}
-
 	}
 
 	@Override
 	public boolean isReadable() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * Shows a list of the items read from XML.
+	 * @return Collection<IItem> the list
+	 */
 	@Override
 	public Collection<IItem> getItems() {
 		return this.items;
 	}
 
+	/**
+	 * Shows the filename that was last accessed.
+	 * @return String the file name or URI
+	 */
 	@Override
 	public String getFilename() {
 		return this.sFilename;

@@ -147,14 +147,19 @@ public class JFInputView extends ViewPart {
 	private void executeOpenFile() {
 		String sFile = getOpenFile();
 		if (sFile.length() > 0) {
-			cpDefault.insertFromFile(sFile);
+			cpDefault.insertFromFile(sFile, cpDefault.FILE_LOCAL);
 		}
 	}
-	
+
 	private void executeOpenUrl() {
 		String sFile = getOpenUrl();
 		if (sFile.length() > 0) {
-			cpDefault.insertFromUrl(sFile);
+			try {
+				cpDefault.insertFromFile(sFile, cpDefault.FILE_REMOTE);
+			} catch (Exception e) {
+				CinderLog.logError(e);
+			}
+
 		}
 	}
 
@@ -167,7 +172,6 @@ public class JFInputView extends ViewPart {
 			sResult = dlg.open();
 			CinderLog.logInfo("JF_OF:" + sResult);
 		} catch (Exception e) {
-			// TODO: handle exception
 			CinderLog.logError(e);
 		}
 		return sResult;
@@ -180,13 +184,14 @@ public class JFInputView extends ViewPart {
 
 		Display display = Display.getCurrent();
 		Shell shell = new Shell(display);
-		InputDialog dlg = new InputDialog(shell, dialogTitle, dialogMessage, "", null);
+		InputDialog dlg = new InputDialog(shell, dialogTitle, dialogMessage,
+				"", null);
 		dlg.open();
 		sResult = dlg.getValue();
-		
+
 		return sResult;
 	}
-	
+
 	/**
 	 * Executes the text selection.
 	 */
@@ -299,7 +304,7 @@ public class JFInputView extends ViewPart {
 				executeOpenFile();
 			}
 		};
-		
+
 		aOpenUrl = new Action() {
 			public void run() {
 				executeOpenUrl();
@@ -323,12 +328,15 @@ public class JFInputView extends ViewPart {
 		aOpenFile.setImageDescriptor(PlatformUI.getWorkbench()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_OBJ_FOLDER));
-		
+
 		aOpenUrl.setText("Open URL");
 		aOpenUrl.setToolTipText("Open URL");
-		aOpenUrl.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_BKMRK_TSK));
+		aOpenUrl
+				.setImageDescriptor(PlatformUI
+						.getWorkbench()
+						.getSharedImages()
+						.getImageDescriptor(
+								org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_BKMRK_TSK));
 	}
 
 	/**

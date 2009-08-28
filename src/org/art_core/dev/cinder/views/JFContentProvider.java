@@ -1,6 +1,5 @@
 package org.art_core.dev.cinder.views;
 
-import java.net.URL;
 import java.util.Collection;
 
 import org.art_core.dev.cinder.CinderLog;
@@ -37,13 +36,16 @@ public class JFContentProvider implements IStructuredContentProvider,
 		ItemManagerListener {
 	private TableViewer viewer;
 	private ItemManager manager;
+	public final short FILE_LOCAL = 0;
+	public final short FILE_REMOTE = 1;
+	public final short FILE_WORKSPACE = 2;
 
 	public JFContentProvider() {
 		manager = ItemManager.getManager();
 	}
 
 	/**
-	 * Creates Markers of findings.
+	 * Creates Markers for findings.
 	 */
 	public void setMarkersGlobal() {
 		String sMyLoc;
@@ -76,6 +78,9 @@ public class JFContentProvider implements IStructuredContentProvider,
 		}
 	}
 
+	/**
+	 * Removes Markers for findings.
+	 */
 	public void removeMarkersGlobal() {
 		String sMyLoc;
 		IFile res;
@@ -97,6 +102,11 @@ public class JFContentProvider implements IStructuredContentProvider,
 		}
 	}
 
+	/**
+	 * Removes Markers from a single File.
+	 * 
+	 * @param pItem
+	 */
 	public void removeMarkersSingle(PropertiesItem pItem) {
 		final String sMyLoc = pItem.getLocation();
 		// find the correct editor window, based on the name
@@ -158,48 +168,44 @@ public class JFContentProvider implements IStructuredContentProvider,
 		// end bogus list
 
 		// read from properties file
-		final PropertiesInputReader pir = new PropertiesInputReader(
-				"cinder.properties");
-		pir.readFile();
+		final PropertiesInputReader pir = new PropertiesInputReader();
+		pir.readFromWorkspaceFile("cinder.properties");
 		Collection<IItem> coll = pir.getItems();
 		for (IItem item : coll) {
 			manager.add(item);
 		}
 
 		// read from XML file
-		final XmlInputReader xir = new XmlInputReader("cinder.xml");
-		xir.readFile();
+		final XmlInputReader xir = new XmlInputReader();
+		xir.readFromWorkspaceFile("cinder.xml");
 		coll = xir.getItems();
 		for (IItem item : coll) {
 			manager.add(item);
 		}
 	}
 
-	public void insertFromFile(String sFile) {
+	/**
+	 * Inserts findings from a file
+	 * 
+	 * @param sFile
+	 */
+	public void insertFromFile(String sFile, short iType) {
 		try {
+			CinderLog.logInfo("JFCP_IFF:" + sFile);
 			XmlInputReader xir = new XmlInputReader();
-			xir.setFile(sFile);
-			xir.readFile();
-			Collection<IItem> coll = xir.getItems();
-			CinderLog.logInfo("JFCP_IFF:" + coll.size());
 
-			for (IItem item : coll) {
-				manager.add(item);
+			switch (iType) {
+			case FILE_LOCAL:
+				xir.readFromLocalFile(sFile);
+				break;
+			case FILE_WORKSPACE:
+				xir.readFromWorkspaceFile(sFile);
+				break;
+			default:
+				xir.readFromUri(sFile);
+				break;
 			}
-			this.viewer.refresh();
-		} catch (Exception e) {
-			// TODO: handle exception
-			CinderLog.logError(e);
-		}
-	}
 
-	public void insertFromUrl(String sFile) {
-		try {
-			CinderLog.logInfo("JFCP_IFU:" + sFile);
-			URL uOpen = new URL(sFile);
-			XmlInputReader xir = new XmlInputReader();
-			xir.setStream(uOpen.openStream());
-			xir.readStream();
 			Collection<IItem> coll = xir.getItems();
 			CinderLog.logInfo("JFCP_IFF:" + coll.size());
 
@@ -224,6 +230,7 @@ public class JFContentProvider implements IStructuredContentProvider,
 		if (manager != null) {
 			manager.addItemManagerListener(this);
 		}
+		this.viewer.refresh();
 	}
 
 	@Override
