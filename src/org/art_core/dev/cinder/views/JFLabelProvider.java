@@ -9,6 +9,14 @@ import org.eclipse.ui.PlatformUI;
 
 class JFLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+	/**
+	 * Returns the label image for the given column of the given element.
+	 * 
+	 * @param element
+	 * @param index
+	 * @return String
+	 */
+	@Override
 	public String getColumnText(final Object obj, final int index) {
 		String sResult;
 		switch (index) {
@@ -34,6 +42,14 @@ class JFLabelProvider extends LabelProvider implements ITableLabelProvider {
 		return sResult;
 	}
 
+	/**
+	 * Returns the label image for the given column of the given element.
+	 * 
+	 * @param element
+	 * @param index
+	 * @return Image or <code>null</code>
+	 */
+	@Override
 	public Image getColumnImage(final Object obj, final int index) {
 		if ((index == 0) && (obj instanceof IItem)) {
 			return ((IItem) obj).getType().getImage();
