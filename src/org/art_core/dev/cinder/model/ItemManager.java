@@ -8,7 +8,7 @@ public final class ItemManager {
 	// Singleton
 	private static ItemManager manager = new ItemManager();
 	private Collection<IItem> items;
-	private List<ItemManagerListener> listeners = new ArrayList<ItemManagerListener>();
+	private final List<ItemManagerListener> listeners = new ArrayList<ItemManagerListener>();
 
 	private ItemManager() {
 		this.reset();
@@ -29,7 +29,7 @@ public final class ItemManager {
 		this.items = new ArrayList<IItem>();
 	}
 
-	public void add(IItem iiNewItem) {
+	public void add(final IItem iiNewItem) {
 		items.add(iiNewItem);
 	}
 

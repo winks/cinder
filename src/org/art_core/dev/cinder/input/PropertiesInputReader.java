@@ -15,9 +15,6 @@ public class PropertiesInputReader implements IInputHandler {
 	private String sFilename;
 	private final Collection<IItem> items = new ArrayList<IItem>();
 
-	public PropertiesInputReader() {
-	}
-
 	@Override
 	public boolean isReadable() {
 		// TODO Auto-generated method stub
@@ -44,7 +41,7 @@ public class PropertiesInputReader implements IInputHandler {
 	 * @param String the file name
 	 * @param boolean whether the file name is a URI
 	 */
-	protected void readFromFile(final String sFile, boolean bRemote) {
+	protected void readFromFile(final String sFile, final boolean bRemote) {
 		this.sFilename = sFile;
 
 		PropertiesItem pItem;
@@ -87,13 +84,13 @@ public class PropertiesInputReader implements IInputHandler {
 	}
 
 	@Override
-	public void readFromLocalFile(String sFile) {
+	public void readFromLocalFile(final String sFile) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void readFromUri(String sFile) {
+	public void readFromUri(final String sFile) {
 		// TODO Auto-generated method stub
 
 	}

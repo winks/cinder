@@ -23,12 +23,6 @@ public class XmlInputReader implements IInputHandler {
 	private final Collection<IItem> items = new ArrayList<IItem>();
 
 	/**
-	 * Constructor.
-	 */
-	public XmlInputReader() {
-	}
-
-	/**
 	 * Reads an XML file from an URI.
 	 * @param String the URI
 	 */
@@ -66,7 +60,7 @@ public class XmlInputReader implements IInputHandler {
 	 * @param sFile the filename
 	 * @param bRemote Whether the file is given via URI
 	 */
-	protected void readFromFile(final String sFile, boolean bRemote) {
+	protected void readFromFile(final String sFile, final boolean bRemote) {
 		this.sFilename = sFile;
 		File fXml = null;
 		Document doc = null;
@@ -94,7 +88,7 @@ public class XmlInputReader implements IInputHandler {
 	 * Parses a Document.
 	 * @param doc
 	 */
-	protected void parseDocument(Document doc) {
+	protected void parseDocument(final Document doc) {
 		try {
 			PropertiesItem xItem;
 			NodeList fileNodes, errorNodes;
@@ -106,8 +100,8 @@ public class XmlInputReader implements IInputHandler {
 			// handle all <file name=""> sections
 			for (int fIndex = 0; fIndex < fileNodes.getLength(); fIndex++) {
 				// ignore whitespace
-				short x = fileNodes.item(fIndex).getNodeType();
-				if (x == Node.ELEMENT_NODE) {
+				final int iNodeType = fileNodes.item(fIndex).getNodeType();
+				if (iNodeType == Node.ELEMENT_NODE) {
 					fileElement = (Element) fileNodes.item(fIndex);
 					sTargetFileName = fileElement.getAttribute("name");
 					CinderLog.logInfo("XIR::read:" + sTargetFileName);

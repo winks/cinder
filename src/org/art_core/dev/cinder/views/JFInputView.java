@@ -26,26 +26,19 @@ import org.eclipse.swt.SWT;
 
 public class JFInputView extends ViewPart {
 
-	private final String JAVAEDITORID = "org.eclipse.jdt.ui.CompilationUnitEditor";
+	private static final String JAVAEDITORID = "org.eclipse.jdt.ui.CompilationUnitEditor";
 	private final String[] colNames = { "", "Name", "Status", "Line", "Offset" };
-	private final boolean TOGGLE_OFF = false;
-	private final boolean TOGGLE_ON = true;
+	private static final boolean TOGGLE_OFF = false;
+	private static final boolean TOGGLE_ON = true;
 
 	private TableViewer viewer;
 	private JFContentProvider cpDefault;
-	private TableColumn tCol, nCol, sCol, lineCol, offCol;
 
 	private Action aRemoveMarkersGlobal;
 	private Action aSetMarkersGlobal;
 	private Action aSelect;
 	private Action aOpenFile;
 	private Action aOpenUrl;
-
-	/**
-	 * The constructor.
-	 */
-	public JFInputView() {
-	}
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -70,6 +63,7 @@ public class JFInputView extends ViewPart {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.FULL_SELECTION);
 		final Table table = viewer.getTable();
+		TableColumn tCol, nCol, sCol, lineCol, offCol;
 
 		// icon column
 		tCol = new TableColumn(table, SWT.LEFT);
@@ -115,9 +109,8 @@ public class JFInputView extends ViewPart {
 	 */
 	private PropertiesItem getSelectedItem() {
 		final ISelection selection = viewer.getSelection();
-		PropertiesItem pItem = (PropertiesItem) ((IStructuredSelection) selection)
+		return (PropertiesItem) ((IStructuredSelection) selection)
 				.getFirstElement();
-		return pItem;
 	}
 
 	/**
@@ -125,8 +118,8 @@ public class JFInputView extends ViewPart {
 	 * 
 	 * @param bEnable
 	 */
-	private void executeMarkerToggle(boolean bEnable) {
-		PropertiesItem pItem = this.getSelectedItem();
+	private void executeMarkerToggle(final boolean bEnable) {
+		final PropertiesItem pItem = this.getSelectedItem();
 
 		if (pItem == null) {
 			if (bEnable == TOGGLE_ON) {
@@ -145,17 +138,17 @@ public class JFInputView extends ViewPart {
 	}
 
 	private void executeOpenFile() {
-		String sFile = getOpenFile();
+		final String sFile = getOpenFile();
 		if (sFile.length() > 0) {
-			cpDefault.insertFromFile(sFile, cpDefault.FILE_LOCAL);
+			cpDefault.insertFromFile(sFile, JFContentProvider.FILE_LOCAL);
 		}
 	}
 
 	private void executeOpenUrl() {
-		String sFile = getOpenUrl();
+		final String sFile = getOpenUrl();
 		if (sFile.length() > 0) {
 			try {
-				cpDefault.insertFromFile(sFile, cpDefault.FILE_REMOTE);
+				cpDefault.insertFromFile(sFile, JFContentProvider.FILE_REMOTE);
 			} catch (Exception e) {
 				CinderLog.logError(e);
 			}
@@ -166,9 +159,9 @@ public class JFInputView extends ViewPart {
 	private String getOpenFile() {
 		String sResult = "";
 		try {
-			Display display = Display.getCurrent();
-			Shell shell = new Shell(display);
-			FileDialog dlg = new FileDialog(shell);
+			final Display display = Display.getCurrent();
+			final Shell shell = new Shell(display);
+			final FileDialog dlg = new FileDialog(shell);
 			sResult = dlg.open();
 			CinderLog.logInfo("JF_OF:" + sResult);
 		} catch (Exception e) {
@@ -182,10 +175,10 @@ public class JFInputView extends ViewPart {
 		String dialogTitle = "Read XML from URL";
 		String dialogMessage = "Please enter the URL of the XML file to open:";
 
-		Display display = Display.getCurrent();
-		Shell shell = new Shell(display);
-		InputDialog dlg = new InputDialog(shell, dialogTitle, dialogMessage,
-				"", null);
+		final Display display = Display.getCurrent();
+		final Shell shell = new Shell(display);
+		final InputDialog dlg = new InputDialog(shell, dialogTitle,
+				dialogMessage, "", null);
 		dlg.open();
 		sResult = dlg.getValue();
 
@@ -198,80 +191,70 @@ public class JFInputView extends ViewPart {
 	private void executeSelect() {
 		// select the clicked item from the view
 		final ISelection selection = viewer.getSelection();
-		PropertiesItem pItem = (PropertiesItem) ((IStructuredSelection) selection)
+		final PropertiesItem pItem = (PropertiesItem) ((IStructuredSelection) selection)
 				.getFirstElement();
 		if (pItem == null) {
 			return;
 		}
 
-		final String sMyLoc = pItem.getLocation();
-		final IFile res = CinderTools.getResource(sMyLoc);
+		final IFile res = CinderTools.getResource(pItem.getLocation());
 		AbstractTextEditor editor = null;
 		FileEditorInput fileInput;
 
 		try {
-			if (null == res) {
-				throw new Exception("resource not found");
-			}
 			fileInput = new FileEditorInput(res);
 			editor = (AbstractTextEditor) PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getActivePage().openEditor(
 							fileInput, JAVAEDITORID);
-		} catch (PartInitException e1) {
-			CinderLog.logError(e1);
-		} catch (Exception e) {
-			CinderLog.logError(e);
-		}
-
-		if (editor != null) {
 			// convert line numbers to offset numbers (eclipse internal)
-			IEditorInput input = editor.getEditorInput();
-			IDocument doc = ((ITextEditor) editor).getDocumentProvider()
+			final IEditorInput input = editor.getEditorInput();
+			final IDocument doc = ((ITextEditor) editor).getDocumentProvider()
 					.getDocument(input);
+
 			int iLineOffset = -1;
 			int iLineLength = -1;
 			int iOff = pItem.getOffset();
 			int iLen = 5;
-			try {
-				iLineOffset = doc.getLineOffset(pItem.getLine() - 1);
-				iLineLength = doc.getLineLength(pItem.getLine() - 1);
-				CinderLog.logInfo("JFIV:LineOff:" + iLineOffset + " LineLen: "
-						+ iLineLength);
-				if (iLineOffset >= 0) {
-					iOff += iLineOffset;
-					CinderLog.logInfo("JFIV:getLine:" + pItem.getLine()
-							+ " iOff: " + iOff);
-					StringBuilder x = new StringBuilder();
-					x.append(doc.get(iOff, 3));
-					CinderLog.logInfo("JFIV:numLines:" + doc.getNumberOfLines()
-							+ " t: " + x.toString());
-					if (iLineLength >= 0) {
-						iLen = iLineLength;
 
-						// optional stripping of leading whitespace
-						int iCounter = 0;
-						String test = "";
-						for (int i = 0; i <= iLineLength; i++) {
-							test = doc.get(iLineOffset + i, 1);
-							if (" ".equals(test) || "\t".equals(test)) {
-								iCounter++;
-							} else {
-								break;
-							}
+			iLineOffset = doc.getLineOffset(pItem.getLine() - 1);
+			iLineLength = doc.getLineLength(pItem.getLine() - 1);
+			CinderLog.logInfo("JFIV:LineOff:" + iLineOffset + " LineLen: "
+					+ iLineLength);
+			if (iLineOffset >= 0) {
+				iOff += iLineOffset;
+				CinderLog.logInfo("JFIV:getLine:" + pItem.getLine() + " iOff: "
+						+ iOff);
+				final StringBuilder sbX = new StringBuilder();
+				sbX.append(doc.get(iOff, 3));
+				CinderLog.logInfo("JFIV:numLines:" + doc.getNumberOfLines()
+						+ " t: " + sbX.toString());
+				if (iLineLength >= 0) {
+					iLen = iLineLength;
+
+					// optional stripping of leading whitespace
+					int iCounter = 0;
+					String test = "";
+					for (int i = 0; i <= iLineLength; i++) {
+						test = doc.get(iLineOffset + i, 1);
+						if (" ".equals(test) || "\t".equals(test)) {
+							iCounter++;
+						} else {
+							break;
 						}
-						iOff += iCounter;
-						iLen -= iCounter;
-						CinderLog.logInfo("JFIV:++:" + iCounter);
 					}
+					iOff += iCounter;
+					iLen -= iCounter;
+					CinderLog.logInfo("JFIV:++:" + iCounter);
 				}
-			} catch (Exception e) {
-				CinderLog.logInfo("JFIV:E:" + e.getMessage());
 			}
-
 			// avoid to select the line break at the end
 			iLen -= 1;
-			TextSelection sel = new TextSelection(iOff, iLen);
+			final TextSelection sel = new TextSelection(iOff, iLen);
 			editor.getSelectionProvider().setSelection(sel);
+		} catch (PartInitException e1) {
+			CinderLog.logError(e1);
+		} catch (Exception e) {
+			CinderLog.logError(e);
 		}
 	}
 

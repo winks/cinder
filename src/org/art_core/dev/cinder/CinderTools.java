@@ -27,10 +27,11 @@ public final class CinderTools {
 		IFile res = null;
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IProject[] projects = root.getProjects();
+		String sProjName = "";
 
 		try {
 			CinderLog.logInfo("CT_GR_start");
-			String sProjName = "";
+			
 			for (int i = 0; i < projects.length; i++) {
 				sProjName = projects[i].getName();
 				CinderLog.logInfo("CT_GR:DBG: " + sProjName);

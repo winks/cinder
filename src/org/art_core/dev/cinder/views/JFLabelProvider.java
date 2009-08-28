@@ -51,10 +51,11 @@ class JFLabelProvider extends LabelProvider implements ITableLabelProvider {
 	 */
 	@Override
 	public Image getColumnImage(final Object obj, final int index) {
+		Image imResult = null;
 		if ((index == 0) && (obj instanceof IItem)) {
-			return ((IItem) obj).getType().getImage();
+			imResult = ((IItem) obj).getType().getImage();
 		}
-		return null;
+		return imResult;
 	}
 
 	public Image getImage(final Object obj) {

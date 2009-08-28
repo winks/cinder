@@ -1,6 +1,5 @@
 package org.art_core.dev.cinder.model;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -10,18 +9,18 @@ public abstract class ItemType implements Comparable<ItemType> {
 	private static final ISharedImages PLATFORM_IMAGES = PlatformUI
 			.getWorkbench().getSharedImages();
 
-	private final String id;
+	private final String sID;
 	private final String printName;
 	private final int ordinal;
 
-	public ItemType(final String id, final String name, final int position) {
-		this.id = id;
+	public ItemType(final String sid, final String name, final int position) {
+		this.sID = sid;
 		this.printName = name;
 		this.ordinal = position;
 	}
 
 	public String getId() {
-		return id;
+		return sID;
 	}
 
 	public String getName() {
@@ -43,11 +42,11 @@ public abstract class ItemType implements Comparable<ItemType> {
 			return null;
 		}
 
-		public IItem newItem(Object obj) {
+		public IItem newItem(final Object obj) {
 			return null;
 		}
 
-		public IItem loadItem(String info) {
+		public IItem loadItem(final String info) {
 			return null;
 		}
 	};
@@ -59,14 +58,14 @@ public abstract class ItemType implements Comparable<ItemType> {
 					.getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FILE);
 		}
 
-		public IItem newItem(Object obj) {
-			if (!(obj instanceof IFile)) {
-				return null;
-			}
+		public IItem newItem(final Object obj) {
+			//if (!(obj instanceof IFile)) {
+			//	return null;
+			//}
 			return null;
 		}
 
-		public IItem loadItem(String info) {
+		public IItem loadItem(final String info) {
 			return null;
 		}
 	};
@@ -78,11 +77,11 @@ public abstract class ItemType implements Comparable<ItemType> {
 					.getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER);
 		}
 
-		public IItem newItem(Object obj) {
+		public IItem newItem(final Object obj) {
 			return null;
 		}
 
-		public IItem loadItem(String info) {
+		public IItem loadItem(final String info) {
 			return null;
 		}
 	};
@@ -93,11 +92,11 @@ public abstract class ItemType implements Comparable<ItemType> {
 			return PLATFORM_IMAGES.getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 		}
 
-		public IItem newItem(Object obj) {
+		public IItem newItem(final Object obj) {
 			return null;
 		}
 
-		public IItem loadItem(String info) {
+		public IItem loadItem(final String info) {
 			return null;
 		}
 	};
@@ -108,11 +107,11 @@ public abstract class ItemType implements Comparable<ItemType> {
 			return PLATFORM_IMAGES.getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 		}
 
-		public IItem newItem(Object obj) {
+		public IItem newItem(final Object obj) {
 			return null;
 		}
 
-		public IItem loadItem(String info) {
+		public IItem loadItem(final String info) {
 			return null;
 		}
 	};
@@ -124,11 +123,11 @@ public abstract class ItemType implements Comparable<ItemType> {
 					.getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER);
 		}
 
-		public IItem newItem(Object obj) {
+		public IItem newItem(final Object obj) {
 			return null;
 		}
 
-		public IItem loadItem(String info) {
+		public IItem loadItem(final String info) {
 			return null;
 		}
 	};
@@ -140,11 +139,11 @@ public abstract class ItemType implements Comparable<ItemType> {
 					org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PACKAGE);
 		}
 
-		public IItem newItem(Object obj) {
+		public IItem newItem(final Object obj) {
 			return null;
 		}
 
-		public IItem loadItem(String info) {
+		public IItem loadItem(final String info) {
 			return null;
 		}
 	};
@@ -156,11 +155,11 @@ public abstract class ItemType implements Comparable<ItemType> {
 					org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CFILE);
 		}
 
-		public IItem newItem(Object obj) {
+		public IItem newItem(final Object obj) {
 			return null;
 		}
 
-		public IItem loadItem(String info) {
+		public IItem loadItem(final String info) {
 			return null;
 		}
 	};
@@ -172,11 +171,11 @@ public abstract class ItemType implements Comparable<ItemType> {
 					org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CUNIT);
 		}
 
-		public IItem newItem(Object obj) {
+		public IItem newItem(final Object obj) {
 			return null;
 		}
 
-		public IItem loadItem(String info) {
+		public IItem loadItem(final String info) {
 			return null;
 		}
 	};
@@ -188,11 +187,11 @@ public abstract class ItemType implements Comparable<ItemType> {
 					org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_INTERFACE);
 		}
 
-		public IItem newItem(Object obj) {
+		public IItem newItem(final Object obj) {
 			return null;
 		}
 
-		public IItem loadItem(String info) {
+		public IItem loadItem(final String info) {
 			return null;
 		}
 	};
@@ -204,11 +203,11 @@ public abstract class ItemType implements Comparable<ItemType> {
 					org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
 		}
 
-		public IItem newItem(Object obj) {
+		public IItem newItem(final Object obj) {
 			return null;
 		}
 
-		public IItem loadItem(String info) {
+		public IItem loadItem(final String info) {
 			return null;
 		}
 	};

@@ -36,9 +36,9 @@ public class JFContentProvider implements IStructuredContentProvider,
 		ItemManagerListener {
 	private TableViewer viewer;
 	private ItemManager manager;
-	public final short FILE_LOCAL = 0;
-	public final short FILE_REMOTE = 1;
-	public final short FILE_WORKSPACE = 2;
+	public static final int FILE_LOCAL = 0;
+	public static final int FILE_REMOTE = 1;
+	public static final int FILE_WORKSPACE = 2;
 
 	public JFContentProvider() {
 		manager = ItemManager.getManager();
@@ -51,15 +51,15 @@ public class JFContentProvider implements IStructuredContentProvider,
 		String sMyLoc;
 		IFile res;
 		PropertiesItem pItem;
-		IItem[] items = manager.getItems();
+		IMarker marker;
 
-		for (Object oItem : items) {
+		for (Object oItem : this.getElements(this)) {
 			pItem = (PropertiesItem) oItem;
 			sMyLoc = pItem.getLocation();
 			res = CinderTools.getResource(sMyLoc);
 
 			try {
-				IMarker marker = res.createMarker(IMarker.TASK);
+				marker = res.createMarker(IMarker.TASK);
 				marker.setAttribute(IMarker.MESSAGE, pItem.getName() + "("
 						+ pItem.getMessage() + "): " + pItem.getLine());
 				// marker.setAttribute(IMarker.CHAR_START, 50);
@@ -85,9 +85,8 @@ public class JFContentProvider implements IStructuredContentProvider,
 		String sMyLoc;
 		IFile res;
 		PropertiesItem pItem;
-		IItem[] items = manager.getItems();
 
-		for (Object oItem : items) {
+		for (Object oItem : this.getElements(this)) {
 			pItem = (PropertiesItem) oItem;
 			sMyLoc = pItem.getLocation();
 			res = CinderTools.getResource(sMyLoc);
@@ -107,8 +106,7 @@ public class JFContentProvider implements IStructuredContentProvider,
 	 * 
 	 * @param pItem
 	 */
-	public void removeMarkersSingle(PropertiesItem pItem) {
-		final String sMyLoc = pItem.getLocation();
+	public void removeMarkersSingle(final PropertiesItem pItem) {
 		// find the correct editor window, based on the name
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IProject[] projects = root.getProjects();
@@ -117,7 +115,8 @@ public class JFContentProvider implements IStructuredContentProvider,
 		for (int i = 0; i < projects.length; i++) {
 			sProjName = projects[i].getName();
 			CinderLog.logInfo("JFIV_D:DBG: " + sProjName);
-			res = (IFile) root.findMember(sProjName + "/" + sMyLoc);
+			res = (IFile) root
+					.findMember(sProjName + "/" + pItem.getLocation());
 			if (res == null) {
 				CinderLog.logInfo("JFIV_D_notfound:NULL");
 				continue;
@@ -135,7 +134,7 @@ public class JFContentProvider implements IStructuredContentProvider,
 		}
 	}
 
-	public void setMarkersSingle(PropertiesItem pItem) {
+	public void setMarkersSingle(final PropertiesItem pItem) {
 		this.setMarkersGlobal();
 	}
 
@@ -143,7 +142,7 @@ public class JFContentProvider implements IStructuredContentProvider,
 	 * Inserts example values.
 	 */
 	public void insertExampleValues() {
-		String sKey = "abc";
+		final String sKey = "abc";
 		// this a bogus list for debugging
 		manager.add(new PropertiesItem(sKey));
 		manager.add(new PropertiesItem(sKey, "bar"));
@@ -189,10 +188,10 @@ public class JFContentProvider implements IStructuredContentProvider,
 	 * 
 	 * @param sFile
 	 */
-	public void insertFromFile(String sFile, short iType) {
+	public void insertFromFile(final String sFile, final int iType) {
 		try {
 			CinderLog.logInfo("JFCP_IFF:" + sFile);
-			XmlInputReader xir = new XmlInputReader();
+			final XmlInputReader xir = new XmlInputReader();
 
 			switch (iType) {
 			case FILE_LOCAL:
@@ -206,7 +205,7 @@ public class JFContentProvider implements IStructuredContentProvider,
 				break;
 			}
 
-			Collection<IItem> coll = xir.getItems();
+			final Collection<IItem> coll = xir.getItems();
 			CinderLog.logInfo("JFCP_IFF:" + coll.size());
 
 			for (IItem item : coll) {
@@ -214,7 +213,6 @@ public class JFContentProvider implements IStructuredContentProvider,
 			}
 			this.viewer.refresh();
 		} catch (Exception e) {
-			// TODO: handle exception
 			CinderLog.logError(e);
 		}
 	}
@@ -233,10 +231,16 @@ public class JFContentProvider implements IStructuredContentProvider,
 		this.viewer.refresh();
 	}
 
+	/**
+	 * Disposes of.
+	 */
 	@Override
 	public void dispose() {
 	}
 
+	/**
+	 * Returns all elements of the manager.
+	 */
 	@Override
 	public Object[] getElements(final Object parent) {
 		return manager.getItems();
