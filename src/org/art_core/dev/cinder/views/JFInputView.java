@@ -154,9 +154,12 @@ public class JFInputView extends ViewPart {
 	 * Executes opening a file.
 	 */
 	private void executeOpenFile() {
-		final String sFile = getOpenFile();
+		String sPrefKey = CinderPrefTools.P_STRING + "_xml_file";
+		String sPrefPath = ipsPref.getString(sPrefKey);
+		final String sFile = getOpenFile(sPrefPath);
 		if (sFile.length() > 0) {
 			cpDefault.insertFromFile(sFile, JFContentProvider.FILE_LOCAL);
+			ipsPref.setValue(sPrefKey, sFile);
 		}
 	}
 
@@ -164,13 +167,14 @@ public class JFInputView extends ViewPart {
 	 * Executes opening an URL.
 	 */
 	private void executeOpenUrl() {
-		String sPrefPath = ipsPref.getString(CinderPrefTools.P_STRING
-				+ "_xml_url");
+		String sPrefKey = CinderPrefTools.P_STRING + "_xml_url";
+		String sPrefPath = ipsPref.getString(sPrefKey);
 		CinderLog.logInfo("JFIV_eOU:" + sPrefPath);
 		final String sFile = getOpenUrl(sPrefPath);
 		if (sFile.length() > 0) {
 			try {
 				cpDefault.insertFromFile(sFile, JFContentProvider.FILE_REMOTE);
+				ipsPref.setValue(sPrefKey, sFile);
 			} catch (Exception e) {
 				CinderLog.logError(e);
 			}
@@ -183,12 +187,13 @@ public class JFInputView extends ViewPart {
 	 * 
 	 * @return String the filename
 	 */
-	private String getOpenFile() {
+	private String getOpenFile(final String sFile) {
 		String sResult = "";
 		try {
 			final Display display = Display.getCurrent();
 			final Shell shell = new Shell(display);
 			final FileDialog dlg = new FileDialog(shell);
+			dlg.setFileName(sFile);
 			sResult = dlg.open();
 			CinderLog.logInfo("JF_OF:" + sResult);
 		} catch (Exception e) {
@@ -204,7 +209,7 @@ public class JFInputView extends ViewPart {
 	 *            the preselected URL
 	 * @return the URL
 	 */
-	private String getOpenUrl(String sPre) {
+	private String getOpenUrl(final String sPre) {
 		String sResult = "";
 		String dialogTitle = "Read XML from URL";
 		String dialogMessage = "Please enter the URL of the XML file to open:";
@@ -402,7 +407,7 @@ public class JFInputView extends ViewPart {
 		mmMenu.add(new Separator());
 		mmMenu.add(aSetMarkersGlobal);
 
-		// add to View Toolbar
+		// add to Local Tool Bar of the View
 		mmBar = bars.getToolBarManager();
 		mmBar.add(aShowDummy);
 		mmBar.add(aOpenFile);
