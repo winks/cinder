@@ -143,6 +143,16 @@ public class JFInputView extends ViewPart {
 		}
 	}
 
+	/**
+	 * Executes showing the dummy entries.
+	 */
+	private void executeShowDummy() {
+		cpDefault.insertDummyValues();
+	}
+
+	/**
+	 * Executes opening a file.
+	 */
 	private void executeOpenFile() {
 		final String sFile = getOpenFile();
 		if (sFile.length() > 0) {
@@ -150,11 +160,9 @@ public class JFInputView extends ViewPart {
 		}
 	}
 
-	private void executeShowDummy() {
-		cpDefault.insertDummyValues();
-
-	}
-
+	/**
+	 * Executes opening an URL.
+	 */
 	private void executeOpenUrl() {
 		String sPrefPath = ipsPref.getString(CinderPrefTools.P_STRING
 				+ "_xml_url");
@@ -170,6 +178,11 @@ public class JFInputView extends ViewPart {
 		}
 	}
 
+	/**
+	 * Opens a file select dialog for user input of a file name.
+	 * 
+	 * @return String the filename
+	 */
 	private String getOpenFile() {
 		String sResult = "";
 		try {
@@ -184,6 +197,13 @@ public class JFInputView extends ViewPart {
 		return sResult;
 	}
 
+	/**
+	 * Opens a dialog for user input of an URL.
+	 * 
+	 * @param sPre
+	 *            the preselected URL
+	 * @return the URL
+	 */
 	private String getOpenUrl(String sPre) {
 		String sResult = "";
 		String dialogTitle = "Read XML from URL";
@@ -276,38 +296,41 @@ public class JFInputView extends ViewPart {
 	 * Initialize the actions needed
 	 */
 	private void createActions() {
-		// double click - generic
+		// selecting an item
 		aSelect = new Action() {
 			public void run() {
 				executeSelect();
 			}
 		};
 
-		// delete - generic
+		// removing all markers
 		aRemoveMarkersGlobal = new Action() {
 			public void run() {
 				executeMarkerToggle(TOGGLE_OFF);
 			}
 		};
-		// set - generic
+		// setting all markers
 		aSetMarkersGlobal = new Action() {
 			public void run() {
 				executeMarkerToggle(TOGGLE_ON);
 			}
 		};
 
+		// opening a file
 		aOpenFile = new Action() {
 			public void run() {
 				executeOpenFile();
 			}
 		};
 
+		// opening an URL
 		aOpenUrl = new Action() {
 			public void run() {
 				executeOpenUrl();
 			}
 		};
 
+		// show dummy entries
 		aShowDummy = new Action() {
 			public void run() {
 				executeShowDummy();
@@ -365,6 +388,31 @@ public class JFInputView extends ViewPart {
 	}
 
 	/**
+	 * Adds action to action bars.
+	 */
+	private void contributeToActionBars() {
+		final IActionBars bars = getViewSite().getActionBars();
+
+		IMenuManager mmMenu;
+		IToolBarManager mmBar;
+
+		// add to Local Menu
+		mmMenu = bars.getMenuManager();
+		mmMenu.add(aRemoveMarkersGlobal);
+		mmMenu.add(new Separator());
+		mmMenu.add(aSetMarkersGlobal);
+
+		// add to View Toolbar
+		mmBar = bars.getToolBarManager();
+		mmBar.add(aShowDummy);
+		mmBar.add(aOpenFile);
+		mmBar.add(aOpenUrl);
+		mmBar.add(aRemoveMarkersGlobal);
+		mmBar.add(aSetMarkersGlobal);
+
+	}
+
+	/**
 	 * Adds actions to a double click
 	 */
 	private void hookDoubleClickAction() {
@@ -375,42 +423,11 @@ public class JFInputView extends ViewPart {
 		});
 	}
 
-	private void contributeToActionBars() {
-		final IActionBars bars = getViewSite().getActionBars();
-		fillLocalPullDown(bars.getMenuManager());
-		fillLocalToolBar(bars.getToolBarManager());
-	}
-
-	private void fillLocalPullDown(final IMenuManager manager) {
-		manager.add(aRemoveMarkersGlobal);
-		manager.add(new Separator());
-		manager.add(aSetMarkersGlobal);
-	}
-
 	private void fillContextMenu(final IMenuManager manager) {
 		manager.add(aRemoveMarkersGlobal);
 		manager.add(aSetMarkersGlobal);
 		// Other plug-ins can contribute their actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	}
-
-	private void fillLocalToolBar(final IToolBarManager manager) {
-		manager.add(aShowDummy);
-		manager.add(aOpenFile);
-		manager.add(aOpenUrl);
-		manager.add(aRemoveMarkersGlobal);
-		manager.add(aSetMarkersGlobal);
-	}
-
-	/**
-	 * Show a popup message
-	 * 
-	 * @param message
-	 * @param title
-	 */
-	private void showMessage(String message, String title) {
-		MessageDialog.openInformation(viewer.getControl().getShell(), title,
-				message);
 	}
 
 	/**
