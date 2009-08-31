@@ -24,7 +24,9 @@ public class XmlInputReader implements IInputHandler {
 
 	/**
 	 * Reads an XML file from an URI.
-	 * @param String the URI
+	 * 
+	 * @param String
+	 *            the URI
 	 */
 	@Override
 	public void readFromUri(final String sUri) {
@@ -33,7 +35,9 @@ public class XmlInputReader implements IInputHandler {
 
 	/**
 	 * Reads an XML file from the local file system.
-	 * @param String the location of the file
+	 * 
+	 * @param String
+	 *            the location of the file
 	 */
 	@Override
 	public void readFromLocalFile(final String sFile) {
@@ -42,7 +46,9 @@ public class XmlInputReader implements IInputHandler {
 
 	/**
 	 * Reads an XML file from the workspace.
-	 * @param String the file name
+	 * 
+	 * @param String
+	 *            the file name
 	 */
 	@Override
 	public void readFromWorkspaceFile(final String sWorkspaceFile) {
@@ -57,8 +63,11 @@ public class XmlInputReader implements IInputHandler {
 
 	/**
 	 * Reads an XML file.
-	 * @param sFile the filename
-	 * @param bRemote Whether the file is given via URI
+	 * 
+	 * @param sFile
+	 *            the filename
+	 * @param bRemote
+	 *            Whether the file is given via URI
 	 */
 	protected void readFromFile(final String sFile, final boolean bRemote) {
 		this.sFilename = sFile;
@@ -86,6 +95,7 @@ public class XmlInputReader implements IInputHandler {
 
 	/**
 	 * Parses a Document.
+	 * 
 	 * @param doc
 	 */
 	protected void parseDocument(final Document doc) {
@@ -144,6 +154,7 @@ public class XmlInputReader implements IInputHandler {
 
 	/**
 	 * Shows a list of the items read from XML.
+	 * 
 	 * @return Collection<IItem> the list
 	 */
 	@Override
@@ -153,6 +164,7 @@ public class XmlInputReader implements IInputHandler {
 
 	/**
 	 * Shows the filename that was last accessed.
+	 * 
 	 * @return String the file name or URI
 	 */
 	@Override

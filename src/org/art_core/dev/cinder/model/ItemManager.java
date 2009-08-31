@@ -1,17 +1,17 @@
 package org.art_core.dev.cinder.model;
 
 import java.util.ArrayList;
-import java.util.Collection; //import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 
 public final class ItemManager {
 	// Singleton
 	private static ItemManager manager = new ItemManager();
-	private Collection<IItem> items;
+	private HashSet<IItem> items;
 	private final List<ItemManagerListener> listeners = new ArrayList<ItemManagerListener>();
 
 	private ItemManager() {
-		this.reset();
+		this.items = new HashSet<IItem>();
 	}
 
 	public static ItemManager getManager() {
@@ -26,7 +26,7 @@ public final class ItemManager {
 	 * Resets to an empty state.
 	 */
 	public void reset() {
-		this.items = new ArrayList<IItem>();
+		this.items.clear();
 	}
 
 	public void add(final IItem iiNewItem) {

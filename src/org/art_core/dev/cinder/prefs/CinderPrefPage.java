@@ -31,25 +31,49 @@ public class CinderPrefPage extends FieldEditorPreferencePage implements
 	 * editor knows how to save and restore itself.
 	 */
 	public void createFieldEditors() {
+		addField(new StringFieldEditor(CinderPrefTools.P_STRING + "_xml_url",
+				"URL to XML", getFieldEditorParent()));
+
+		addField(new FileFieldEditor(CinderPrefTools.P_STRING + "_xml_file",
+				"XML File", getFieldEditorParent()));
+
 		/*
-		 * addField( new DirectoryFieldEditor( PreferenceConstants.P_PATH,
-		 * "&Directory preference:", getFieldEditorParent()) );
+		 * addField(new BooleanFieldEditor(CinderPrefTools.P_BOOLEAN,
+		 * "&An example of a boolean preference - cinder",
+		 * getFieldEditorParent()));
+		 * 
+		 * addField(new RadioGroupFieldEditor(CinderPrefTools.P_CHOICE,
+		 * "An example of a multiple-choice preference - cinder", 1, new
+		 * String[][] { { "&Choice 1", "choice1" }, { "C&hoice 2", "choice2" }
+		 * }, getFieldEditorParent()));
+		 * 
+		 * addField(new StringFieldEditor(CinderPrefTools.P_STRING +
+		 * "_highlight", "&highlight:", getFieldEditorParent()));
+		 * 
+		 * addField(new StringFieldEditor(CinderPrefTools.P_STRING + "_line",
+		 * "&line number:", getFieldEditorParent()));
+		 * 
+		 * addField(new ColorFieldEditor(CinderPrefTools.P_COLOR, "boo",
+		 * getFieldEditorParent()));
+		 * 
+		 * addField(new DirectoryFieldEditor(CinderPrefTools.P_STRING + "_d",
+		 * "xy", getFieldEditorParent()));
+		 * 
+		 * addField(new FileFieldEditor(CinderPrefTools.P_STRING + "lkhölbhlb",
+		 * "fdsafdsfs", getFieldEditorParent()));
+		 * 
+		 * addField(new FontFieldEditor(CinderPrefTools.P_STRING + "dsgdsgsdg",
+		 * "ödskflj", getFieldEditorParent()));
+		 * 
+		 * addField(new IntegerFieldEditor( CinderPrefTools.P_STRING +
+		 * "_sdfsdgsdg", "<yfdfds", getFieldEditorParent()));
+		 * 
+		 * addField(new PathEditor(CinderPrefTools.P_STRING + "ödosghks",
+		 * "ldkhn", ".", getFieldEditorParent()));
+		 * 
+		 * addField(new ScaleFieldEditor(CinderPrefTools.P_STRING + "fdf", "sa",
+		 * getFieldEditorParent()));
 		 */
-
-		addField(new BooleanFieldEditor(CinderPrefTools.P_BOOLEAN,
-				"&An example of a boolean preference - cinder",
-				getFieldEditorParent()));
-
-		addField(new RadioGroupFieldEditor(CinderPrefTools.P_CHOICE,
-				"An example of a multiple-choice preference - cinder", 1,
-				new String[][] { { "&Choice 1", "choice1" },
-						{ "C&hoice 2", "choice2" } }, getFieldEditorParent()));
-
-		addField(new StringFieldEditor(CinderPrefTools.P_STRING + "_highlight",
-				"&highlight:", getFieldEditorParent()));
-
-		addField(new StringFieldEditor(CinderPrefTools.P_STRING + "_line",
-				"&line number:", getFieldEditorParent()));
 	}
 
 	/*

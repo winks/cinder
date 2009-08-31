@@ -1,5 +1,6 @@
 package org.art_core.dev.cinder.model;
 
+import org.art_core.dev.cinder.CinderLog;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
@@ -123,4 +124,43 @@ public class PropertiesItem implements IItem {
 		}
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + line;
+		result = prime * result
+				+ ((location == null) ? 0 : location.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + offset;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PropertiesItem other = (PropertiesItem) obj;
+		if (line != other.line)
+			return false;
+		if (location == null) {
+			if (other.location != null)
+				return false;
+		} else if (!location.equals(other.location))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (offset != other.offset)
+			return false;
+		return true;
+	}
+
 }

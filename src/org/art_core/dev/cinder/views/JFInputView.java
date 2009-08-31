@@ -1,9 +1,11 @@
 package org.art_core.dev.cinder.views;
 
 import org.art_core.dev.cinder.CinderLog;
+import org.art_core.dev.cinder.CinderPlugin;
 import org.art_core.dev.cinder.CinderTools;
 import org.art_core.dev.cinder.model.ItemManager;
 import org.art_core.dev.cinder.model.PropertiesItem;
+import org.art_core.dev.cinder.prefs.CinderPrefTools;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -14,6 +16,7 @@ import org.eclipse.ui.part.*;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.*;
@@ -33,12 +36,15 @@ public class JFInputView extends ViewPart {
 
 	private TableViewer viewer;
 	private JFContentProvider cpDefault;
+	private IPreferenceStore ipsPref = CinderPlugin.getDefault()
+			.getPreferenceStore();
 
-	private Action aRemoveMarkersGlobal;
 	private Action aSetMarkersGlobal;
+	private Action aRemoveMarkersGlobal;
 	private Action aSelect;
-	private Action aOpenFile;
 	private Action aOpenUrl;
+	private Action aOpenFile;
+	private Action aShowDummy;
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -144,8 +150,16 @@ public class JFInputView extends ViewPart {
 		}
 	}
 
+	private void executeShowDummy() {
+		cpDefault.insertDummyValues();
+
+	}
+
 	private void executeOpenUrl() {
-		final String sFile = getOpenUrl();
+		String sPrefPath = ipsPref.getString(CinderPrefTools.P_STRING
+				+ "_xml_url");
+		CinderLog.logInfo("JFIV_eOU:" + sPrefPath);
+		final String sFile = getOpenUrl(sPrefPath);
 		if (sFile.length() > 0) {
 			try {
 				cpDefault.insertFromFile(sFile, JFContentProvider.FILE_REMOTE);
@@ -170,7 +184,7 @@ public class JFInputView extends ViewPart {
 		return sResult;
 	}
 
-	private String getOpenUrl() {
+	private String getOpenUrl(String sPre) {
 		String sResult = "";
 		String dialogTitle = "Read XML from URL";
 		String dialogMessage = "Please enter the URL of the XML file to open:";
@@ -178,7 +192,7 @@ public class JFInputView extends ViewPart {
 		final Display display = Display.getCurrent();
 		final Shell shell = new Shell(display);
 		final InputDialog dlg = new InputDialog(shell, dialogTitle,
-				dialogMessage, "", null);
+				dialogMessage, sPre, null);
 		dlg.open();
 		sResult = dlg.getValue();
 
@@ -294,6 +308,12 @@ public class JFInputView extends ViewPart {
 			}
 		};
 
+		aShowDummy = new Action() {
+			public void run() {
+				executeShowDummy();
+			}
+		};
+
 		aRemoveMarkersGlobal.setText("Remove all Markers");
 		aRemoveMarkersGlobal.setToolTipText("Remove all Markers");
 		aRemoveMarkersGlobal.setImageDescriptor(PlatformUI.getWorkbench()
@@ -320,6 +340,12 @@ public class JFInputView extends ViewPart {
 						.getSharedImages()
 						.getImageDescriptor(
 								org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_BKMRK_TSK));
+
+		aShowDummy.setText("Show Dummy");
+		aShowDummy.setToolTipText("Show Dummy");
+		aShowDummy.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_UP));
 	}
 
 	/**
@@ -369,6 +395,7 @@ public class JFInputView extends ViewPart {
 	}
 
 	private void fillLocalToolBar(final IToolBarManager manager) {
+		manager.add(aShowDummy);
 		manager.add(aOpenFile);
 		manager.add(aOpenUrl);
 		manager.add(aRemoveMarkersGlobal);

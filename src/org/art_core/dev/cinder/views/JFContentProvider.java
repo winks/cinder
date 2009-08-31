@@ -1,5 +1,6 @@
 package org.art_core.dev.cinder.views;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.art_core.dev.cinder.CinderLog;
@@ -74,7 +75,6 @@ public class JFContentProvider implements IStructuredContentProvider,
 			} catch (Exception e) {
 				CinderLog.logError(e);
 			}
-
 		}
 	}
 
@@ -138,33 +138,35 @@ public class JFContentProvider implements IStructuredContentProvider,
 		this.setMarkersGlobal();
 	}
 
-	/**
-	 * Inserts example values.
-	 */
-	public void insertExampleValues() {
+	public void insertDummyValues() {
 		final String sKey = "abc";
+
+		Collection<IItem> dummy = new ArrayList<IItem>();
+
 		// this a bogus list for debugging
-		manager.add(new PropertiesItem(sKey));
-		manager.add(new PropertiesItem(sKey, "bar"));
-		manager.add(new PropertiesItem(sKey, "WORKBENCH_FOLDER",
+		dummy.add(new PropertiesItem(sKey));
+		dummy.add(new PropertiesItem(sKey, "bar"));
+		dummy.add(new PropertiesItem(sKey, "WORKBENCH_FOLDER",
 				ItemType.WORKBENCH_FOLDER));
-		manager.add(new PropertiesItem(sKey, "WORKBENCH_PROJECT",
+		dummy.add(new PropertiesItem(sKey, "WORKBENCH_PROJECT",
 				ItemType.WORKBENCH_PROJECT));
-		manager
-				.add(new PropertiesItem(sKey, "JAVA_CLASS", ItemType.JAVA_CLASS));
-		manager.add(new PropertiesItem(sKey, "JAVA_CLASS_FILE",
+		dummy.add(new PropertiesItem(sKey, "JAVA_CLASS", ItemType.JAVA_CLASS));
+		dummy.add(new PropertiesItem(sKey, "JAVA_CLASS_FILE",
 				ItemType.JAVA_CLASS_FILE));
-		manager.add(new PropertiesItem(sKey, "JAVA_COMP_UNIT",
+		dummy.add(new PropertiesItem(sKey, "JAVA_COMP_UNIT",
 				ItemType.JAVA_COMP_UNIT));
-		manager.add(new PropertiesItem(sKey, "JAVA_INTERFACE",
+		dummy.add(new PropertiesItem(sKey, "JAVA_INTERFACE",
 				ItemType.JAVA_INTERFACE));
-		manager.add(new PropertiesItem(sKey, "JAVA_PACKAGE",
+		dummy.add(new PropertiesItem(sKey, "JAVA_PACKAGE",
 				ItemType.JAVA_PACKAGE));
-		manager.add(new PropertiesItem(sKey, "JAVA_PACKAGE_ROOT",
+		dummy.add(new PropertiesItem(sKey, "JAVA_PACKAGE_ROOT",
 				ItemType.JAVA_PACKAGE_ROOT));
-		manager.add(new PropertiesItem(sKey, "JAVA_PROJECT",
+		dummy.add(new PropertiesItem(sKey, "JAVA_PROJECT",
 				ItemType.JAVA_PROJECT));
 		// end bogus list
+		for (IItem item : dummy) {
+			manager.add(item);
+		}
 
 		// read from properties file
 		final PropertiesInputReader pir = new PropertiesInputReader();
@@ -173,11 +175,17 @@ public class JFContentProvider implements IStructuredContentProvider,
 		for (IItem item : coll) {
 			manager.add(item);
 		}
+		this.viewer.refresh();
+	}
 
+	/**
+	 * Inserts example values.
+	 */
+	public void insertExampleValues() {
 		// read from XML file
 		final XmlInputReader xir = new XmlInputReader();
 		xir.readFromWorkspaceFile("cinder.xml");
-		coll = xir.getItems();
+		Collection<IItem> coll = xir.getItems();
 		for (IItem item : coll) {
 			manager.add(item);
 		}
@@ -253,7 +261,9 @@ public class JFContentProvider implements IStructuredContentProvider,
 			viewer.remove(event.getItemsRemoved());
 			viewer.add(event.getItemsAdded());
 		} finally {
+			viewer.refresh();
 			viewer.getTable().setRedraw(true);
+			viewer.refresh();
 		}
 	}
 }

@@ -12,5 +12,7 @@ public final class CinderPrefTools {
 	public static final String P_CHOICE = "choicePreference";
 
 	public static final String P_STRING = "stringPreference";
+	
+	public static final String P_COLOR = "colorPreference";
 
 }
