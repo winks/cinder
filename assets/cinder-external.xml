@@ -1,0 +1,8 @@
+<files>
+<file name="HelloWorldPHP.php">
+    <error line="7" column="0" severity="warning" message="bogus" pattern="PHP_BogusPattern" />
+</file>
+<file name="HelloWorldPHPOutput.php">
+    <error line="7" column="0" severity="warning" message="bogus 2" pattern="PHP_BogusPattern2" />
+</file>
+</files>
