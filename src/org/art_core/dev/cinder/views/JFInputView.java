@@ -30,7 +30,7 @@ import org.eclipse.swt.SWT;
 public class JFInputView extends ViewPart {
 
 	private static final String JAVAEDITORID = "org.eclipse.jdt.ui.CompilationUnitEditor";
-	private final String[] colNames = { "", "Name", "Status", "Line", "Offset", "Changed" };
+	private final String[] colNames = { "", "Name", "Location", "Line", "Offset", "Status", "Changed" };
 	private static final boolean TOGGLE_OFF = false;
 	private static final boolean TOGGLE_ON = true;
 
@@ -72,7 +72,7 @@ public class JFInputView extends ViewPart {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.FULL_SELECTION);
 		final Table table = viewer.getTable();
-		TableColumn tCol, nCol, sCol, lineCol, offCol, tsCol;
+		TableColumn tCol, nCol, locCol, lineCol, offCol, statCol, tsCol;
 
 		// icon column
 		tCol = new TableColumn(table, SWT.LEFT);
@@ -82,12 +82,12 @@ public class JFInputView extends ViewPart {
 		// name column
 		nCol = new TableColumn(table, SWT.LEFT);
 		nCol.setText(colNames[1]);
-		nCol.setWidth(150);
+		nCol.setWidth(200);
 
-		// status column
-		sCol = new TableColumn(table, SWT.LEFT);
-		sCol.setText(colNames[2]);
-		sCol.setWidth(200);
+		// location column
+		locCol = new TableColumn(table, SWT.LEFT);
+		locCol.setText(colNames[2]);
+		locCol.setWidth(200);
 
 		// line number column
 		lineCol = new TableColumn(table, SWT.LEFT);
@@ -100,8 +100,13 @@ public class JFInputView extends ViewPart {
 		offCol.setWidth(50);
 		
 		// timestamp column
+		statCol = new TableColumn(table, SWT.LEFT);
+		statCol.setText(colNames[5]);
+		statCol.setWidth(100);
+		
+		// status column
 		tsCol = new TableColumn(table, SWT.LEFT);
-		tsCol.setText(colNames[5]);
+		tsCol.setText(colNames[6]);
 		tsCol.setWidth(120);
 
 		table.setHeaderVisible(true);
@@ -316,6 +321,7 @@ public class JFInputView extends ViewPart {
 	 * Initialize the actions needed
 	 */
 	private void createActions() {
+		
 		// selecting an item
 		aSelect = new Action() {
 			public void run() {
@@ -329,8 +335,23 @@ public class JFInputView extends ViewPart {
 				executeMarkerToggle(TOGGLE_OFF);
 			}
 		};
+		
+		// removing markers
+		aRemoveMarkersSingle = new Action() {
+			public void run() {
+				executeMarkerToggle(TOGGLE_OFF);
+			}
+		};
+		
 		// setting all markers
 		aSetMarkersGlobal = new Action() {
+			public void run() {
+				executeMarkerToggle(TOGGLE_ON);
+			}
+		};
+		
+		// setting markers
+		aSetMarkersSingle = new Action() {
 			public void run() {
 				executeMarkerToggle(TOGGLE_ON);
 			}
@@ -360,7 +381,9 @@ public class JFInputView extends ViewPart {
 		// clear entries
 		aClear = new Action() {
 			public void run() {
+				executeMarkerToggle(TOGGLE_OFF);
 				executeClear();
+				
 			}
 		};
 

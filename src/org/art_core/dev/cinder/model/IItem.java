@@ -16,6 +16,8 @@ public interface IItem extends IAdaptable {
 	int getOffset();
 	
 	int getLastChanged();
+	
+	ItemStatus getStatus();
 
 	ItemType getType();
 

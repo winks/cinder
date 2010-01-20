@@ -15,7 +15,11 @@ public final class CinderTools {
 		ItemType itemtype;
 
 		if ("warning".equals(type)) {
-			itemtype = ItemType.JAVA_INTERFACE;
+			itemtype = ItemType.TASK_WARN;
+		} else if ("error".equals(type)) {
+			itemtype = ItemType.TASK_ERROR;
+		} else if ("info".equals(type)) {
+			itemtype = ItemType.TASK_INFO;
 		} else {
 			itemtype = PropertiesItem.DEFAULT_TYPE;
 		}

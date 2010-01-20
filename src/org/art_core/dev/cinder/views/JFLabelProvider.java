@@ -23,23 +23,27 @@ class JFLabelProvider extends LabelProvider implements ITableLabelProvider {
 	@Override
 	public String getColumnText(final Object obj, final int index) {
 		String sResult;
+		IItem item = (IItem) obj;
 		switch (index) {
 		case 0: // type column
 			sResult = "";
 			break;
 		case 1: // name column
-			sResult = ((IItem) obj).getName();
+			sResult = item.getName();
 			break;
 		case 2: // location column
-			sResult = ((IItem) obj).getLocation();
+			sResult = item.getLocation();
 			break;
 		case 3: // line number column
-			sResult = String.valueOf(((IItem) obj).getLine());
+			sResult = String.valueOf(item.getLine());
 			break;
 		case 4: // offset column
-			sResult = String.valueOf(((IItem) obj).getOffset());
+			sResult = String.valueOf(item.getOffset());
 			break;
-		case 5: // timestamp column
+		case 5: // status column
+			sResult = item.getStatus().toString();
+			break;
+		case 6: // timestamp column
 			int ts = ((IItem) obj).getLastChanged();
 			Date dTS = new Date (ts*1000L);
 			SimpleDateFormat sdf = new SimpleDateFormat(sPattern);

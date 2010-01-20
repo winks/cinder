@@ -211,11 +211,59 @@ public abstract class ItemType implements Comparable<ItemType> {
 			return null;
 		}
 	};
+	
+	public static final ItemType TASK_INFO = new ItemType("TASK_INFO",
+			"TASK_INFO", 10) {
+		public Image getImage() {
+			return PLATFORM_IMAGES.getImage(
+					org.eclipse.ui.ISharedImages.IMG_OBJS_INFO_TSK);
+		}
+
+		public IItem newItem(final Object obj) {
+			return null;
+		}
+
+		public IItem loadItem(final String info) {
+			return null;
+		}
+	};
+	
+	public static final ItemType TASK_WARN = new ItemType("TASK_WARN",
+			"TASK_WARN", 10) {
+		public Image getImage() {
+			return PLATFORM_IMAGES.getImage(
+					org.eclipse.ui.ISharedImages.IMG_OBJS_WARN_TSK);
+		}
+
+		public IItem newItem(final Object obj) {
+			return null;
+		}
+
+		public IItem loadItem(final String info) {
+			return null;
+		}
+	};
+	
+	public static final ItemType TASK_ERROR = new ItemType("TASK_ERROR",
+			"TASK_ERROR", 10) {
+		public Image getImage() {
+			return PLATFORM_IMAGES.getImage(
+					org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
+		}
+
+		public IItem newItem(final Object obj) {
+			return null;
+		}
+
+		public IItem loadItem(final String info) {
+			return null;
+		}
+	};
 
 	private static final ItemType[] TYPES = { UNKNOWN, WORKBENCH_FILE,
 			WORKBENCH_FOLDER, WORKBENCH_PROJECT, JAVA_PROJECT,
 			JAVA_PACKAGE_ROOT, JAVA_PACKAGE, JAVA_CLASS_FILE, JAVA_COMP_UNIT,
-			JAVA_INTERFACE, JAVA_CLASS, };
+			JAVA_INTERFACE, JAVA_CLASS, TASK_INFO, TASK_WARN, TASK_ERROR, };
 
 	public static ItemType[] getTypes() {
 		return TYPES.clone();

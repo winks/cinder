@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.Platform;
 
 public class PropertiesItem implements IItem {
 	private ItemType type;
+	private ItemStatus status;
 	private String name;
 	private String location;
 	private String message;
@@ -61,6 +62,7 @@ public class PropertiesItem implements IItem {
 		this.line = line;
 		this.offset = offset;
 		this.setLastChanged();
+		this.setStatus(ItemStatus.NEW);
 	}
 	
 	private int getTimestamp() {
@@ -74,6 +76,10 @@ public class PropertiesItem implements IItem {
 	
 	public void setLastChanged(int iTime) {
 		this.timestamp = iTime;
+	}
+	
+	public void setStatus(ItemStatus st) {
+		this.status = st;
 	}
 
 	@Override
@@ -101,8 +107,14 @@ public class PropertiesItem implements IItem {
 		return this.offset;
 	}
 	
+	@Override
 	public int getLastChanged() {
 		return this.timestamp;
+	}
+	
+	@Override
+	public ItemStatus getStatus() {
+		return this.status;
 	}
 
 	public String getMessage() {
@@ -180,5 +192,4 @@ public class PropertiesItem implements IItem {
 			return false;
 		return true;
 	}
-
 }
