@@ -138,8 +138,13 @@ public class JFContentProvider implements IStructuredContentProvider,
 		this.setMarkersGlobal();
 	}
 
+	public void clear() {
+		manager.reset();
+		this.viewer.refresh();
+	}
+	
 	public void insertDummyValues() {
-		final String sKey = "abc";
+		final String sKey = "CinderDummy";
 
 		Collection<IItem> dummy = new ArrayList<IItem>();
 

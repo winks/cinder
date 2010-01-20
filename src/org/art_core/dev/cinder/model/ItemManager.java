@@ -26,7 +26,7 @@ public final class ItemManager {
 	 * Resets to an empty state.
 	 */
 	public void reset() {
-		this.items.clear();
+		items.clear();
 	}
 
 	public void add(final IItem iiNewItem) {

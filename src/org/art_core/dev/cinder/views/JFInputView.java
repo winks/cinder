@@ -17,6 +17,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.*;
@@ -40,10 +41,13 @@ public class JFInputView extends ViewPart {
 
 	private Action aSetMarkersGlobal;
 	private Action aRemoveMarkersGlobal;
+	private Action aSetMarkersSingle;
+	private Action aRemoveMarkersSingle;
 	private Action aSelect;
 	private Action aOpenUrl;
 	private Action aOpenFile;
 	private Action aShowDummy;
+	private Action aClear;
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -152,6 +156,13 @@ public class JFInputView extends ViewPart {
 	 */
 	private void executeShowDummy() {
 		cpDefault.insertDummyValues();
+	}
+	
+	/**
+	 * Executes clearing entries.
+	 */
+	private void executeClear() {
+		cpDefault.clear();
 	}
 
 	/**
@@ -345,39 +356,67 @@ public class JFInputView extends ViewPart {
 				executeShowDummy();
 			}
 		};
+		
+		// clear entries
+		aClear = new Action() {
+			public void run() {
+				executeClear();
+			}
+		};
 
-		aRemoveMarkersGlobal.setText("Remove all Markers");
-		aRemoveMarkersGlobal.setToolTipText("Remove all Markers");
-		aRemoveMarkersGlobal.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_TOOL_DELETE));
+		ImageDescriptor idRemove = PlatformUI.getWorkbench()
+			.getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED);
+		ImageDescriptor idAdd = PlatformUI.getWorkbench()
+			.getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY);
+		ImageDescriptor idOpenFile = PlatformUI.getWorkbench()
+			.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+		ImageDescriptor idOpenUrl = PlatformUI.getWorkbench()
+			.getSharedImages().getImageDescriptor(org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_BKMRK_TSK);
+		ImageDescriptor idDummy = PlatformUI.getWorkbench()
+			.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT);
+		ImageDescriptor idClear = PlatformUI.getWorkbench()
+			.getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE);
+		
+		String sRemoveAll = "Remove all Markers";
+		String sRemoveOne = "Remove Markers";
+		String sAddAll    = "Set all Markers";
+		String sAddOne    = "Set Markers";
+		String sOpenFile  = "Open File";
+		String sOpenUrl   = "Open URL";
+		String sDummy     = "Show Dummy";
+		String sClear     = "Clear entries";
+		
+		aRemoveMarkersGlobal.setText(sRemoveAll);
+		aRemoveMarkersGlobal.setToolTipText(sRemoveAll);
+		aRemoveMarkersGlobal.setImageDescriptor(idRemove);
+		
+		aRemoveMarkersSingle.setText(sRemoveOne);
+		aRemoveMarkersSingle.setToolTipText(sRemoveOne);
+		aRemoveMarkersSingle.setImageDescriptor(idRemove);
 
-		aSetMarkersGlobal.setText("Set all Markers");
-		aSetMarkersGlobal.setToolTipText("Set all Markers");
-		aSetMarkersGlobal.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_TOOL_NEW_WIZARD));
+		aSetMarkersGlobal.setText(sAddAll);
+		aSetMarkersGlobal.setToolTipText(sAddAll);
+		aSetMarkersGlobal.setImageDescriptor(idAdd);
+		
+		aSetMarkersSingle.setText(sAddOne);
+		aSetMarkersSingle.setToolTipText(sAddOne);
+		aSetMarkersSingle.setImageDescriptor(idAdd);
 
-		aOpenFile.setText("Open File");
-		aOpenFile.setToolTipText("Open File");
-		aOpenFile.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_OBJ_FOLDER));
+		aOpenFile.setText(sOpenFile);
+		aOpenFile.setToolTipText(sOpenFile);
+		aOpenFile.setImageDescriptor(idOpenFile);
 
-		aOpenUrl.setText("Open URL");
-		aOpenUrl.setToolTipText("Open URL");
-		aOpenUrl
-				.setImageDescriptor(PlatformUI
-						.getWorkbench()
-						.getSharedImages()
-						.getImageDescriptor(
-								org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_BKMRK_TSK));
+		aOpenUrl.setText(sOpenUrl);
+		aOpenUrl.setToolTipText(sOpenUrl);
+		aOpenUrl.setImageDescriptor(idOpenUrl);
 
-		aShowDummy.setText("Show Dummy");
-		aShowDummy.setToolTipText("Show Dummy");
-		aShowDummy.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_UP));
+		aShowDummy.setText(sDummy);
+		aShowDummy.setToolTipText(sDummy);
+		aShowDummy.setImageDescriptor(idDummy);
+		
+		aClear.setText(sClear);
+		aClear.setToolTipText(sClear);
+		aClear.setImageDescriptor(idClear);
 	}
 
 	/**
@@ -410,6 +449,8 @@ public class JFInputView extends ViewPart {
 		mmMenu.add(aRemoveMarkersGlobal);
 		mmMenu.add(new Separator());
 		mmMenu.add(aSetMarkersGlobal);
+		mmMenu.add(new Separator());
+		mmMenu.add(aClear);
 
 		// add to Local Tool Bar of the View
 		mmBar = bars.getToolBarManager();
@@ -418,7 +459,9 @@ public class JFInputView extends ViewPart {
 		mmBar.add(aOpenUrl);
 		mmBar.add(aRemoveMarkersGlobal);
 		mmBar.add(aSetMarkersGlobal);
+		mmBar.add(aClear);
 
+		bars.updateActionBars();
 	}
 
 	/**
@@ -435,6 +478,7 @@ public class JFInputView extends ViewPart {
 	private void fillContextMenu(final IMenuManager manager) {
 		manager.add(aRemoveMarkersGlobal);
 		manager.add(aSetMarkersGlobal);
+		manager.add(aClear);
 		// Other plug-ins can contribute their actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}

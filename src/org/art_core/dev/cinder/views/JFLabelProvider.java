@@ -11,7 +11,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 class JFLabelProvider extends LabelProvider implements ITableLabelProvider {
-	private static final String sPattern = "yyyy-MM-dd H:m:s";
+	private static final String sPattern = "yyyy-MM-dd HH:mm:ss";
 	
 	/**
 	 * Returns the label image for the given column of the given element.
