@@ -14,6 +14,8 @@ public interface IItem extends IAdaptable {
 	int getLine();
 
 	int getOffset();
+	
+	int getLastChanged();
 
 	ItemType getType();
 

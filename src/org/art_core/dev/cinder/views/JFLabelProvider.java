@@ -1,5 +1,8 @@
 package org.art_core.dev.cinder.views;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.art_core.dev.cinder.model.IItem;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -8,7 +11,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 class JFLabelProvider extends LabelProvider implements ITableLabelProvider {
-
+	private static final String sPattern = "yyyy-MM-dd H:m:s";
+	
 	/**
 	 * Returns the label image for the given column of the given element.
 	 * 
@@ -34,6 +38,17 @@ class JFLabelProvider extends LabelProvider implements ITableLabelProvider {
 			break;
 		case 4: // offset column
 			sResult = String.valueOf(((IItem) obj).getOffset());
+			break;
+		case 5: // timestamp column
+			int ts = ((IItem) obj).getLastChanged();
+			Date dTS = new Date (ts*1000L);
+			SimpleDateFormat sdf = new SimpleDateFormat(sPattern);
+			sResult = "";
+			try {
+				sResult = sdf.format(dTS);
+			} catch (NullPointerException e) {
+				// TODO: handle exception
+			}
 			break;
 		default:
 			sResult = "";

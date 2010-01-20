@@ -29,7 +29,7 @@ import org.eclipse.swt.SWT;
 public class JFInputView extends ViewPart {
 
 	private static final String JAVAEDITORID = "org.eclipse.jdt.ui.CompilationUnitEditor";
-	private final String[] colNames = { "", "Name", "Status", "Line", "Offset" };
+	private final String[] colNames = { "", "Name", "Status", "Line", "Offset", "Changed" };
 	private static final boolean TOGGLE_OFF = false;
 	private static final boolean TOGGLE_ON = true;
 
@@ -68,7 +68,7 @@ public class JFInputView extends ViewPart {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.FULL_SELECTION);
 		final Table table = viewer.getTable();
-		TableColumn tCol, nCol, sCol, lineCol, offCol;
+		TableColumn tCol, nCol, sCol, lineCol, offCol, tsCol;
 
 		// icon column
 		tCol = new TableColumn(table, SWT.LEFT);
@@ -83,7 +83,7 @@ public class JFInputView extends ViewPart {
 		// status column
 		sCol = new TableColumn(table, SWT.LEFT);
 		sCol.setText(colNames[2]);
-		sCol.setWidth(150);
+		sCol.setWidth(200);
 
 		// line number column
 		lineCol = new TableColumn(table, SWT.LEFT);
@@ -94,6 +94,11 @@ public class JFInputView extends ViewPart {
 		offCol = new TableColumn(table, SWT.LEFT);
 		offCol.setText(colNames[4]);
 		offCol.setWidth(50);
+		
+		// timestamp column
+		tsCol = new TableColumn(table, SWT.LEFT);
+		tsCol.setText(colNames[5]);
+		tsCol.setWidth(120);
 
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);

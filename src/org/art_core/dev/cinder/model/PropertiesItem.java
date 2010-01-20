@@ -11,6 +11,7 @@ public class PropertiesItem implements IItem {
 	private String message;
 	private int line;
 	private int offset;
+	private int timestamp;
 	public IFile rFile;
 
 	private IResource resource;
@@ -59,6 +60,20 @@ public class PropertiesItem implements IItem {
 		this.type = type;
 		this.line = line;
 		this.offset = offset;
+		this.setLastChanged();
+	}
+	
+	private int getTimestamp() {
+		int iNow = (int) (System.currentTimeMillis()/1000L);
+		return iNow;
+	}
+	
+	public void setLastChanged() {
+		this.timestamp = this.getTimestamp();
+	}
+	
+	public void setLastChanged(int iTime) {
+		this.timestamp = iTime;
 	}
 
 	@Override
@@ -84,6 +99,10 @@ public class PropertiesItem implements IItem {
 	@Override
 	public int getOffset() {
 		return this.offset;
+	}
+	
+	public int getLastChanged() {
+		return this.timestamp;
 	}
 
 	public String getMessage() {
