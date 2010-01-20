@@ -1,6 +1,5 @@
 package org.art_core.dev.cinder.model;
 
-import org.art_core.dev.cinder.CinderLog;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
