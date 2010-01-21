@@ -196,7 +196,7 @@ public class JFInputView extends ViewPart {
 				cpDefault.insertFromFile(sFile, JFContentProvider.FILE_REMOTE);
 				ipsPref.setValue(sPrefKey, sFile);
 			} catch (Exception e) {
-				CinderLog.logError(e);
+				CinderLog.logErrorInfo("executeOpenUrl", e);
 			}
 
 		}
@@ -217,7 +217,7 @@ public class JFInputView extends ViewPart {
 			sResult = dlg.open();
 			CinderLog.logInfo("JF_OF:" + sResult);
 		} catch (Exception e) {
-			CinderLog.logError(e);
+			CinderLog.logErrorInfo("getOpenFile", e);
 		}
 		return sResult;
 	}
@@ -311,9 +311,9 @@ public class JFInputView extends ViewPart {
 			final TextSelection sel = new TextSelection(iOff, iLen);
 			editor.getSelectionProvider().setSelection(sel);
 		} catch (PartInitException e1) {
-			CinderLog.logError(e1);
+			CinderLog.logErrorInfo("executeSelect", e1);
 		} catch (Exception e) {
-			CinderLog.logError(e);
+			CinderLog.logErrorInfo("executeSelect", e);
 		}
 	}
 

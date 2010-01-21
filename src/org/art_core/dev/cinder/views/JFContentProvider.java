@@ -73,7 +73,7 @@ public class JFContentProvider implements IStructuredContentProvider,
 				CinderLog.logInfo("JFIV:MARKER:"
 						+ marker.getAttribute(IMarker.LINE_NUMBER, 666));
 			} catch (Exception e) {
-				CinderLog.logError(e);
+				CinderLog.logErrorInfo("setMarkersGlobal", e);
 			}
 		}
 	}
@@ -94,9 +94,9 @@ public class JFContentProvider implements IStructuredContentProvider,
 			try {
 				res.deleteMarkers(null, true, 2);
 			} catch (CoreException e) {
-				CinderLog.logError(e);
+				CinderLog.logErrorInfo("removeMarkersGlobal", e);
 			} catch (Exception e1) {
-				CinderLog.logError(e1);
+				CinderLog.logErrorInfo("removeMarkersGlobal", e1);
 			}
 		}
 	}
@@ -130,7 +130,9 @@ public class JFContentProvider implements IStructuredContentProvider,
 		try {
 			res.deleteMarkers(null, true, 2);
 		} catch (CoreException e) {
-			CinderLog.logError(e);
+			CinderLog.logErrorInfo("removeMarkerSingle", e);
+		} catch (Exception e1) {
+			CinderLog.logErrorInfo("removeMarkerSingle", e1);
 		}
 	}
 
@@ -226,7 +228,7 @@ public class JFContentProvider implements IStructuredContentProvider,
 			}
 			this.viewer.refresh();
 		} catch (Exception e) {
-			CinderLog.logError(e);
+			CinderLog.logErrorInfo("insertFromFile", e);
 		}
 	}
 
