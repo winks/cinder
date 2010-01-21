@@ -60,7 +60,13 @@ public class JFContentProvider implements IStructuredContentProvider,
 			res = CinderTools.getResource(sMyLoc);
 
 			try {
-				marker = res.createMarker(IMarker.TASK);
+				if (pItem.getType() == ItemType.TASK_INFO) {
+					marker = res.createMarker(IMarker.TASK);
+				} else if (pItem.getType() == ItemType.TASK_ERROR) {
+					marker = res.createMarker(IMarker.PROBLEM);
+				} else {
+					marker = res.createMarker(IMarker.TASK);
+				}
 				marker.setAttribute(IMarker.MESSAGE, pItem.getName() + "("
 						+ pItem.getMessage() + "): " + pItem.getLine());
 				// marker.setAttribute(IMarker.CHAR_START, 50);
