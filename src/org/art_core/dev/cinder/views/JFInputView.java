@@ -2,7 +2,6 @@ package org.art_core.dev.cinder.views;
 
 import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.CinderPlugin;
-import org.art_core.dev.cinder.CinderTools;
 import org.art_core.dev.cinder.model.ItemManager;
 import org.art_core.dev.cinder.model.PropertiesItem;
 import org.art_core.dev.cinder.prefs.CinderPrefTools;
@@ -12,24 +11,30 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
-import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.ViewPart;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
 public class JFInputView extends ViewPart {
 
-	private static final String JAVAEDITORID = "org.eclipse.jdt.ui.CompilationUnitEditor";
 	private final String[] colNames = { "", "Name", "Location", "Line", "Offset", "Status", "Changed" };
 	private static final boolean TOGGLE_OFF = false;
 	private static final boolean TOGGLE_ON = true;
@@ -203,6 +208,13 @@ public class JFInputView extends ViewPart {
 	}
 
 	/**
+	 * Executes the text selection.
+	 */
+	private void executeSelect() {
+		cpDefault.select();
+	}
+	
+	/**
 	 * Opens a file select dialog for user input of a file name.
 	 * 
 	 * @return String the filename
@@ -242,79 +254,6 @@ public class JFInputView extends ViewPart {
 		sResult = dlg.getValue();
 
 		return sResult;
-	}
-
-	/**
-	 * Executes the text selection.
-	 */
-	private void executeSelect() {
-		// select the clicked item from the view
-		final ISelection selection = viewer.getSelection();
-		final PropertiesItem pItem = (PropertiesItem) ((IStructuredSelection) selection)
-				.getFirstElement();
-		if (pItem == null) {
-			return;
-		}
-
-		final IFile res = CinderTools.getResource(pItem.getLocation());
-		AbstractTextEditor editor = null;
-		FileEditorInput fileInput;
-
-		try {
-			fileInput = new FileEditorInput(res);
-			editor = (AbstractTextEditor) PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage().openEditor(
-							fileInput, JAVAEDITORID);
-			// convert line numbers to offset numbers (eclipse internal)
-			final IEditorInput input = editor.getEditorInput();
-			final IDocument doc = ((ITextEditor) editor).getDocumentProvider()
-					.getDocument(input);
-
-			int iLineOffset = -1;
-			int iLineLength = -1;
-			int iOff = pItem.getOffset();
-			int iLen = 5;
-
-			iLineOffset = doc.getLineOffset(pItem.getLine() - 1);
-			iLineLength = doc.getLineLength(pItem.getLine() - 1);
-			CinderLog.logInfo("JFIV:LineOff:" + iLineOffset + " LineLen: "
-					+ iLineLength);
-			if (iLineOffset >= 0) {
-				iOff += iLineOffset;
-				CinderLog.logInfo("JFIV:getLine:" + pItem.getLine() + " iOff: "
-						+ iOff);
-				final StringBuilder sbX = new StringBuilder();
-				sbX.append(doc.get(iOff, 3));
-				CinderLog.logInfo("JFIV:numLines:" + doc.getNumberOfLines()
-						+ " t: " + sbX.toString());
-				if (iLineLength >= 0) {
-					iLen = iLineLength;
-
-					// optional stripping of leading whitespace
-					int iCounter = 0;
-					String test = "";
-					for (int i = 0; i <= iLineLength; i++) {
-						test = doc.get(iLineOffset + i, 1);
-						if (" ".equals(test) || "\t".equals(test)) {
-							iCounter++;
-						} else {
-							break;
-						}
-					}
-					iOff += iCounter;
-					iLen -= iCounter;
-					CinderLog.logInfo("JFIV:++:" + iCounter);
-				}
-			}
-			// avoid to select the line break at the end
-			iLen -= 1;
-			final TextSelection sel = new TextSelection(iOff, iLen);
-			editor.getSelectionProvider().setSelection(sel);
-		} catch (PartInitException e1) {
-			CinderLog.logError(e1);
-		} catch (Exception e) {
-			CinderLog.logError(e);
-		}
 	}
 
 	/**

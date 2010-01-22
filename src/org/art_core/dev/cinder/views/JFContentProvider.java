@@ -19,9 +19,19 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /*
  * The content provider class is responsible for
@@ -40,6 +50,7 @@ public class JFContentProvider implements IStructuredContentProvider,
 	public static final int FILE_LOCAL = 0;
 	public static final int FILE_REMOTE = 1;
 	public static final int FILE_WORKSPACE = 2;
+	private static final String JAVAEDITORID = "org.eclipse.jdt.ui.CompilationUnitEditor";
 
 	public JFContentProvider() {
 		manager = ItemManager.getManager();
@@ -141,6 +152,76 @@ public class JFContentProvider implements IStructuredContentProvider,
 	public void clear() {
 		manager.reset();
 		this.viewer.refresh();
+	}
+	
+	public void select() {
+		// select the clicked item from the view
+		final ISelection selection = viewer.getSelection();
+		final PropertiesItem pItem = (PropertiesItem) ((IStructuredSelection) selection)
+				.getFirstElement();
+		if (pItem == null) {
+			return;
+		}
+
+		final IFile res = CinderTools.getResource(pItem.getLocation());
+		AbstractTextEditor editor = null;
+		FileEditorInput fileInput;
+
+		try {
+			fileInput = new FileEditorInput(res);
+			editor = (AbstractTextEditor) PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getActivePage().openEditor(
+							fileInput, JAVAEDITORID);
+			// convert line numbers to offset numbers (eclipse internal)
+			final IEditorInput input = editor.getEditorInput();
+			final IDocument doc = ((ITextEditor) editor).getDocumentProvider()
+					.getDocument(input);
+
+			int iLineOffset = -1;
+			int iLineLength = -1;
+			int iOff = pItem.getOffset();
+			int iLen = 5;
+
+			iLineOffset = doc.getLineOffset(pItem.getLine() - 1);
+			iLineLength = doc.getLineLength(pItem.getLine() - 1);
+			CinderLog.logInfo("JFIV:LineOff:" + iLineOffset + " LineLen: "
+					+ iLineLength);
+			if (iLineOffset >= 0) {
+				iOff += iLineOffset;
+				CinderLog.logInfo("JFIV:getLine:" + pItem.getLine() + " iOff: "
+						+ iOff);
+				final StringBuilder sbX = new StringBuilder();
+				sbX.append(doc.get(iOff, 3));
+				CinderLog.logInfo("JFIV:numLines:" + doc.getNumberOfLines()
+						+ " t: " + sbX.toString());
+				if (iLineLength >= 0) {
+					iLen = iLineLength;
+
+					// optional stripping of leading whitespace
+					int iCounter = 0;
+					String test = "";
+					for (int i = 0; i <= iLineLength; i++) {
+						test = doc.get(iLineOffset + i, 1);
+						if (" ".equals(test) || "\t".equals(test)) {
+							iCounter++;
+						} else {
+							break;
+						}
+					}
+					iOff += iCounter;
+					iLen -= iCounter;
+					CinderLog.logInfo("JFIV:++:" + iCounter);
+				}
+			}
+			// avoid to select the line break at the end
+			iLen -= 1;
+			final TextSelection sel = new TextSelection(iOff, iLen);
+			editor.getSelectionProvider().setSelection(sel);
+		} catch (PartInitException e1) {
+			CinderLog.logError(e1);
+		} catch (Exception e) {
+			CinderLog.logError(e);
+		}
 	}
 	
 	public void insertDummyValues() {
