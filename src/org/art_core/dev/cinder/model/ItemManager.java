@@ -14,10 +14,18 @@ public final class ItemManager {
 		this.items = new HashSet<IItem>();
 	}
 
+	/**
+	 * Return singleton instance.
+	 * @return
+	 */
 	public static ItemManager getManager() {
 		return manager;
 	}
 
+	/**
+	 * Return all items as an array.
+	 * @return
+	 */
 	public IItem[] getItems() {
 		return items.toArray(new IItem[items.size()]);
 	}
@@ -29,6 +37,10 @@ public final class ItemManager {
 		items.clear();
 	}
 
+	/**
+	 * Add an item.
+	 * @param iiNewItem
+	 */
 	public void add(final IItem iiNewItem) {
 		items.add(iiNewItem);
 	}
