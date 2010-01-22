@@ -91,9 +91,11 @@ public class MainController {
 			try {
 				res.deleteMarkers(null, true, 2);
 			} catch (CoreException e) {
-				CinderLog.logErrorInfo("removeMarkersGlobal", e);
+				//CinderLog.logErrorInfo("removeMarkersGlobal", e);
+				CinderLog.logError(e);
 			} catch (Exception e1) {
-				CinderLog.logErrorInfo("removeMarkersGlobal", e1);
+				//CinderLog.logErrorInfo("removeMarkersGlobal", e1);
+				CinderLog.logError(e1);
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package org.art_core.dev.cinder.views;
 
 import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.CinderPlugin;
+import org.art_core.dev.cinder.controller.MainController;
 import org.art_core.dev.cinder.model.ItemManager;
 import org.art_core.dev.cinder.model.PropertiesItem;
 import org.art_core.dev.cinder.prefs.CinderPrefTools;
@@ -33,6 +34,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
+
 public class JFInputView extends ViewPart {
 
 	private final String[] colNames = { "", "Name", "Location", "Line", "Offset", "Status", "Changed" };
@@ -40,7 +42,7 @@ public class JFInputView extends ViewPart {
 	private static final boolean TOGGLE_ON = true;
 
 	private TableViewer viewer;
-	private JFContentProvider cpDefault;
+	private MainController cControl;
 	private IPreferenceStore ipsPref = CinderPlugin.getDefault()
 			.getPreferenceStore();
 
@@ -60,10 +62,12 @@ public class JFInputView extends ViewPart {
 	 */
 	public void createPartControl(final Composite parent) {
 		createTableViewer(parent);
+		cControl = new MainController(this);
 		createActions();
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
+		cControl.insertDummyValues();
 		executeMarkerToggle(TOGGLE_OFF);
 		executeMarkerToggle(TOGGLE_ON);
 	}
@@ -76,6 +80,15 @@ public class JFInputView extends ViewPart {
 	private void createTableViewer(final Composite parent) {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.FULL_SELECTION);
+		createColumn(viewer);
+		
+		viewer.setContentProvider(new JFContentProvider());
+		viewer.setLabelProvider(new JFLabelProvider());
+		viewer.setSorter(new JFSorter());
+		viewer.setInput(ItemManager.getManager());
+	}
+
+	private void createColumn(TableViewer viewer) {
 		final Table table = viewer.getTable();
 		TableColumn tCol, nCol, locCol, lineCol, offCol, statCol, tsCol;
 
@@ -116,14 +129,6 @@ public class JFInputView extends ViewPart {
 
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-
-		cpDefault = new JFContentProvider();
-		cpDefault.insertExampleValues();
-
-		viewer.setContentProvider(cpDefault);
-		viewer.setLabelProvider(new JFLabelProvider());
-		viewer.setSorter(new JFSorter());
-		viewer.setInput(ItemManager.getManager());
 	}
 
 	/**
@@ -147,16 +152,16 @@ public class JFInputView extends ViewPart {
 
 		if (pItem == null) {
 			if (bEnable == TOGGLE_ON) {
-				cpDefault.setMarkersGlobal();
+				cControl.setMarkersGlobal();
 			} else {
-				cpDefault.removeMarkersGlobal();
+				cControl.removeMarkersGlobal();
 			}
 		} else {
 			// TODO
 			if (bEnable == TOGGLE_ON) {
-				cpDefault.setMarkersSingle(pItem);
+				cControl.setMarkersSingle(pItem);
 			} else {
-				cpDefault.removeMarkersSingle(pItem);
+				cControl.removeMarkersSingle(pItem);
 			}
 		}
 	}
@@ -165,14 +170,14 @@ public class JFInputView extends ViewPart {
 	 * Executes showing the dummy entries.
 	 */
 	private void executeShowDummy() {
-		cpDefault.insertDummyValues();
+		cControl.insertDummyValues();
 	}
 	
 	/**
 	 * Executes clearing entries.
 	 */
 	private void executeClear() {
-		cpDefault.clear();
+		cControl.clear();
 	}
 
 	/**
@@ -183,7 +188,7 @@ public class JFInputView extends ViewPart {
 		String sPrefPath = ipsPref.getString(sPrefKey);
 		final String sFile = getOpenFile(sPrefPath);
 		if (sFile.length() > 0) {
-			cpDefault.insertFromFile(sFile, JFContentProvider.FILE_LOCAL);
+			cControl.insertFromFile(sFile, MainController.FILE_LOCAL);
 			ipsPref.setValue(sPrefKey, sFile);
 		}
 	}
@@ -198,7 +203,7 @@ public class JFInputView extends ViewPart {
 		final String sFile = getOpenUrl(sPrefPath);
 		if (sFile.length() > 0) {
 			try {
-				cpDefault.insertFromFile(sFile, JFContentProvider.FILE_REMOTE);
+				cControl.insertFromFile(sFile, MainController.FILE_REMOTE);
 				ipsPref.setValue(sPrefKey, sFile);
 			} catch (Exception e) {
 				CinderLog.logError(e);
@@ -211,7 +216,7 @@ public class JFInputView extends ViewPart {
 	 * Executes the text selection.
 	 */
 	private void executeSelect() {
-		cpDefault.select();
+		cControl.select();
 	}
 	
 	/**
@@ -426,6 +431,10 @@ public class JFInputView extends ViewPart {
 		bars.updateActionBars();
 	}
 
+	public TableViewer getViewer() {
+		return viewer;
+	}
+	
 	/**
 	 * Adds actions to a double click
 	 */
