@@ -71,7 +71,13 @@ public class JFContentProvider implements IStructuredContentProvider,
 			res = CinderTools.getResource(sMyLoc);
 
 			try {
-				marker = res.createMarker(IMarker.TASK);
+				if (pItem.getType() == ItemType.TASK_INFO) {
+					marker = res.createMarker(IMarker.TASK);
+				} else if (pItem.getType() == ItemType.TASK_ERROR) {
+					marker = res.createMarker(IMarker.PROBLEM);
+				} else {
+					marker = res.createMarker(IMarker.TASK);
+				}
 				marker.setAttribute(IMarker.MESSAGE, pItem.getName() + "("
 						+ pItem.getMessage() + "): " + pItem.getLine());
 				// marker.setAttribute(IMarker.CHAR_START, 50);
@@ -84,7 +90,7 @@ public class JFContentProvider implements IStructuredContentProvider,
 				CinderLog.logInfo("JFIV:MARKER:"
 						+ marker.getAttribute(IMarker.LINE_NUMBER, 666));
 			} catch (Exception e) {
-				CinderLog.logError(e);
+				CinderLog.logErrorInfo("setMarkersGlobal", e);
 			}
 		}
 	}
@@ -105,9 +111,9 @@ public class JFContentProvider implements IStructuredContentProvider,
 			try {
 				res.deleteMarkers(null, true, 2);
 			} catch (CoreException e) {
-				CinderLog.logError(e);
+				CinderLog.logErrorInfo("removeMarkersGlobal", e);
 			} catch (Exception e1) {
-				CinderLog.logError(e1);
+				CinderLog.logErrorInfo("removeMarkersGlobal", e1);
 			}
 		}
 	}
@@ -141,7 +147,9 @@ public class JFContentProvider implements IStructuredContentProvider,
 		try {
 			res.deleteMarkers(null, true, 2);
 		} catch (CoreException e) {
-			CinderLog.logError(e);
+			CinderLog.logErrorInfo("removeMarkerSingle", e);
+		} catch (Exception e1) {
+			CinderLog.logErrorInfo("removeMarkerSingle", e1);
 		}
 	}
 
@@ -307,7 +315,7 @@ public class JFContentProvider implements IStructuredContentProvider,
 			}
 			this.viewer.refresh();
 		} catch (Exception e) {
-			CinderLog.logError(e);
+			CinderLog.logErrorInfo("insertFromFile", e);
 		}
 	}
 

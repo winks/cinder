@@ -7,7 +7,17 @@ import org.eclipse.core.runtime.Status;
  * The logger of convenience for the Cinder plug-in.
  */
 public final class CinderLog {
+	public final int OK = IStatus.OK;
+	public final int INFO = IStatus.INFO;
+	public final int WARNING = IStatus.WARNING;
+	public final int ERROR = IStatus.ERROR;
+	
 	private CinderLog() {}
+	
+	
+	public static void logErrorInfo(final String message, final Throwable exception) {
+		log (IStatus.INFO, IStatus.OK, message, exception);
+	}
    /**
     * Log the specified information.
     * 
