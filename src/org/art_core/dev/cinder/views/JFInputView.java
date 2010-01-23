@@ -353,9 +353,9 @@ public class JFInputView extends ViewPart {
 		};
 
 		ImageDescriptor idRemove = PlatformUI.getWorkbench()
-			.getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED);
+			.getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR);
 		ImageDescriptor idAdd = PlatformUI.getWorkbench()
-			.getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY);
+			.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD);
 		ImageDescriptor idOpenFile = PlatformUI.getWorkbench()
 			.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 		ImageDescriptor idOpenUrl = PlatformUI.getWorkbench()
@@ -434,9 +434,8 @@ public class JFInputView extends ViewPart {
 
 		// add to Local Menu
 		mmMenu = bars.getMenuManager();
-		mmMenu.add(aRemoveMarkersSingle);
-		mmMenu.add(new Separator());
 		mmMenu.add(aSetMarkersSingle);
+		mmMenu.add(aRemoveMarkersSingle);
 		mmMenu.add(new Separator());
 		mmMenu.add(aClear);
 		mmMenu.add(new Separator());
@@ -446,16 +445,16 @@ public class JFInputView extends ViewPart {
 		mmBar = bars.getToolBarManager();
 		mmBar.add(aOpenFile);
 		mmBar.add(aOpenUrl);
-		mmBar.add(aRemoveMarkersGlobal);
 		mmBar.add(aSetMarkersGlobal);
+		mmBar.add(aRemoveMarkersGlobal);
 		mmBar.add(aClear);
 
 		bars.updateActionBars();
 	}
 	
 	private void fillContextMenu(final IMenuManager manager) {
-		manager.add(aRemoveMarkersSingle);
 		manager.add(aSetMarkersSingle);
+		manager.add(aRemoveMarkersSingle);
 		manager.add(aClear);
 		// Other plug-ins can contribute their actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
