@@ -61,20 +61,20 @@ public class PropertiesItem implements IItem {
 		this.type = type;
 		this.line = line;
 		this.offset = offset;
-		this.setLastChanged();
+		this.setTimestamp();
 		this.setStatus(ItemStatus.NEW);
 	}
 	
-	private int getTimestamp() {
+	private int getCurrentTimestamp() {
 		int iNow = (int) (System.currentTimeMillis()/1000L);
 		return iNow;
 	}
 	
-	public void setLastChanged() {
-		this.timestamp = this.getTimestamp();
+	public void setTimestamp() {
+		this.timestamp = this.getCurrentTimestamp();
 	}
 	
-	public void setLastChanged(int iTime) {
+	public void setTimestamp(int iTime) {
 		this.timestamp = iTime;
 	}
 	
@@ -108,7 +108,7 @@ public class PropertiesItem implements IItem {
 	}
 	
 	@Override
-	public int getLastChanged() {
+	public int getTimestamp() {
 		return this.timestamp;
 	}
 	
@@ -117,6 +117,7 @@ public class PropertiesItem implements IItem {
 		return this.status;
 	}
 
+	@Override
 	public String getMessage() {
 		return this.message;
 	}

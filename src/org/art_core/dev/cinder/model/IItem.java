@@ -10,12 +10,14 @@ public interface IItem extends IAdaptable {
 	String getName();
 
 	String getLocation();
+	
+	String getMessage();
 
 	int getLine();
 
 	int getOffset();
 	
-	int getLastChanged();
+	int getTimestamp();
 	
 	ItemStatus getStatus();
 

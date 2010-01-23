@@ -8,9 +8,9 @@ import org.art_core.dev.cinder.CinderTools;
 import org.art_core.dev.cinder.input.PropertiesInputReader;
 import org.art_core.dev.cinder.input.XmlInputReader;
 import org.art_core.dev.cinder.model.IItem;
+import org.art_core.dev.cinder.model.PropertiesItem;
 import org.art_core.dev.cinder.model.ItemManager;
 import org.art_core.dev.cinder.model.ItemType;
-import org.art_core.dev.cinder.model.PropertiesItem;
 import org.art_core.dev.cinder.views.JFInputView;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -48,11 +48,11 @@ public class MainController {
 	public void setMarkersGlobal() {
 		String sMyLoc;
 		IFile res;
-		PropertiesItem pItem;
+		IItem pItem;
 		IMarker marker;
 		
 		for (Object oItem : manager.getItems()) {
-			pItem = (PropertiesItem) oItem;
+			pItem = (IItem) oItem;
 			sMyLoc = pItem.getLocation();
 			res = CinderTools.getResource(sMyLoc);
 
@@ -81,10 +81,10 @@ public class MainController {
 	public void removeMarkersGlobal() {
 		String sMyLoc;
 		IFile res;
-		PropertiesItem pItem;
+		IItem pItem;
 
 		for (Object oItem : manager.getItems()) {
-			pItem = (PropertiesItem) oItem;
+			pItem = (IItem) oItem;
 			sMyLoc = pItem.getLocation();
 			res = CinderTools.getResource(sMyLoc);
 
@@ -103,7 +103,7 @@ public class MainController {
 	 * 
 	 * @param pItem
 	 */
-	public void removeMarkersSingle(final PropertiesItem pItem) {
+	public void removeMarkersSingle(final IItem pItem) {
 		// find the correct editor window, based on the name
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IProject[] projects = root.getProjects();
@@ -131,7 +131,7 @@ public class MainController {
 		}
 	}
 
-	public void setMarkersSingle(final PropertiesItem pItem) {
+	public void setMarkersSingle(final IItem pItem) {
 		this.setMarkersGlobal();
 	}
 
@@ -143,7 +143,7 @@ public class MainController {
 	public void select() {
 		// select the clicked item from the view
 		final ISelection selection = cView.getViewer().getSelection();
-		final PropertiesItem pItem = (PropertiesItem) ((IStructuredSelection) selection)
+		final IItem pItem = (IItem) ((IStructuredSelection) selection)
 				.getFirstElement();
 		if (pItem == null) {
 			return;

@@ -15,4 +15,7 @@ public final class CinderPrefTools {
 	
 	public static final String P_COLOR = "colorPreference";
 
+	public static final String DESCRIPTION = "General settings for Cinder:";
+	
+	public static final String MESSAGE = "Cinder Preferences";
 }

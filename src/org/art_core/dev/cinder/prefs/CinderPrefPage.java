@@ -22,7 +22,8 @@ public class CinderPrefPage extends FieldEditorPreferencePage implements
 	public CinderPrefPage() {
 		super(GRID);
 		setPreferenceStore(CinderPlugin.getDefault().getPreferenceStore());
-		setDescription("A demonstration of a cinder preference page");
+		setDescription(CinderPrefTools.DESCRIPTION);
+		setMessage(CinderPrefTools.MESSAGE);
 	}
 
 	/**

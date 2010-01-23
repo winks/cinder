@@ -44,7 +44,7 @@ class JFLabelProvider extends LabelProvider implements ITableLabelProvider {
 			sResult = item.getStatus().toString();
 			break;
 		case 6: // timestamp column
-			int ts = ((IItem) obj).getLastChanged();
+			int ts = ((IItem) obj).getTimestamp();
 			Date dTS = new Date (ts*1000L);
 			SimpleDateFormat sdf = new SimpleDateFormat(sPattern);
 			sResult = "";
