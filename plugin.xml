@@ -16,29 +16,6 @@
             class="org.art_core.dev.cinder.prefs.CinderPrefInit">
       </initializer>
    </extension>
-
-	<extension
-		point="org.eclipse.ui.editors.annotationTypes">
-		<type
-			name="org.art_core.dev.cinder.TypeError"
-			super="org.eclipse.ui.workbench.texteditor.error"
-			markerType="org.art-core.dev.cinder.TypeError"
-			markerSeverity="2">
-		</type>
-		<type
-			name="org.art_core.dev.cinder.TypeWarning"
-			super="org.eclipse.ui.workbench.texteditor.warning"
-			markerType="org.art-core.dev.cinder.TypeWarning"
-			markerSeverity="1">
-		</type>
-		<type
-			name="org.art_core.dev.cinder.TypeInfo"
-			super="org.eclipse.ui.workbench.texteditor.info"
-			markerType="org.art-core.dev.cinder.TypeInfo"
-			markerSeverity="0">
-		</type>
-	</extension>
-	
 	<extension
          point="org.eclipse.ui.views">
       <category
@@ -53,55 +30,5 @@
             id="org.art_core.dev.cinder.views.JFInputView">
       </view>
    </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <view
-               ratio="0.5"
-               relative="org.eclipse.ui.views.TaskList"
-               relationship="right"
-               id="org.art_core.dev.cinder.views.InputView">
-         </view>
-      </perspectiveExtension>
-   </extension>
-   <extension
-         id="auditmarker"
-         name="Properties Auditor Marker"
-         point="org.eclipse.core.resources.markers">
-      <super type="org.eclipse.core.resources.problemmarker"/>
-      <super type="org.eclipse.core.resources.textmarker"/>
-      <persistent value="true"/>
-      <attribute name="key"/>
-      <attribute name="violation"/>
-   </extension>
-   <extension
-         point="org.eclipse.ui.ide.markerResolution">
-      <markerResolutionGenerator
-            class="org.art_core.dev.cinder.builder.ViolationResolutionGenerator"
-            markerType="org.art_core.dev.cinder.auditmarker">
-      </markerResolutionGenerator>
-   </extension>
-   <extension
-         id="propertiesAuditor"
-         name="Favorites Properties Auditor"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="org.art_core.dev.cinder.builder.PropertiesAuditorNature">
-         </run>
-      </runtime>
-      <builder
-            id="org.art_core.dev.cinder.builder.propertiesFileAuditor">
-      </builder>
-      <requires-nature
-            id="org.eclipse.jdt.core.javanature">
-      </requires-nature>
-      <requires-nature
-            id="org.eclipse.pde.PluginNature">
-      </requires-nature>
-      <one-of-nature
-            id="pluginAuditors">
-      </one-of-nature>
-   </extension>
+ 
 </plugin>

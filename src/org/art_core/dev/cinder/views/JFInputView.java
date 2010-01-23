@@ -186,10 +186,16 @@ public class JFInputView extends ViewPart {
 	private void executeOpenFile() {
 		String sPrefKey = CinderPrefTools.P_STRING + "_xml_file";
 		String sPrefPath = ipsPref.getString(sPrefKey);
+		CinderLog.logInfo("JFIV_eOF:" + sPrefPath);
 		final String sFile = getOpenFile(sPrefPath);
 		if (sFile.length() > 0) {
-			cControl.insertFromFile(sFile, MainController.FILE_LOCAL);
-			ipsPref.setValue(sPrefKey, sFile);
+			try {
+				cControl.insertFromFile(sFile, MainController.FILE_LOCAL);
+				ipsPref.setValue(sPrefKey, sFile);
+				executeMarkerToggle(TOGGLE_ON);
+			} catch (Exception e) {
+				CinderLog.logError(e);
+			}
 		}
 	}
 
@@ -205,6 +211,7 @@ public class JFInputView extends ViewPart {
 			try {
 				cControl.insertFromFile(sFile, MainController.FILE_REMOTE);
 				ipsPref.setValue(sPrefKey, sFile);
+				executeMarkerToggle(TOGGLE_ON);
 			} catch (Exception e) {
 				CinderLog.logError(e);
 			}

@@ -70,7 +70,7 @@ public class MainController {
 				CinderLog.logInfo("JFIV:MARKER:"
 						+ marker.getAttribute(IMarker.LINE_NUMBER, 666));
 			} catch (Exception e) {
-				CinderLog.logError(e);
+				CinderLog.logErrorInfo("setMarkersGlobal", e);
 			}
 		}
 	}
@@ -91,11 +91,9 @@ public class MainController {
 			try {
 				res.deleteMarkers(null, true, 2);
 			} catch (CoreException e) {
-				//CinderLog.logErrorInfo("removeMarkersGlobal", e);
-				CinderLog.logError(e);
+				CinderLog.logErrorInfo("removeMarkersGlobal", e);
 			} catch (Exception e1) {
-				//CinderLog.logErrorInfo("removeMarkersGlobal", e1);
-				CinderLog.logError(e1);
+				CinderLog.logErrorInfo("removeMarkersGlobal", e1);
 			}
 		}
 	}
