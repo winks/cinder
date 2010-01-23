@@ -34,22 +34,22 @@ public final class CinderTools {
 		String sProjName = "";
 
 		try {
-			CinderLog.logInfo("CT_GR_start");
+			CinderLog.logDebug("CT_GR_start");
 			
 			for (int i = 0; i < projects.length; i++) {
 				sProjName = projects[i].getName();
-				CinderLog.logInfo("CT_GR:DBG: " + sProjName);
+				CinderLog.logDebug("CT_GR:DBG: " + sProjName);
 				res = (IFile) root.findMember(sProjName + "/" + sFile);
 				if (res == null) {
-					CinderLog.logInfo("CT_GR_notfound:NULL");
+					CinderLog.logDebug("CT_GR_notfound:NULL");
 					continue;
 				} else {
-					CinderLog.logInfo("CT_GR___found:" + res.toString());
+					CinderLog.logDebug("CT_GR___found:" + res.toString());
 					break;
 				}
 			}
 		} catch (Exception e) {
-			CinderLog.logError("CT_GR:E:" + sFile, e);
+			CinderLog.logErrorInfo("CT_GR:E:" + sFile, e);
 		}
 		return res;
 	}

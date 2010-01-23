@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.2"?>
+<?eclipse version="3.5"?>
 <plugin>
-   <extension
-         point="org.eclipse.ui.preferencePages">
+   <extension point="org.eclipse.ui.preferencePages">
       <page
-            name="Cinder Preferences"
+            name="Cinder"
             class="org.art_core.dev.cinder.prefs.CinderPrefPage"
-            id="org.art_core.dev.cinder.preferencesCinderPrefPage">
+            id="org.art_core.dev.cinder.prefs.CinderPrefPage">
       </page>
    </extension>
    
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.art_core.dev.cinder.prefs.CinderPrefInit">
+   <extension point="org.eclipse.core.runtime.preferences">
+      <initializer 
+      		class="org.art_core.dev.cinder.prefs.CinderPrefInit">
       </initializer>
    </extension>
-	<extension
-         point="org.eclipse.ui.views">
+   
+	<extension point="org.eclipse.ui.views">
       <category
             name="Cinder"
             id="org.art_core.dev.cinder">

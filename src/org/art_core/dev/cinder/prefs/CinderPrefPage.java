@@ -19,11 +19,19 @@ import org.art_core.dev.cinder.CinderPlugin;
 public class CinderPrefPage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 
+	public static final String P_PATH = "pathPreference";
+	public static final String P_BOOLEAN = "booleanPreference";
+	public static final String P_CHOICE = "choicePreference";
+	public static final String P_STRING = "stringPreference";
+	public static final String P_COLOR = "colorPreference";
+	public static final String DESCRIPTION = "General settings for Cinder:";
+	public static final String MESSAGE = "Cinder Preferences";
+	
 	public CinderPrefPage() {
 		super(GRID);
 		setPreferenceStore(CinderPlugin.getDefault().getPreferenceStore());
-		setDescription(CinderPrefTools.DESCRIPTION);
-		setMessage(CinderPrefTools.MESSAGE);
+		setDescription(CinderPrefPage.DESCRIPTION);
+		setMessage(CinderPrefPage.MESSAGE);
 	}
 
 	/**
@@ -32,12 +40,14 @@ public class CinderPrefPage extends FieldEditorPreferencePage implements
 	 * editor knows how to save and restore itself.
 	 */
 	public void createFieldEditors() {
-		addField(new StringFieldEditor(CinderPrefTools.P_STRING + "_xml_url",
+		addField(new StringFieldEditor(CinderPrefPage.P_STRING + "_xml_url",
 				"URL to XML", getFieldEditorParent()));
 
-		addField(new FileFieldEditor(CinderPrefTools.P_STRING + "_xml_file",
+		addField(new FileFieldEditor(CinderPrefPage.P_STRING + "_xml_file",
 				"XML File", getFieldEditorParent()));
-
+		
+		addField(new BooleanFieldEditor(CinderPrefPage.P_BOOLEAN + "_show_debug", 
+				"Show debug messages", getFieldEditorParent()));
 	}
 
 	/*

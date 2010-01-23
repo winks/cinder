@@ -31,19 +31,22 @@ class JFLabelProvider extends LabelProvider implements ITableLabelProvider {
 		case 1: // name column
 			sResult = item.getName();
 			break;
-		case 2: // location column
+		case 2: // message column
+			sResult = item.getMessage();
+			break;
+		case 3: // location column
 			sResult = item.getLocation();
 			break;
-		case 3: // line number column
+		case 4: // line number column
 			sResult = String.valueOf(item.getLine());
 			break;
-		case 4: // offset column
+		case 5: // offset column
 			sResult = String.valueOf(item.getOffset());
 			break;
-		case 5: // status column
+		case 6: // status column
 			sResult = item.getStatus().toString();
 			break;
-		case 6: // timestamp column
+		case 7: // timestamp column
 			int ts = ((IItem) obj).getTimestamp();
 			Date dTS = new Date (ts*1000L);
 			SimpleDateFormat sdf = new SimpleDateFormat(sPattern);

@@ -31,7 +31,7 @@ public class PropertiesInputReader implements IInputHandler {
 		final String sPath = root.getLocation().toString();
 		String sFilename;
 		sFilename = sPath + "/" + sWorkspaceFile;
-		CinderLog.logInfo("PIR:RFW:" + sPath + "_" + sWorkspaceFile);
+		CinderLog.logDebug("PIR:RFW:" + sPath + "_" + sWorkspaceFile);
 
 		this.readFromFile(sFilename, false);
 	}
@@ -54,11 +54,11 @@ public class PropertiesInputReader implements IInputHandler {
 			final String snx = prop.getProperty("name");
 			final String ssx = prop.getProperty("status");
 			final String stx = prop.getProperty("type");
-			CinderLog.logInfo("PIR::read:[" + snx + "][" + ssx + "][" + stx
+			CinderLog.logDebug("PIR::read:[" + snx + "][" + ssx + "][" + stx
 					+ "]");
 			// TODO use PropertiesItem(snx, ssx, stx) if t can be be converted
 			pItem = new PropertiesItem(snx, ssx);
-			CinderLog.logInfo("PIR::read:" + pItem.toString());
+			CinderLog.logDebug("PIR::read:" + pItem.toString());
 			items.add(pItem);
 		} catch (Exception e) {
 			CinderLog.logError(e);

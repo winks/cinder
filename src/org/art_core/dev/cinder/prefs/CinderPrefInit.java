@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
  * Class used to initialize default preference values.
  */
 public class CinderPrefInit extends AbstractPreferenceInitializer {
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

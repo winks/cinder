@@ -66,8 +66,8 @@ public class MainController {
 				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 				marker.setAttribute("key", pItem.getName());
 				marker.setAttribute("violation", pItem.getMessage());
-				CinderLog.logInfo("JFIV:MARKER:" + marker.getType());
-				CinderLog.logInfo("JFIV:MARKER:"
+				CinderLog.logDebug("JFIV:MARKER:" + marker.getType());
+				CinderLog.logDebug("JFIV:MARKER:"
 						+ marker.getAttribute(IMarker.LINE_NUMBER, 666));
 			} catch (Exception e) {
 				CinderLog.logErrorInfo("setMarkersGlobal", e);
@@ -111,18 +111,18 @@ public class MainController {
 		String sProjName = "";
 		for (int i = 0; i < projects.length; i++) {
 			sProjName = projects[i].getName();
-			CinderLog.logInfo("JFIV_D:DBG: " + sProjName);
+			CinderLog.logDebug("JFIV_D:DBG: " + sProjName);
 			res = (IFile) root
 					.findMember(sProjName + "/" + pItem.getLocation());
 			if (res == null) {
-				CinderLog.logInfo("JFIV_D_notfound:NULL");
+				CinderLog.logDebug("JFIV_D_notfound:NULL");
 				continue;
 			} else {
-				CinderLog.logInfo("JFIV_D____found:" + res.toString());
+				CinderLog.logDebug("JFIV_D____found:" + res.toString());
 				break;
 			}
 		}
-		CinderLog.logInfo("JFIV_D_start2");
+		CinderLog.logDebug("JFIV_D_start2");
 
 		try {
 			res.deleteMarkers(null, true, 2);
@@ -170,15 +170,15 @@ public class MainController {
 
 			iLineOffset = doc.getLineOffset(pItem.getLine() - 1);
 			iLineLength = doc.getLineLength(pItem.getLine() - 1);
-			CinderLog.logInfo("JFIV:LineOff:" + iLineOffset + " LineLen: "
+			CinderLog.logDebug("JFIV:LineOff:" + iLineOffset + " LineLen: "
 					+ iLineLength);
 			if (iLineOffset >= 0) {
 				iOff += iLineOffset;
-				CinderLog.logInfo("JFIV:getLine:" + pItem.getLine() + " iOff: "
+				CinderLog.logDebug("JFIV:getLine:" + pItem.getLine() + " iOff: "
 						+ iOff);
 				final StringBuilder sbX = new StringBuilder();
 				sbX.append(doc.get(iOff, 3));
-				CinderLog.logInfo("JFIV:numLines:" + doc.getNumberOfLines()
+				CinderLog.logDebug("JFIV:numLines:" + doc.getNumberOfLines()
 						+ " t: " + sbX.toString());
 				if (iLineLength >= 0) {
 					iLen = iLineLength;
@@ -196,7 +196,7 @@ public class MainController {
 					}
 					iOff += iCounter;
 					iLen -= iCounter;
-					CinderLog.logInfo("JFIV:++:" + iCounter);
+					CinderLog.logDebug("JFIV:++:" + iCounter);
 				}
 			}
 			// avoid to select the line break at the end
@@ -271,7 +271,7 @@ public class MainController {
 	 */
 	public void insertFromFile(final String sFile, final int iType) {
 		try {
-			CinderLog.logInfo("JFCP_IFF:" + sFile);
+			CinderLog.logDebug("JFCP_IFF:" + sFile);
 			final XmlInputReader xir = new XmlInputReader();
 
 			switch (iType) {
@@ -287,7 +287,7 @@ public class MainController {
 			}
 
 			final Collection<IItem> coll = xir.getItems();
-			CinderLog.logInfo("JFCP_IFF:" + coll.size());
+			CinderLog.logDebug("JFCP_IFF:" + coll.size());
 
 			for (IItem item : coll) {
 				manager.add(item);

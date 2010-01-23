@@ -4,8 +4,8 @@ import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.CinderPlugin;
 import org.art_core.dev.cinder.controller.MainController;
 import org.art_core.dev.cinder.model.ItemManager;
-import org.art_core.dev.cinder.model.PropertiesItem;
-import org.art_core.dev.cinder.prefs.CinderPrefTools;
+import org.art_core.dev.cinder.model.IItem;
+import org.art_core.dev.cinder.prefs.CinderPrefPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -37,7 +37,7 @@ import org.eclipse.swt.SWT;
 
 public class JFInputView extends ViewPart {
 
-	private final String[] colNames = { "", "Name", "Location", "Line", "Offset", "Status", "Changed" };
+	private final String[] colNames = { "", "Name", "Message", "Location", "Line", "Offset", "Status", "Changed" };
 	private static final boolean TOGGLE_OFF = false;
 	private static final boolean TOGGLE_ON = true;
 
@@ -68,8 +68,8 @@ public class JFInputView extends ViewPart {
 		hookDoubleClickAction();
 		contributeToActionBars();
 		cControl.insertDummyValues();
-		executeMarkerToggle(TOGGLE_OFF);
-		executeMarkerToggle(TOGGLE_ON);
+		executeMarkerToggleGlobal(TOGGLE_OFF);
+		executeMarkerToggleGlobal(TOGGLE_ON);
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class JFInputView extends ViewPart {
 
 	private void createColumn(TableViewer viewer) {
 		final Table table = viewer.getTable();
-		TableColumn tCol, nCol, locCol, lineCol, offCol, statCol, tsCol;
+		TableColumn tCol, nCol, mCol, locCol, lineCol, offCol, statCol, tsCol;
 
 		// icon column
 		tCol = new TableColumn(table, SWT.LEFT);
@@ -100,31 +100,36 @@ public class JFInputView extends ViewPart {
 		// name column
 		nCol = new TableColumn(table, SWT.LEFT);
 		nCol.setText(colNames[1]);
-		nCol.setWidth(200);
+		nCol.setWidth(150);
+		
+		// message column
+		mCol = new TableColumn(table, SWT.LEFT);
+		mCol.setText(colNames[2]);
+		mCol.setWidth(200);
 
 		// location column
 		locCol = new TableColumn(table, SWT.LEFT);
-		locCol.setText(colNames[2]);
+		locCol.setText(colNames[3]);
 		locCol.setWidth(200);
 
 		// line number column
 		lineCol = new TableColumn(table, SWT.LEFT);
-		lineCol.setText(colNames[3]);
+		lineCol.setText(colNames[4]);
 		lineCol.setWidth(50);
 
 		// offset column
 		offCol = new TableColumn(table, SWT.LEFT);
-		offCol.setText(colNames[4]);
+		offCol.setText(colNames[5]);
 		offCol.setWidth(50);
 		
 		// timestamp column
 		statCol = new TableColumn(table, SWT.LEFT);
-		statCol.setText(colNames[5]);
+		statCol.setText(colNames[6]);
 		statCol.setWidth(100);
 		
 		// status column
 		tsCol = new TableColumn(table, SWT.LEFT);
-		tsCol.setText(colNames[6]);
+		tsCol.setText(colNames[7]);
 		tsCol.setWidth(120);
 
 		table.setHeaderVisible(true);
@@ -134,11 +139,11 @@ public class JFInputView extends ViewPart {
 	/**
 	 * Discover the item selected in the TableViwer
 	 * 
-	 * @return {@link PropertiesItem}
+	 * @return {@link IItem}
 	 */
-	private PropertiesItem getSelectedItem() {
+	private IItem getSelectedItem() {
 		final ISelection selection = viewer.getSelection();
-		return (PropertiesItem) ((IStructuredSelection) selection)
+		return (IItem) ((IStructuredSelection) selection)
 				.getFirstElement();
 	}
 
@@ -147,15 +152,24 @@ public class JFInputView extends ViewPart {
 	 * 
 	 * @param bEnable
 	 */
-	private void executeMarkerToggle(final boolean bEnable) {
-		final PropertiesItem pItem = this.getSelectedItem();
+	private void executeMarkerToggleGlobal(final boolean bEnable) {
+		if (bEnable == TOGGLE_ON) {
+			cControl.setMarkersGlobal();
+		} else {
+			cControl.removeMarkersGlobal();
+		}
+	}
+	
+	/**
+	 * Executes the creation and deletion of Markers.
+	 * 
+	 * @param bEnable
+	 */
+	private void executeMarkerToggleSingle(final boolean bEnable) {
+		final IItem pItem = this.getSelectedItem();
 
 		if (pItem == null) {
-			if (bEnable == TOGGLE_ON) {
-				cControl.setMarkersGlobal();
-			} else {
-				cControl.removeMarkersGlobal();
-			}
+			CinderLog.logErrorInfo("executeMarkerToggleSingle", new Exception());
 		} else {
 			// TODO
 			if (bEnable == TOGGLE_ON) {
@@ -165,6 +179,7 @@ public class JFInputView extends ViewPart {
 			}
 		}
 	}
+	
 
 	/**
 	 * Executes showing the dummy entries.
@@ -184,15 +199,15 @@ public class JFInputView extends ViewPart {
 	 * Executes opening a file.
 	 */
 	private void executeOpenFile() {
-		String sPrefKey = CinderPrefTools.P_STRING + "_xml_file";
+		String sPrefKey = CinderPrefPage.P_STRING + "_xml_file";
 		String sPrefPath = ipsPref.getString(sPrefKey);
-		CinderLog.logInfo("JFIV_eOF:" + sPrefPath);
+		CinderLog.logDebug("JFIV_eOF:" + sPrefPath);
 		final String sFile = getOpenFile(sPrefPath);
 		if (sFile.length() > 0) {
 			try {
 				cControl.insertFromFile(sFile, MainController.FILE_LOCAL);
 				ipsPref.setValue(sPrefKey, sFile);
-				executeMarkerToggle(TOGGLE_ON);
+				executeMarkerToggleGlobal(TOGGLE_ON);
 			} catch (Exception e) {
 				CinderLog.logError(e);
 			}
@@ -203,19 +218,18 @@ public class JFInputView extends ViewPart {
 	 * Executes opening an URL.
 	 */
 	private void executeOpenUrl() {
-		String sPrefKey = CinderPrefTools.P_STRING + "_xml_url";
+		String sPrefKey = CinderPrefPage.P_STRING + "_xml_url";
 		String sPrefPath = ipsPref.getString(sPrefKey);
-		CinderLog.logInfo("JFIV_eOU:" + sPrefPath);
+		CinderLog.logDebug("JFIV_eOU:" + sPrefPath);
 		final String sFile = getOpenUrl(sPrefPath);
 		if (sFile.length() > 0) {
 			try {
 				cControl.insertFromFile(sFile, MainController.FILE_REMOTE);
 				ipsPref.setValue(sPrefKey, sFile);
-				executeMarkerToggle(TOGGLE_ON);
+				executeMarkerToggleGlobal(TOGGLE_ON);
 			} catch (Exception e) {
 				CinderLog.logError(e);
 			}
-
 		}
 	}
 
@@ -239,7 +253,7 @@ public class JFInputView extends ViewPart {
 			final FileDialog dlg = new FileDialog(shell);
 			dlg.setFileName(sFile);
 			sResult = dlg.open();
-			CinderLog.logInfo("JF_OF:" + sResult);
+			CinderLog.logDebug("JF_OF:" + sResult);
 		} catch (Exception e) {
 			CinderLog.logError(e);
 		}
@@ -283,28 +297,28 @@ public class JFInputView extends ViewPart {
 		// removing all markers
 		aRemoveMarkersGlobal = new Action() {
 			public void run() {
-				executeMarkerToggle(TOGGLE_OFF);
+				executeMarkerToggleGlobal(TOGGLE_OFF);
 			}
 		};
 		
 		// removing markers
 		aRemoveMarkersSingle = new Action() {
 			public void run() {
-				executeMarkerToggle(TOGGLE_OFF);
+				executeMarkerToggleSingle(TOGGLE_OFF);
 			}
 		};
 		
 		// setting all markers
 		aSetMarkersGlobal = new Action() {
 			public void run() {
-				executeMarkerToggle(TOGGLE_ON);
+				executeMarkerToggleGlobal(TOGGLE_ON);
 			}
 		};
 		
 		// setting markers
 		aSetMarkersSingle = new Action() {
 			public void run() {
-				executeMarkerToggle(TOGGLE_ON);
+				executeMarkerToggleSingle(TOGGLE_ON);
 			}
 		};
 
@@ -332,7 +346,7 @@ public class JFInputView extends ViewPart {
 		// clear entries
 		aClear = new Action() {
 			public void run() {
-				executeMarkerToggle(TOGGLE_OFF);
+				executeMarkerToggleGlobal(TOGGLE_OFF);
 				executeClear();
 				
 			}
@@ -420,15 +434,16 @@ public class JFInputView extends ViewPart {
 
 		// add to Local Menu
 		mmMenu = bars.getMenuManager();
-		mmMenu.add(aRemoveMarkersGlobal);
+		mmMenu.add(aRemoveMarkersSingle);
 		mmMenu.add(new Separator());
-		mmMenu.add(aSetMarkersGlobal);
+		mmMenu.add(aSetMarkersSingle);
 		mmMenu.add(new Separator());
 		mmMenu.add(aClear);
+		mmMenu.add(new Separator());
+		mmMenu.add(aShowDummy);
 
 		// add to Local Tool Bar of the View
 		mmBar = bars.getToolBarManager();
-		mmBar.add(aShowDummy);
 		mmBar.add(aOpenFile);
 		mmBar.add(aOpenUrl);
 		mmBar.add(aRemoveMarkersGlobal);
@@ -436,6 +451,14 @@ public class JFInputView extends ViewPart {
 		mmBar.add(aClear);
 
 		bars.updateActionBars();
+	}
+	
+	private void fillContextMenu(final IMenuManager manager) {
+		manager.add(aRemoveMarkersSingle);
+		manager.add(aSetMarkersSingle);
+		manager.add(aClear);
+		// Other plug-ins can contribute their actions here
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	public TableViewer getViewer() {
@@ -451,14 +474,6 @@ public class JFInputView extends ViewPart {
 				aSelect.run();
 			}
 		});
-	}
-
-	private void fillContextMenu(final IMenuManager manager) {
-		manager.add(aRemoveMarkersGlobal);
-		manager.add(aSetMarkersGlobal);
-		manager.add(aClear);
-		// Other plug-ins can contribute their actions here
-		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	/**

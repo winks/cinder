@@ -1,7 +1,9 @@
 package org.art_core.dev.cinder;
 
+import org.art_core.dev.cinder.prefs.CinderPrefPage;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * The logger of convenience for the Cinder plug-in.
@@ -14,10 +16,28 @@ public final class CinderLog {
 	
 	private CinderLog() {}
 	
+	/**
+	 * Logs debug messages if the config allows it.
+	 * @param message
+	 */
+	public static void logDebug(final String message) {
+		IPreferenceStore ipsPref = CinderPlugin.getDefault().getPreferenceStore();
+		String sPrefKey = CinderPrefPage.P_BOOLEAN + "_show_debug";
+		boolean bDebug = ipsPref.getBoolean(sPrefKey);
+		if (bDebug) {
+			logInfo(message);
+		}
+	}
 	
+	/**
+	 * Logs a non-critical exception as information.
+	 * @param message
+	 * @param exception
+	 */
 	public static void logErrorInfo(final String message, final Throwable exception) {
 		log (IStatus.INFO, IStatus.OK, message, exception);
 	}
+	
    /**
     * Log the specified information.
     * 
