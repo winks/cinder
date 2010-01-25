@@ -70,7 +70,7 @@ public class MainController {
 				CinderLog.logDebug("JFIV:MARKER:"
 						+ marker.getAttribute(IMarker.LINE_NUMBER, 666));
 			} catch (Exception e) {
-				CinderLog.logErrorInfo("setMarkersGlobal", e);
+				CinderLog.logErrorInfo("showMarkersAll", e);
 			}
 		}
 	}
@@ -91,9 +91,9 @@ public class MainController {
 			try {
 				res.deleteMarkers(null, true, 2);
 			} catch (CoreException e) {
-				CinderLog.logErrorInfo("removeMarkersGlobal", e);
+				CinderLog.logErrorInfo("hideMarkersAll", e);
 			} catch (Exception e1) {
-				CinderLog.logErrorInfo("removeMarkersGlobal", e1);
+				CinderLog.logErrorInfo("hideMarkersAll", e1);
 			}
 		}
 	}
@@ -236,25 +236,18 @@ public class MainController {
 		Collection<IItem> dummy = new ArrayList<IItem>();
 
 		// this a bogus list for debugging
-		dummy.add(new PropertiesItem(sKey));
-		dummy.add(new PropertiesItem(sKey, "bar"));
-		dummy.add(new PropertiesItem(sKey, "WORKBENCH_FOLDER",
-				ItemType.WORKBENCH_FOLDER));
-		dummy.add(new PropertiesItem(sKey, "WORKBENCH_PROJECT",
-				ItemType.WORKBENCH_PROJECT));
+		dummy.add(new PropertiesItem(sKey, "WORKBENCH_FOLDER", ItemType.WORKBENCH_FOLDER));
+		dummy.add(new PropertiesItem(sKey, "WORKBENCH_PROJECT", ItemType.WORKBENCH_PROJECT));
 		dummy.add(new PropertiesItem(sKey, "JAVA_CLASS", ItemType.JAVA_CLASS));
-		dummy.add(new PropertiesItem(sKey, "JAVA_CLASS_FILE",
-				ItemType.JAVA_CLASS_FILE));
-		dummy.add(new PropertiesItem(sKey, "JAVA_COMP_UNIT",
-				ItemType.JAVA_COMP_UNIT));
-		dummy.add(new PropertiesItem(sKey, "JAVA_INTERFACE",
-				ItemType.JAVA_INTERFACE));
-		dummy.add(new PropertiesItem(sKey, "JAVA_PACKAGE",
-				ItemType.JAVA_PACKAGE));
-		dummy.add(new PropertiesItem(sKey, "JAVA_PACKAGE_ROOT",
-				ItemType.JAVA_PACKAGE_ROOT));
-		dummy.add(new PropertiesItem(sKey, "JAVA_PROJECT",
-				ItemType.JAVA_PROJECT));
+		dummy.add(new PropertiesItem(sKey, "JAVA_CLASS_FILE", ItemType.JAVA_CLASS_FILE));
+		dummy.add(new PropertiesItem(sKey, "JAVA_COMP_UNIT", ItemType.JAVA_COMP_UNIT));
+		dummy.add(new PropertiesItem(sKey, "JAVA_INTERFACE", ItemType.JAVA_INTERFACE));
+		dummy.add(new PropertiesItem(sKey, "JAVA_PACKAGE", ItemType.JAVA_PACKAGE));
+		dummy.add(new PropertiesItem(sKey, "JAVA_PACKAGE_ROOT", ItemType.JAVA_PACKAGE_ROOT));
+		dummy.add(new PropertiesItem(sKey, "JAVA_PROJECT", ItemType.JAVA_PROJECT));
+		dummy.add(new PropertiesItem(sKey, "TASK_INFO", ItemType.TASK_INFO));
+		dummy.add(new PropertiesItem(sKey, "TASK_WARN", ItemType.TASK_WARN));
+		dummy.add(new PropertiesItem(sKey, "TASK_ERROR", ItemType.TASK_ERROR));
 		// end bogus list
 		for (IItem item : dummy) {
 			manager.add(item);
