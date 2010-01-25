@@ -43,9 +43,9 @@ public class MainController {
 		this.manager = ItemManager.getManager();
 	}
 	/**
-	 * Creates Markers for findings.
+	 * Shows Markers for findings.
 	 */
-	public void setMarkersGlobal() {
+	public void showMarkersAll() {
 		String sMyLoc;
 		IFile res;
 		IItem pItem;
@@ -76,9 +76,9 @@ public class MainController {
 	}
 
 	/**
-	 * Removes Markers for findings.
+	 * Hides Markers for findings.
 	 */
-	public void removeMarkersGlobal() {
+	public void hideMarkersAll() {
 		String sMyLoc;
 		IFile res;
 		IItem pItem;
@@ -99,11 +99,11 @@ public class MainController {
 	}
 
 	/**
-	 * Removes Markers from a single File.
+	 * Hides Markers from a single File.
 	 * 
 	 * @param pItem
 	 */
-	public void removeMarkersSingle(final IItem pItem) {
+	public void hideMarkersSelected(final IItem pItem) {
 		// find the correct editor window, based on the name
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IProject[] projects = root.getProjects();
@@ -131,15 +131,32 @@ public class MainController {
 		}
 	}
 
-	public void setMarkersSingle(final IItem pItem) {
-		this.setMarkersGlobal();
+	/**
+	 * Shows markers for selected items.
+	 * @param pItem
+	 */
+	public void showMarkersSelected(final IItem pItem) {
+		this.showMarkersAll();
 	}
 
-	public void clear() {
+	/**
+	 * Removes all items from the manager.
+	 */
+	public void clearAll() {
 		manager.reset();
 		cView.getViewer().refresh();
 	}
 	
+	/**
+	 * Removes selected items from the manager.
+	 */
+	public void clearSelected() {
+		
+	}
+	
+	/**
+	 * Shows a selection in the editor.
+	 */
 	public void select() {
 		// select the clicked item from the view
 		final ISelection selection = cView.getViewer().getSelection();
@@ -210,6 +227,9 @@ public class MainController {
 		}
 	}
 	
+	/**
+	 * Inserts dummy values.
+	 */
 	public void insertDummyValues() {
 		final String sKey = "CinderDummy";
 

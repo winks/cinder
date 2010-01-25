@@ -46,15 +46,16 @@ public class JFInputView extends ViewPart {
 	private IPreferenceStore ipsPref = CinderPlugin.getDefault()
 			.getPreferenceStore();
 
-	private Action aSetMarkersGlobal;
-	private Action aRemoveMarkersGlobal;
-	private Action aSetMarkersSingle;
-	private Action aRemoveMarkersSingle;
+	private Action aShowMarkersAll;
+	private Action aHideMarkersAll;
+	private Action aShowMarkersSelected;
+	private Action aHideMarkersSelected;
 	private Action aSelect;
 	private Action aOpenUrl;
 	private Action aOpenFile;
 	private Action aShowDummy;
-	private Action aClear;
+	private Action aClearAll;
+	private Action aClearSelected;
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -68,8 +69,8 @@ public class JFInputView extends ViewPart {
 		hookDoubleClickAction();
 		contributeToActionBars();
 		cControl.insertDummyValues();
-		executeMarkerToggleGlobal(TOGGLE_OFF);
-		executeMarkerToggleGlobal(TOGGLE_ON);
+		executeMarkerToggleAll(TOGGLE_OFF);
+		executeMarkerToggleAll(TOGGLE_ON);
 	}
 
 	/**
@@ -152,11 +153,11 @@ public class JFInputView extends ViewPart {
 	 * 
 	 * @param bEnable
 	 */
-	private void executeMarkerToggleGlobal(final boolean bEnable) {
+	private void executeMarkerToggleAll(final boolean bEnable) {
 		if (bEnable == TOGGLE_ON) {
-			cControl.setMarkersGlobal();
+			cControl.showMarkersAll();
 		} else {
-			cControl.removeMarkersGlobal();
+			cControl.hideMarkersAll();
 		}
 	}
 	
@@ -165,7 +166,7 @@ public class JFInputView extends ViewPart {
 	 * 
 	 * @param bEnable
 	 */
-	private void executeMarkerToggleSingle(final boolean bEnable) {
+	private void executeMarkerToggleSelected(final boolean bEnable) {
 		final IItem pItem = this.getSelectedItem();
 
 		if (pItem == null) {
@@ -173,9 +174,9 @@ public class JFInputView extends ViewPart {
 		} else {
 			// TODO
 			if (bEnable == TOGGLE_ON) {
-				cControl.setMarkersSingle(pItem);
+				cControl.showMarkersSelected(pItem);
 			} else {
-				cControl.removeMarkersSingle(pItem);
+				cControl.hideMarkersSelected(pItem);
 			}
 		}
 	}
@@ -189,10 +190,17 @@ public class JFInputView extends ViewPart {
 	}
 	
 	/**
-	 * Executes clearing entries.
+	 * Executes clearing all entries.
 	 */
-	private void executeClear() {
-		cControl.clear();
+	private void executeClearAll() {
+		cControl.clearAll();
+	}
+	
+	/**
+	 * Executes clearing selected entries.
+	 */
+	private void executeClearSelected() {
+		cControl.clearSelected();
 	}
 
 	/**
@@ -207,7 +215,7 @@ public class JFInputView extends ViewPart {
 			try {
 				cControl.insertFromFile(sFile, MainController.FILE_LOCAL);
 				ipsPref.setValue(sPrefKey, sFile);
-				executeMarkerToggleGlobal(TOGGLE_ON);
+				executeMarkerToggleAll(TOGGLE_ON);
 			} catch (Exception e) {
 				CinderLog.logError(e);
 			}
@@ -226,7 +234,7 @@ public class JFInputView extends ViewPart {
 			try {
 				cControl.insertFromFile(sFile, MainController.FILE_REMOTE);
 				ipsPref.setValue(sPrefKey, sFile);
-				executeMarkerToggleGlobal(TOGGLE_ON);
+				executeMarkerToggleAll(TOGGLE_ON);
 			} catch (Exception e) {
 				CinderLog.logError(e);
 			}
@@ -295,30 +303,30 @@ public class JFInputView extends ViewPart {
 		};
 
 		// removing all markers
-		aRemoveMarkersGlobal = new Action() {
+		aHideMarkersAll = new Action() {
 			public void run() {
-				executeMarkerToggleGlobal(TOGGLE_OFF);
+				executeMarkerToggleAll(TOGGLE_OFF);
 			}
 		};
 		
 		// removing markers
-		aRemoveMarkersSingle = new Action() {
+		aHideMarkersSelected = new Action() {
 			public void run() {
-				executeMarkerToggleSingle(TOGGLE_OFF);
+				executeMarkerToggleSelected(TOGGLE_OFF);
 			}
 		};
 		
 		// setting all markers
-		aSetMarkersGlobal = new Action() {
+		aShowMarkersAll = new Action() {
 			public void run() {
-				executeMarkerToggleGlobal(TOGGLE_ON);
+				executeMarkerToggleAll(TOGGLE_ON);
 			}
 		};
 		
 		// setting markers
-		aSetMarkersSingle = new Action() {
+		aShowMarkersSelected = new Action() {
 			public void run() {
-				executeMarkerToggleSingle(TOGGLE_ON);
+				executeMarkerToggleSelected(TOGGLE_ON);
 			}
 		};
 
@@ -343,52 +351,62 @@ public class JFInputView extends ViewPart {
 			}
 		};
 		
-		// clear entries
-		aClear = new Action() {
+		// clear all entries
+		aClearAll = new Action() {
 			public void run() {
-				executeMarkerToggleGlobal(TOGGLE_OFF);
-				executeClear();
-				
+				executeMarkerToggleAll(TOGGLE_OFF);
+				executeClearAll();
+			}
+		};
+		
+		// clear some entries
+		aClearSelected = new Action() {
+			public void run() {
+				executeMarkerToggleSelected(TOGGLE_OFF);
+				executeClearSelected();
 			}
 		};
 
-		ImageDescriptor idRemove = PlatformUI.getWorkbench()
+		ImageDescriptor idHide = PlatformUI.getWorkbench()
 			.getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR);
-		ImageDescriptor idAdd = PlatformUI.getWorkbench()
-			.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD);
+		ImageDescriptor idShow = PlatformUI.getWorkbench()
+			.getSharedImages().getImageDescriptor(org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_TASK_TSK);
 		ImageDescriptor idOpenFile = PlatformUI.getWorkbench()
 			.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 		ImageDescriptor idOpenUrl = PlatformUI.getWorkbench()
 			.getSharedImages().getImageDescriptor(org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_BKMRK_TSK);
 		ImageDescriptor idDummy = PlatformUI.getWorkbench()
 			.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT);
-		ImageDescriptor idClear = PlatformUI.getWorkbench()
-			.getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE);
+		ImageDescriptor idClearAll = PlatformUI.getWorkbench()
+			.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_REMOVEALL);
+		ImageDescriptor idClearSelected = PlatformUI.getWorkbench()
+		.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_REMOVE);
 		
-		String sRemoveAll = "Remove all Markers";
-		String sRemoveOne = "Remove Markers";
-		String sAddAll    = "Set all Markers";
-		String sAddOne    = "Set Markers";
-		String sOpenFile  = "Open File";
-		String sOpenUrl   = "Open URL";
-		String sDummy     = "Show Dummy";
-		String sClear     = "Clear entries";
+		String sHideAll = "Hide all Markers";
+		String sHideOne = "Hide Markers";
+		String sShowAll = "Show all Markers";
+		String sShowOne = "Show Markers";
+		String sOpenFile = "Open File";
+		String sOpenUrl = "Open URL";
+		String sDummy = "Show Dummy";
+		String sClearAll      = "Clear all entries";
+		String sClearSelected = "Clear entries";
 		
-		aRemoveMarkersGlobal.setText(sRemoveAll);
-		aRemoveMarkersGlobal.setToolTipText(sRemoveAll);
-		aRemoveMarkersGlobal.setImageDescriptor(idRemove);
+		aHideMarkersAll.setText(sHideAll);
+		aHideMarkersAll.setToolTipText(sHideAll);
+		aHideMarkersAll.setImageDescriptor(idHide);
 		
-		aRemoveMarkersSingle.setText(sRemoveOne);
-		aRemoveMarkersSingle.setToolTipText(sRemoveOne);
-		aRemoveMarkersSingle.setImageDescriptor(idRemove);
+		aHideMarkersSelected.setText(sHideOne);
+		aHideMarkersSelected.setToolTipText(sHideOne);
+		aHideMarkersSelected.setImageDescriptor(idHide);
 
-		aSetMarkersGlobal.setText(sAddAll);
-		aSetMarkersGlobal.setToolTipText(sAddAll);
-		aSetMarkersGlobal.setImageDescriptor(idAdd);
+		aShowMarkersAll.setText(sShowAll);
+		aShowMarkersAll.setToolTipText(sShowAll);
+		aShowMarkersAll.setImageDescriptor(idShow);
 		
-		aSetMarkersSingle.setText(sAddOne);
-		aSetMarkersSingle.setToolTipText(sAddOne);
-		aSetMarkersSingle.setImageDescriptor(idAdd);
+		aShowMarkersSelected.setText(sShowOne);
+		aShowMarkersSelected.setToolTipText(sShowOne);
+		aShowMarkersSelected.setImageDescriptor(idShow);
 
 		aOpenFile.setText(sOpenFile);
 		aOpenFile.setToolTipText(sOpenFile);
@@ -402,9 +420,13 @@ public class JFInputView extends ViewPart {
 		aShowDummy.setToolTipText(sDummy);
 		aShowDummy.setImageDescriptor(idDummy);
 		
-		aClear.setText(sClear);
-		aClear.setToolTipText(sClear);
-		aClear.setImageDescriptor(idClear);
+		aClearAll.setText(sClearAll);
+		aClearAll.setToolTipText(sClearAll);
+		aClearAll.setImageDescriptor(idClearAll);
+		
+		aClearSelected.setText(sClearSelected);
+		aClearSelected.setToolTipText(sClearSelected);
+		aClearSelected.setImageDescriptor(idClearSelected);
 	}
 
 	/**
@@ -434,10 +456,10 @@ public class JFInputView extends ViewPart {
 
 		// add to Local Menu
 		mmMenu = bars.getMenuManager();
-		mmMenu.add(aSetMarkersSingle);
-		mmMenu.add(aRemoveMarkersSingle);
+		mmMenu.add(aShowMarkersSelected);
+		mmMenu.add(aHideMarkersSelected);
 		mmMenu.add(new Separator());
-		mmMenu.add(aClear);
+		mmMenu.add(aClearSelected);
 		mmMenu.add(new Separator());
 		mmMenu.add(aShowDummy);
 
@@ -445,17 +467,17 @@ public class JFInputView extends ViewPart {
 		mmBar = bars.getToolBarManager();
 		mmBar.add(aOpenFile);
 		mmBar.add(aOpenUrl);
-		mmBar.add(aSetMarkersGlobal);
-		mmBar.add(aRemoveMarkersGlobal);
-		mmBar.add(aClear);
+		mmBar.add(aShowMarkersAll);
+		mmBar.add(aHideMarkersAll);
+		mmBar.add(aClearAll);
 
 		bars.updateActionBars();
 	}
 	
 	private void fillContextMenu(final IMenuManager manager) {
-		manager.add(aSetMarkersSingle);
-		manager.add(aRemoveMarkersSingle);
-		manager.add(aClear);
+		manager.add(aShowMarkersSelected);
+		manager.add(aHideMarkersSelected);
+		manager.add(aClearSelected);
 		// Other plug-ins can contribute their actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
