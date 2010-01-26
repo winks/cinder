@@ -29,6 +29,11 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+/**
+ * Main controller for cinder.
+ * @author Florian Anderiasch
+ *
+ */
 public class MainController {
 	private ItemManager manager;
 	private JFInputView cView;
@@ -37,13 +42,17 @@ public class MainController {
 	public static final int FILE_WORKSPACE = 2;
 	private static final String JAVAEDITORID = "org.eclipse.jdt.ui.CompilationUnitEditor";
 	
+	/**
+	 * Contructor.
+	 * @param view
+	 */
 	public MainController(JFInputView view) {
 		this.cView = view;
 		//this.viewer = cView.getViewer();
 		this.manager = ItemManager.getManager();
 	}
 	/**
-	 * Shows Markers for findings.
+	 * Shows all markers for findings.
 	 */
 	public void showMarkersAll() {
 		String sMyLoc;
@@ -96,7 +105,7 @@ public class MainController {
 	}
 
 	/**
-	 * Hides Markers for findings.
+	 * Hides all markers for findings.
 	 */
 	public void hideMarkersAll() {
 		String sMyLoc;
@@ -117,7 +126,7 @@ public class MainController {
 	}
 
 	/**
-	 * Hides Markers from a single File.
+	 * Hides selected markers.
 	 * 
 	 * @param pItem
 	 */
@@ -143,18 +152,18 @@ public class MainController {
 		CinderLog.logDebug("JFIV_D_start2");
 
 		try {
-			res.deleteMarkers(null, true, 2);
-		} catch (CoreException e) {
+			//res.deleteMarkers(null, true, 2);
+		} catch (Exception e) {
 			CinderLog.logError(e);
 		}
 	}
 
 	/**
-	 * Shows markers for selected items.
+	 * Shows selected markers.
 	 * @param pItem
 	 */
 	public void showMarkersSelected(final IItem pItem) {
-		this.showMarkersAll();
+		//this.showMarkersAll();
 	}
 
 	/**
@@ -169,7 +178,7 @@ public class MainController {
 	 * Removes selected items from the manager.
 	 */
 	public void clearSelected() {
-		
+		cView.getViewer().refresh();
 	}
 	
 	/**
@@ -178,13 +187,13 @@ public class MainController {
 	public void select() {
 		// select the clicked item from the view
 		final ISelection selection = cView.getViewer().getSelection();
-		final IItem pItem = (IItem) ((IStructuredSelection) selection)
+		final IItem item = (IItem) ((IStructuredSelection) selection)
 				.getFirstElement();
-		if (pItem == null) {
+		if (item == null) {
 			return;
 		}
 
-		final IFile res = CinderTools.getResource(pItem.getLocation());
+		final IFile res = CinderTools.getResource(item.getLocation());
 		AbstractTextEditor editor = null;
 		FileEditorInput fileInput;
 
@@ -193,56 +202,70 @@ public class MainController {
 			editor = (AbstractTextEditor) PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getActivePage().openEditor(
 							fileInput, JAVAEDITORID);
-			// convert line numbers to offset numbers (eclipse internal)
-			final IEditorInput input = editor.getEditorInput();
-			final IDocument doc = ((ITextEditor) editor).getDocumentProvider()
-					.getDocument(input);
-
-			int iLineOffset = -1;
-			int iLineLength = -1;
-			int iOff = pItem.getOffset();
-			int iLen = 5;
-
-			iLineOffset = doc.getLineOffset(pItem.getLine() - 1);
-			iLineLength = doc.getLineLength(pItem.getLine() - 1);
-			CinderLog.logDebug("JFIV:LineOff:" + iLineOffset + " LineLen: "
-					+ iLineLength);
-			if (iLineOffset >= 0) {
-				iOff += iLineOffset;
-				CinderLog.logDebug("JFIV:getLine:" + pItem.getLine() + " iOff: "
-						+ iOff);
-				final StringBuilder sbX = new StringBuilder();
-				sbX.append(doc.get(iOff, 3));
-				CinderLog.logDebug("JFIV:numLines:" + doc.getNumberOfLines()
-						+ " t: " + sbX.toString());
-				if (iLineLength >= 0) {
-					iLen = iLineLength;
-
-					// optional stripping of leading whitespace
-					int iCounter = 0;
-					String test = "";
-					for (int i = 0; i <= iLineLength; i++) {
-						test = doc.get(iLineOffset + i, 1);
-						if (" ".equals(test) || "\t".equals(test)) {
-							iCounter++;
-						} else {
-							break;
-						}
-					}
-					iOff += iCounter;
-					iLen -= iCounter;
-					CinderLog.logDebug("JFIV:++:" + iCounter);
-				}
-			}
-			// avoid to select the line break at the end
-			iLen -= 1;
-			final TextSelection sel = new TextSelection(iOff, iLen);
+			
+			int[] iOffset = convertLineToOffset(editor, item.getOffset(), item.getLine());
+			
+			final TextSelection sel = new TextSelection(iOffset[0], iOffset[1]);
 			editor.getSelectionProvider().setSelection(sel);
 		} catch (PartInitException e1) {
 			CinderLog.logError(e1);
 		} catch (Exception e) {
 			CinderLog.logError(e);
 		}
+	}
+	
+	/**
+	 * Converts line numbers to internal eclipse offsets.
+	 * @param editor
+	 * @param pItem
+	 * @return
+	 * @throws Exception
+	 */
+	private int[] convertLineToOffset(AbstractTextEditor editor, int iOff, int iLine) throws Exception {
+		int[] ret = new int[2];
+		
+		final IEditorInput input = editor.getEditorInput();
+		final IDocument doc = ((ITextEditor) editor).getDocumentProvider().getDocument(input);
+
+		int iLineOffset = -1;
+		int iLineLength = -1;
+		
+		int iLen = 5;
+
+		iLineOffset = doc.getLineOffset(iLine - 1);
+		iLineLength = doc.getLineLength(iLine - 1);
+		CinderLog.logDebug("JFIV:LineOff:" + iLineOffset + " LineLen: " + iLineLength);
+		if (iLineOffset >= 0) {
+			iOff += iLineOffset;
+			CinderLog.logDebug("JFIV:getLine:" + iLine + " iOff: " + iOff);
+			final StringBuilder sbX = new StringBuilder();
+			sbX.append(doc.get(iOff, 3));
+			CinderLog.logDebug("JFIV:numLines:" + doc.getNumberOfLines() + " t: " + sbX.toString());
+			if (iLineLength >= 0) {
+				iLen = iLineLength;
+
+				// optional stripping of leading whitespace
+				int iCounter = 0;
+				String test = "";
+				for (int i = 0; i <= iLineLength; i++) {
+					test = doc.get(iLineOffset + i, 1);
+					if (" ".equals(test) || "\t".equals(test)) {
+						iCounter++;
+					} else {
+						break;
+					}
+				}
+				iOff += iCounter;
+				iLen -= iCounter;
+				CinderLog.logDebug("JFIV:++:" + iCounter);
+			}
+		}
+		// avoid to select the line break at the end
+		iLen -= 1;
+		
+		ret[0] = iOff;
+		ret[1] = iLen;
+		return ret;
 	}
 	
 	/**
@@ -267,6 +290,7 @@ public class MainController {
 		dummy.add(new PropertiesItem(sKey, "TASK_WARN", ItemType.TASK_WARN));
 		dummy.add(new PropertiesItem(sKey, "TASK_ERROR", ItemType.TASK_ERROR));
 		// end bogus list
+		
 		for (IItem item : dummy) {
 			manager.add(item);
 		}

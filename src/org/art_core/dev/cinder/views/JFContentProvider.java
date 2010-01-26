@@ -1,5 +1,6 @@
 package org.art_core.dev.cinder.views;
 
+import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.model.ItemManager;
 import org.art_core.dev.cinder.model.ItemManagerEvent;
 import org.art_core.dev.cinder.model.ItemManagerListener;
@@ -55,7 +56,14 @@ public class JFContentProvider implements IStructuredContentProvider,
 	 */
 	@Override
 	public Object[] getElements(final Object parent) {
-		return manager.getItems();
+		Object[] x = new Object[1];
+		try {
+			x = manager.getItems();
+		} catch (Exception e) {
+			x[0] = parent;
+			CinderLog.logErrorInfo("getElements", e);
+		}
+		return x;
 	}
 
 	@Override
