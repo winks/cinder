@@ -21,7 +21,7 @@
             id="org.art_core.dev.cinder">
       </category>
       <view
-            name="Cinder View"
+            name="Cinder"
             icon="icons/face-monkey.gif"
             category="org.art_core.dev.cinder"
             class="org.art_core.dev.cinder.views.JFInputView"

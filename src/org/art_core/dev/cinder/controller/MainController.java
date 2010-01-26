@@ -55,17 +55,37 @@ public class MainController {
 			pItem = (IItem) oItem;
 			sMyLoc = pItem.getLocation();
 			res = CinderTools.getResource(sMyLoc);
+			ItemType type = pItem.getType();
 
 			try {
-				marker = res.createMarker(IMarker.TASK);
+				switch (type.getPostion()) {
+				case 13:
+					marker = res.createMarker(IMarker.PROBLEM);
+					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+					break;
+				case 12:
+					marker = res.createMarker(IMarker.PROBLEM);
+					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+					break;
+				case 11:
+					marker = res.createMarker(IMarker.PROBLEM);
+					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+					break;
+				default:
+					marker = res.createMarker(IMarker.TEXT);
+					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+					break;
+				}
+				
 				marker.setAttribute(IMarker.MESSAGE, pItem.getName() + "("
 						+ pItem.getMessage() + "): " + pItem.getLine());
 				// marker.setAttribute(IMarker.CHAR_START, 50);
 				// marker.setAttribute(IMarker.CHAR_END, 70);
 				marker.setAttribute(IMarker.LINE_NUMBER, pItem.getLine());
-				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+				
 				marker.setAttribute("key", pItem.getName());
 				marker.setAttribute("violation", pItem.getMessage());
+				
 				CinderLog.logDebug("JFIV:MARKER:" + marker.getType());
 				CinderLog.logDebug("JFIV:MARKER:"
 						+ marker.getAttribute(IMarker.LINE_NUMBER, 666));
@@ -90,8 +110,6 @@ public class MainController {
 
 			try {
 				res.deleteMarkers(null, true, 2);
-			} catch (CoreException e) {
-				CinderLog.logErrorInfo("hideMarkersAll", e);
 			} catch (Exception e1) {
 				CinderLog.logErrorInfo("hideMarkersAll", e1);
 			}

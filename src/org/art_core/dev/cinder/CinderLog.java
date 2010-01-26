@@ -35,7 +35,12 @@ public final class CinderLog {
 	 * @param exception
 	 */
 	public static void logErrorInfo(final String message, final Throwable exception) {
-		log (IStatus.INFO, IStatus.OK, message, exception);
+		IPreferenceStore ipsPref = CinderPlugin.getDefault().getPreferenceStore();
+		String sPrefKey = CinderPrefPage.P_BOOLEAN + "_show_debug";
+		boolean bDebug = ipsPref.getBoolean(sPrefKey);
+		if (bDebug) {
+			log (IStatus.INFO, IStatus.OK, message, exception);
+		}
 	}
 	
    /**

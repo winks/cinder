@@ -56,7 +56,7 @@ public class XmlInputReader implements IInputHandler {
 		final String sPath = root.getLocation().toString();
 		String sFilename;
 		sFilename = sPath + "/" + sWorkspaceFile;
-		CinderLog.logInfo("XIR:RFW:" + sPath + "_" + sWorkspaceFile);
+		CinderLog.logDebug("XIR:RFW:" + sPath + "_" + sWorkspaceFile);
 
 		this.readFromFile(sFilename, false);
 	}
@@ -80,11 +80,11 @@ public class XmlInputReader implements IInputHandler {
 			final DocumentBuilder builder = fac.newDocumentBuilder();
 			if (bRemote) {
 				doc = builder.parse(sFile);
-				CinderLog.logInfo("XIR:RFF_R:" + sFile);
+				CinderLog.logDebug("XIR:RFF_R:" + sFile);
 			} else {
 				fXml = new File(sFile);
 				doc = builder.parse(fXml);
-				CinderLog.logInfo("XIR:RFF_L:" + sFile + "_" + fXml.length());
+				CinderLog.logDebug("XIR:RFF_L:" + sFile + "_" + fXml.length());
 			}
 
 		} catch (Exception e) {
@@ -114,7 +114,7 @@ public class XmlInputReader implements IInputHandler {
 				if (iNodeType == Node.ELEMENT_NODE) {
 					fileElement = (Element) fileNodes.item(fIndex);
 					sTargetFileName = fileElement.getAttribute("name");
-					CinderLog.logInfo("XIR::read:" + sTargetFileName);
+					CinderLog.logDebug("XIR::read:" + sTargetFileName);
 					errorNodes = fileElement.getChildNodes();
 					// handle all <error line="" column="" severity=""
 					// message="" pattern=""> sections
@@ -129,7 +129,7 @@ public class XmlInputReader implements IInputHandler {
 							eSeverity = error.getAttribute("severity");
 							eMessage = error.getAttribute("message");
 							ePattern = error.getAttribute("pattern");
-							CinderLog.logInfo("XIR:" + eLine + ":" + eColumn
+							CinderLog.logDebug("XIR:" + eLine + ":" + eColumn
 									+ ":" + eSeverity);
 
 							xItem = new PropertiesItem(ePattern,

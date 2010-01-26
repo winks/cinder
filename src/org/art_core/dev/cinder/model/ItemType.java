@@ -26,6 +26,10 @@ public abstract class ItemType implements Comparable<ItemType> {
 	public String getName() {
 		return printName;
 	}
+	
+	public int getPostion() {
+		return ordinal;
+	}
 
 	public abstract Image getImage();
 
@@ -213,7 +217,7 @@ public abstract class ItemType implements Comparable<ItemType> {
 	};
 	
 	public static final ItemType TASK_INFO = new ItemType("TASK_INFO",
-			"TASK_INFO", 10) {
+			"TASK_INFO", 11) {
 		public Image getImage() {
 			return PLATFORM_IMAGES.getImage(
 					org.eclipse.ui.ISharedImages.IMG_OBJS_INFO_TSK);
@@ -229,7 +233,7 @@ public abstract class ItemType implements Comparable<ItemType> {
 	};
 	
 	public static final ItemType TASK_WARN = new ItemType("TASK_WARN",
-			"TASK_WARN", 10) {
+			"TASK_WARN", 12) {
 		public Image getImage() {
 			return PLATFORM_IMAGES.getImage(
 					org.eclipse.ui.ISharedImages.IMG_OBJS_WARN_TSK);
@@ -245,7 +249,7 @@ public abstract class ItemType implements Comparable<ItemType> {
 	};
 	
 	public static final ItemType TASK_ERROR = new ItemType("TASK_ERROR",
-			"TASK_ERROR", 10) {
+			"TASK_ERROR", 13) {
 		public Image getImage() {
 			return PLATFORM_IMAGES.getImage(
 					org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
