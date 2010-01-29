@@ -5,6 +5,7 @@ import org.art_core.dev.cinder.CinderPlugin;
 import org.art_core.dev.cinder.controller.MainController;
 import org.art_core.dev.cinder.model.ItemManager;
 import org.art_core.dev.cinder.model.IItem;
+import org.art_core.dev.cinder.model.ItemStatus;
 import org.art_core.dev.cinder.prefs.CinderPrefPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -42,6 +43,7 @@ import org.eclipse.swt.SWT;
 public class JFInputView extends ViewPart {
 
 	private final String[] colNames = { "", "Name", "Message", "Location", "Line", "Offset", "Status", "Changed" };
+	
 	private static final boolean TOGGLE_OFF = false;
 	private static final boolean TOGGLE_ON = true;
 
@@ -60,6 +62,7 @@ public class JFInputView extends ViewPart {
 	private Action aShowDummy;
 	private Action aClearAll;
 	private Action aClearSelected;
+	private Action[] aStatusActions;
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -205,6 +208,16 @@ public class JFInputView extends ViewPart {
 	 */
 	private void executeClearSelected() {
 		cControl.clearSelected();
+	}
+	
+	private void executeSetStatus(ItemStatus status) {
+		final IItem pItem = this.getSelectedItem();
+
+		if (pItem == null) {
+			CinderLog.logErrorInfo("executeSetStatus", new Exception());
+		} else {
+			cControl.setStatus(pItem, status);
+		}
 	}
 
 	/**
@@ -370,6 +383,20 @@ public class JFInputView extends ViewPart {
 				executeClearSelected();
 			}
 		};
+		
+		// set status to xxx
+		int iLen = ItemStatus.values().length;
+		aStatusActions = new Action[iLen];
+		for (final ItemStatus x: ItemStatus.values()) {
+			iLen--;
+			aStatusActions[iLen] = new Action() {
+				public void run() {
+					executeSetStatus(x);
+				}
+			};
+			aStatusActions[iLen].setText(x.name());
+			aStatusActions[iLen].setToolTipText(x.name());
+		}
 
 		ImageDescriptor idHide = PlatformUI.getWorkbench()
 			.getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR);
@@ -455,20 +482,14 @@ public class JFInputView extends ViewPart {
 	private void contributeToActionBars() {
 		final IActionBars bars = getViewSite().getActionBars();
 
-		IMenuManager mmMenu;
-		IToolBarManager mmBar;
+		IMenuManager mmMenu = bars.getMenuManager();
+		IToolBarManager mmBar = bars.getToolBarManager();
 
-		// add to Local Menu
-		mmMenu = bars.getMenuManager();
-		mmMenu.add(aShowMarkersSelected);
-		mmMenu.add(aHideMarkersSelected);
-		mmMenu.add(new Separator());
-		mmMenu.add(aClearSelected);
-		mmMenu.add(new Separator());
+		// add to Local Menu, mirroring the context menu
+		fillContextMenu(mmMenu);
 		mmMenu.add(aShowDummy);
 
 		// add to Local Tool Bar of the View
-		mmBar = bars.getToolBarManager();
 		mmBar.add(aOpenFile);
 		mmBar.add(aOpenUrl);
 		mmBar.add(aShowMarkersAll);
@@ -478,10 +499,24 @@ public class JFInputView extends ViewPart {
 		bars.updateActionBars();
 	}
 	
+	/**
+	 * Add content to a menu manager, for example the context menu
+	 * @param manager
+	 */
 	private void fillContextMenu(final IMenuManager manager) {
+		MenuManager subMenu = new MenuManager("Mark as");
+		
+		for (Action a: aStatusActions) {
+			subMenu.add(a);
+		}
+		
 		manager.add(aShowMarkersSelected);
 		manager.add(aHideMarkersSelected);
+		manager.add(new Separator());
+		manager.add(subMenu);
+		manager.add(new Separator());
 		manager.add(aClearSelected);
+		
 		// Other plug-ins can contribute their actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}

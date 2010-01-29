@@ -10,6 +10,7 @@ import org.art_core.dev.cinder.CinderPlugin;
 import org.art_core.dev.cinder.input.PropertiesInputReader;
 import org.art_core.dev.cinder.input.XmlInputReader;
 import org.art_core.dev.cinder.model.IItem;
+import org.art_core.dev.cinder.model.ItemStatus;
 import org.art_core.dev.cinder.model.PropertiesItem;
 import org.art_core.dev.cinder.model.ItemManager;
 import org.art_core.dev.cinder.model.ItemType;
@@ -161,6 +162,14 @@ public class MainController {
 	}
 
 	/**
+	 * Shows selected markers.
+	 * @param pItem
+	 */
+	public void showMarkersSelected(final IItem pItem) {
+		//TODO
+	}
+	
+	/**
 	 * Hides selected markers.
 	 * 
 	 * @param pItem
@@ -192,13 +201,17 @@ public class MainController {
 			CinderLog.logError(e);
 		}
 	}
-
+	
 	/**
-	 * Shows selected markers.
-	 * @param pItem
+	 * Sets the status for an item.
+	 * @param item
+	 * @param status
 	 */
-	public void showMarkersSelected(final IItem pItem) {
-		//this.showMarkersAll();
+	public void setStatus(IItem item, ItemStatus status) {
+		PropertiesItem pItem = (PropertiesItem) item;
+		pItem.setStatus(status);
+		CinderLog.logDebug("setting status to " + status.name());
+		cView.getViewer().refresh();
 	}
 
 	/**
