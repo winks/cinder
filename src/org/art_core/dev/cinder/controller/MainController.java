@@ -2,8 +2,11 @@ package org.art_core.dev.cinder.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.art_core.dev.cinder.CinderLog;
+import org.art_core.dev.cinder.CinderPlugin;
 import org.art_core.dev.cinder.CinderTools;
 import org.art_core.dev.cinder.input.PropertiesInputReader;
 import org.art_core.dev.cinder.input.XmlInputReader;
@@ -11,12 +14,14 @@ import org.art_core.dev.cinder.model.IItem;
 import org.art_core.dev.cinder.model.PropertiesItem;
 import org.art_core.dev.cinder.model.ItemManager;
 import org.art_core.dev.cinder.model.ItemType;
+import org.art_core.dev.cinder.prefs.CinderPrefPage;
 import org.art_core.dev.cinder.views.JFInputView;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -40,7 +45,7 @@ public class MainController {
 	public static final int FILE_REMOTE = 1;
 	public static final int FILE_WORKSPACE = 2;
 	private static final String JAVAEDITORID = "org.eclipse.jdt.ui.CompilationUnitEditor";
-	
+	private IPreferenceStore ipsPref = CinderPlugin.getDefault().getPreferenceStore();
 	/**
 	 * Constructor.
 	 * @param view
@@ -49,6 +54,40 @@ public class MainController {
 		this.cView = view;
 		//this.viewer = cView.getViewer();
 		this.manager = ItemManager.getManager();
+		this.checkIntervals();
+	}
+	
+	/**
+	 * Regularly check for updates from the CI system.
+	 */
+	private void checkIntervals() {
+		Timer tU = new Timer();
+		Timer tF = new Timer();
+		
+		long delay;
+		
+		// both in msec
+		delay = 1000;
+		long periodUrl = 1000 * 60 * ipsPref.getInt(CinderPrefPage.P_INTEGER + "_xml_url_time");
+		boolean bCheckUrl = ipsPref.getBoolean(CinderPrefPage.P_BOOLEAN + "_xml_url_check");
+		String sCheckUrl = ipsPref.getString(CinderPrefPage.P_STRING + "_xml_url");
+		TimerTask tCheckUrl = new CheckUrl(this, sCheckUrl);
+		
+		if (bCheckUrl && periodUrl > 0) {
+			tU.schedule(tCheckUrl, delay, periodUrl);
+		}
+		
+		// both in msec
+		delay = 30000;
+		long periodFile = 1000 * 60 * ipsPref.getInt(CinderPrefPage.P_INTEGER + "_xml_file_time");
+		boolean bCheckFile = ipsPref.getBoolean(CinderPrefPage.P_BOOLEAN + "_xml_file_check");
+		String sCheckFile = ipsPref.getString(CinderPrefPage.P_STRING + "_xml_file");
+		TimerTask tCheckFile = new CheckFile(this, sCheckFile);
+		
+		if (bCheckFile && periodFile > 0) {
+			tF.schedule(tCheckFile, delay, periodFile);
+		}
+		
 	}
 	/**
 	 * Shows all markers for findings.
