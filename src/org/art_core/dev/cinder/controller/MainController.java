@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -43,7 +42,7 @@ public class MainController {
 	private static final String JAVAEDITORID = "org.eclipse.jdt.ui.CompilationUnitEditor";
 	
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * @param view
 	 */
 	public MainController(JFInputView view) {

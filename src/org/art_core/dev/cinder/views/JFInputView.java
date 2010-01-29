@@ -34,7 +34,11 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
-
+/**
+ * Main view for cinder.
+ * @author Florian Anderiasch
+ *
+ */
 public class JFInputView extends ViewPart {
 
 	private final String[] colNames = { "", "Name", "Message", "Location", "Line", "Offset", "Status", "Changed" };
@@ -378,7 +382,7 @@ public class JFInputView extends ViewPart {
 		ImageDescriptor idDummy = PlatformUI.getWorkbench()
 			.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT);
 		ImageDescriptor idClearAll = PlatformUI.getWorkbench()
-			.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_REMOVEALL);
+			.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_REMOVE);
 		ImageDescriptor idClearSelected = PlatformUI.getWorkbench()
 		.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_REMOVE);
 		

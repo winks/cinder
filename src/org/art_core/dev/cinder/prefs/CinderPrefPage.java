@@ -24,6 +24,7 @@ public class CinderPrefPage extends FieldEditorPreferencePage implements
 	public static final String P_CHOICE = "choicePreference";
 	public static final String P_STRING = "stringPreference";
 	public static final String P_COLOR = "colorPreference";
+	public static final String P_INTEGER = "integerPreference";
 	public static final String DESCRIPTION = "General settings for Cinder:";
 	public static final String MESSAGE = "Cinder Preferences";
 	
@@ -42,9 +43,24 @@ public class CinderPrefPage extends FieldEditorPreferencePage implements
 	public void createFieldEditors() {
 		addField(new StringFieldEditor(CinderPrefPage.P_STRING + "_xml_url",
 				"URL to XML", getFieldEditorParent()));
-
+		addField(new BooleanFieldEditor(CinderPrefPage.P_BOOLEAN + "_xml_url_check", 
+				"Check periodically", getFieldEditorParent()));
+		IntegerFieldEditor ifeUrl = new IntegerFieldEditor(CinderPrefPage.P_INTEGER + "_xml_url_time", 
+				"Interval in minutes:", getFieldEditorParent());
+		ifeUrl.setTextLimit(3);
+		ifeUrl.setValidRange(1, 999);
+		addField(ifeUrl);
+		
 		addField(new FileFieldEditor(CinderPrefPage.P_STRING + "_xml_file",
 				"XML File", getFieldEditorParent()));
+		addField(new BooleanFieldEditor(CinderPrefPage.P_BOOLEAN + "_xml_file_check", 
+				"Check periodically", getFieldEditorParent()));
+		
+		IntegerFieldEditor ifeFile = new IntegerFieldEditor(CinderPrefPage.P_INTEGER + "_xml_file_time", 
+				"Interval in minutes:", getFieldEditorParent());
+		ifeFile.setTextLimit(3);
+		ifeFile.setValidRange(1, 999);
+		addField(ifeFile);
 		
 		addField(new BooleanFieldEditor(CinderPrefPage.P_BOOLEAN + "_show_debug", 
 				"Show debug messages", getFieldEditorParent()));

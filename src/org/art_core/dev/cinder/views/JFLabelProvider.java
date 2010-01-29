@@ -3,7 +3,9 @@ package org.art_core.dev.cinder.views;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.model.IItem;
+import org.art_core.dev.cinder.model.PropertiesItem;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -21,9 +23,15 @@ class JFLabelProvider extends LabelProvider implements ITableLabelProvider {
 	 * @return String
 	 */
 	@Override
-	public String getColumnText(final Object obj, final int index) {
+	public String getColumnText(Object obj, final int index) {
 		String sResult;
-		IItem item = (IItem) obj;
+		IItem item = new PropertiesItem("foo");
+		try {
+			item = (IItem) obj;
+		} catch (Exception e) {
+			// TODO: handle exception
+			CinderLog.logDebug("gCT:" + obj.getClass());
+		}
 		switch (index) {
 		case 0: // type column
 			sResult = "";
@@ -47,7 +55,7 @@ class JFLabelProvider extends LabelProvider implements ITableLabelProvider {
 			sResult = item.getStatus().toString();
 			break;
 		case 7: // timestamp column
-			int ts = ((IItem) obj).getTimestamp();
+			int ts = item.getTimestamp();
 			Date dTS = new Date (ts*1000L);
 			SimpleDateFormat sdf = new SimpleDateFormat(sPattern);
 			sResult = "";
