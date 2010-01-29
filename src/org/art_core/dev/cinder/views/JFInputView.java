@@ -1,5 +1,7 @@
 package org.art_core.dev.cinder.views;
 
+import java.util.ResourceBundle;
+
 import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.CinderPlugin;
 import org.art_core.dev.cinder.controller.MainController;
@@ -43,7 +45,7 @@ import org.eclipse.swt.SWT;
 public class JFInputView extends ViewPart {
 
 	private final String[] colNames = { "", "Name", "Message", "Location", "Line", "Offset", "Status", "Changed" };
-	
+	private ResourceBundle cRes = ResourceBundle.getBundle("CinderResource");
 	private static final boolean TOGGLE_OFF = false;
 	private static final boolean TOGGLE_ON = true;
 
@@ -294,8 +296,8 @@ public class JFInputView extends ViewPart {
 	 */
 	private String getOpenUrl(final String sPre) {
 		String sResult = "";
-		String dialogTitle = "Read XML from URL";
-		String dialogMessage = "Please enter the URL of the XML file to open:";
+		String dialogTitle = cRes.getString( "DIALOG_READ_XML_URL_TITLE");
+		String dialogMessage = cRes.getString( "DIALOG_READ_XML_URL_MESSAGE");
 
 		final Display display = Display.getCurrent();
 		final Shell shell = new Shell(display);
@@ -504,7 +506,7 @@ public class JFInputView extends ViewPart {
 	 * @param manager
 	 */
 	private void fillContextMenu(final IMenuManager manager) {
-		MenuManager subMenu = new MenuManager("Mark as");
+		MenuManager subMenu = new MenuManager(cRes.getString("TEXT_SET_STATUS"));
 		
 		for (Action a: aStatusActions) {
 			subMenu.add(a);
