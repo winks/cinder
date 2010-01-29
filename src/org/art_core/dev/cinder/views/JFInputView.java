@@ -1,5 +1,7 @@
 package org.art_core.dev.cinder.views;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.art_core.dev.cinder.CinderLog;
@@ -16,9 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -45,7 +45,7 @@ import org.eclipse.swt.SWT;
 public class JFInputView extends ViewPart {
 
 	private final String[] colNames = { "", "Name", "Message", "Location", "Line", "Offset", "Status", "Changed" };
-	private ResourceBundle cRes = ResourceBundle.getBundle("CinderResource");
+	private ResourceBundle cRes = ResourceBundle.getBundle("org.art_core.dev.cinder.CinderResource");
 	private static final boolean TOGGLE_OFF = false;
 	private static final boolean TOGGLE_ON = true;
 
@@ -77,7 +77,6 @@ public class JFInputView extends ViewPart {
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
-		cControl.insertDummyValues();
 		executeMarkerToggleAll(TOGGLE_OFF);
 		executeMarkerToggleAll(TOGGLE_ON);
 	}
@@ -151,10 +150,16 @@ public class JFInputView extends ViewPart {
 	 * 
 	 * @return {@link IItem}
 	 */
-	private IItem getSelectedItem() {
+	@SuppressWarnings("unchecked")
+	private List<IItem> getSelectedItems() {
 		final ISelection selection = viewer.getSelection();
-		return (IItem) ((IStructuredSelection) selection)
-				.getFirstElement();
+		List<Object> foo = ((IStructuredSelection) selection).toList();
+		
+		List<IItem> list = new ArrayList<IItem>();
+		for(Object x: foo) {
+			list.add((IItem) x);
+		}
+		return list;
 	}
 
 	/**
@@ -176,20 +181,18 @@ public class JFInputView extends ViewPart {
 	 * @param bEnable
 	 */
 	private void executeMarkerToggleSelected(final boolean bEnable) {
-		final IItem pItem = this.getSelectedItem();
-
-		if (pItem == null) {
-			CinderLog.logErrorInfo("executeMarkerToggleSingle", new Exception());
-		} else {
-			// TODO
-			if (bEnable == TOGGLE_ON) {
-				cControl.showMarkersSelected(pItem);
+		for (IItem pItem: this.getSelectedItems()) {
+			if (pItem == null) {
+				CinderLog.logErrorInfo("executeMarkerToggleSingle", new Exception());
 			} else {
-				cControl.hideMarkersSelected(pItem);
+				if (bEnable == TOGGLE_ON) {
+					cControl.showMarkersSelected(pItem);
+				} else {
+					cControl.hideMarkersSelected(pItem);
+				}
 			}
 		}
 	}
-	
 
 	/**
 	 * Executes showing the dummy entries.
@@ -213,12 +216,12 @@ public class JFInputView extends ViewPart {
 	}
 	
 	private void executeSetStatus(ItemStatus status) {
-		final IItem pItem = this.getSelectedItem();
-
-		if (pItem == null) {
-			CinderLog.logErrorInfo("executeSetStatus", new Exception());
-		} else {
-			cControl.setStatus(pItem, status);
+		for (IItem pItem: this.getSelectedItems()) {
+			if (pItem == null) {
+				CinderLog.logErrorInfo("executeSetStatus", new Exception());
+			} else {
+				cControl.setStatus(pItem, status);
+			}
 		}
 	}
 
@@ -275,9 +278,13 @@ public class JFInputView extends ViewPart {
 	private String getOpenFile(final String sFile) {
 		String sResult = "";
 		try {
-			final Display display = Display.getCurrent();
+			Display display = Display.getCurrent();
+			if (display == null) {
+				display = Display.getDefault();
+			}
 			final Shell shell = new Shell(display);
 			final FileDialog dlg = new FileDialog(shell);
+			dlg.setText(cRes.getString("DIALOG_READ_XML_FILE_TITLE"));
 			dlg.setFileName(sFile);
 			sResult = dlg.open();
 			CinderLog.logDebug("JF_OF:" + sResult);
@@ -299,7 +306,10 @@ public class JFInputView extends ViewPart {
 		String dialogTitle = cRes.getString( "DIALOG_READ_XML_URL_TITLE");
 		String dialogMessage = cRes.getString( "DIALOG_READ_XML_URL_MESSAGE");
 
-		final Display display = Display.getCurrent();
+		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+		}
 		final Shell shell = new Shell(display);
 		final InputDialog dlg = new InputDialog(shell, dialogTitle,
 				dialogMessage, sPre, null);
@@ -314,54 +324,74 @@ public class JFInputView extends ViewPart {
 	 */
 	private void createActions() {
 		
-		// selecting an item
+		// select an item
 		aSelect = new Action() {
 			public void run() {
 				executeSelect();
 			}
 		};
 
-		// removing all markers
+		// hide all markers
 		aHideMarkersAll = new Action() {
 			public void run() {
 				executeMarkerToggleAll(TOGGLE_OFF);
 			}
 		};
+		aHideMarkersAll.setText(cRes.getString("TEXT_HIDE_ALL_MARKERS"));
+		aHideMarkersAll.setToolTipText(cRes.getString("TEXT_HIDE_ALL_MARKERS"));
+		aHideMarkersAll.setImageDescriptor((ImageDescriptor) cRes.getObject("IMAGE_HIDE_ALL_MARKERS"));
 		
-		// removing markers
+		// hide selected markers
 		aHideMarkersSelected = new Action() {
 			public void run() {
 				executeMarkerToggleSelected(TOGGLE_OFF);
 			}
 		};
+		aHideMarkersSelected.setText(cRes.getString("TEXT_HIDE_SEL_MARKERS"));
+		aHideMarkersSelected.setToolTipText(cRes.getString("TEXT_HIDE_SEL_MARKERS"));
+		aHideMarkersSelected.setImageDescriptor((ImageDescriptor) cRes.getObject("IMAGE_HIDE_SEL_MARKERS"));
 		
-		// setting all markers
+		// show all markers
 		aShowMarkersAll = new Action() {
 			public void run() {
 				executeMarkerToggleAll(TOGGLE_ON);
 			}
 		};
+		aShowMarkersAll.setText(cRes.getString("TEXT_SHOW_ALL_MARKERS"));
+		aShowMarkersAll.setToolTipText(cRes.getString("TEXT_SHOW_ALL_MARKERS"));
+		aShowMarkersAll.setImageDescriptor((ImageDescriptor) cRes.getObject("IMAGE_SHOW_ALL_MARKERS"));
 		
-		// setting markers
+		// show selected markers
 		aShowMarkersSelected = new Action() {
 			public void run() {
 				executeMarkerToggleSelected(TOGGLE_ON);
 			}
 		};
+		aShowMarkersSelected.setText(cRes.getString("TEXT_SHOW_SEL_MARKERS"));
+		aShowMarkersSelected.setToolTipText(cRes.getString("TEXT_SHOW_SEL_MARKERS"));
+		aShowMarkersSelected.setImageDescriptor((ImageDescriptor) cRes.getObject("IMAGE_SHOW_SEL_MARKERS"));
 
-		// opening a file
+		// open a file
 		aOpenFile = new Action() {
 			public void run() {
 				executeOpenFile();
 			}
 		};
+		aOpenFile.setText(cRes.getString("TEXT_OPEN_FILE"));
+		aOpenFile.setToolTipText(cRes.getString("TEXT_OPEN_FILE"));
+		aOpenFile.setImageDescriptor((ImageDescriptor) cRes.getObject("IMAGE_OPEN_FILE"));
 
-		// opening an URL
+		
+
+		// open an URL
 		aOpenUrl = new Action() {
 			public void run() {
 				executeOpenUrl();
 			}
 		};
+		aOpenUrl.setText(cRes.getString("TEXT_OPEN_URL"));
+		aOpenUrl.setToolTipText(cRes.getString("TEXT_OPEN_URL"));
+		aOpenUrl.setImageDescriptor((ImageDescriptor) cRes.getObject("IMAGE_OPEN_URL"));
 
 		// show dummy entries
 		aShowDummy = new Action() {
@@ -369,6 +399,9 @@ public class JFInputView extends ViewPart {
 				executeShowDummy();
 			}
 		};
+		aShowDummy.setText(cRes.getString("TEXT_SHOW_DUMMY"));
+		aShowDummy.setToolTipText(cRes.getString("TEXT_SHOW_DUMMY"));
+		aShowDummy.setImageDescriptor((ImageDescriptor) cRes.getObject("IMAGE_SHOW_DUMMY"));
 		
 		// clear all entries
 		aClearAll = new Action() {
@@ -377,6 +410,9 @@ public class JFInputView extends ViewPart {
 				executeClearAll();
 			}
 		};
+		aClearAll.setText(cRes.getString("TEXT_CLEAR_ALL"));
+		aClearAll.setToolTipText(cRes.getString("TEXT_CLEAR_ALL"));
+		aClearAll.setImageDescriptor((ImageDescriptor) cRes.getObject("IMAGE_CLEAR_ALL"));
 		
 		// clear some entries
 		aClearSelected = new Action() {
@@ -385,6 +421,9 @@ public class JFInputView extends ViewPart {
 				executeClearSelected();
 			}
 		};
+		aClearSelected.setText(cRes.getString("TEXT_CLEAR_SEL"));
+		aClearSelected.setToolTipText(cRes.getString("TEXT_CLEAR_SEL"));
+		aClearSelected.setImageDescriptor((ImageDescriptor) cRes.getObject("IMAGE_CLEAR_SEL"));
 		
 		// set status to xxx
 		int iLen = ItemStatus.values().length;
@@ -399,67 +438,6 @@ public class JFInputView extends ViewPart {
 			aStatusActions[iLen].setText(x.name());
 			aStatusActions[iLen].setToolTipText(x.name());
 		}
-
-		ImageDescriptor idHide = PlatformUI.getWorkbench()
-			.getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR);
-		ImageDescriptor idShow = PlatformUI.getWorkbench()
-			.getSharedImages().getImageDescriptor(org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_TASK_TSK);
-		ImageDescriptor idOpenFile = PlatformUI.getWorkbench()
-			.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
-		ImageDescriptor idOpenUrl = PlatformUI.getWorkbench()
-			.getSharedImages().getImageDescriptor(org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_BKMRK_TSK);
-		ImageDescriptor idDummy = PlatformUI.getWorkbench()
-			.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT);
-		ImageDescriptor idClearAll = PlatformUI.getWorkbench()
-			.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_REMOVE);
-		ImageDescriptor idClearSelected = PlatformUI.getWorkbench()
-		.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_REMOVE);
-		
-		String sHideAll = "Hide all Markers";
-		String sHideOne = "Hide Markers";
-		String sShowAll = "Show all Markers";
-		String sShowOne = "Show Markers";
-		String sOpenFile = "Open File";
-		String sOpenUrl = "Open URL";
-		String sDummy = "Show Dummy";
-		String sClearAll      = "Clear all entries";
-		String sClearSelected = "Clear entries";
-		
-		aHideMarkersAll.setText(sHideAll);
-		aHideMarkersAll.setToolTipText(sHideAll);
-		aHideMarkersAll.setImageDescriptor(idHide);
-		
-		aHideMarkersSelected.setText(sHideOne);
-		aHideMarkersSelected.setToolTipText(sHideOne);
-		aHideMarkersSelected.setImageDescriptor(idHide);
-
-		aShowMarkersAll.setText(sShowAll);
-		aShowMarkersAll.setToolTipText(sShowAll);
-		aShowMarkersAll.setImageDescriptor(idShow);
-		
-		aShowMarkersSelected.setText(sShowOne);
-		aShowMarkersSelected.setToolTipText(sShowOne);
-		aShowMarkersSelected.setImageDescriptor(idShow);
-
-		aOpenFile.setText(sOpenFile);
-		aOpenFile.setToolTipText(sOpenFile);
-		aOpenFile.setImageDescriptor(idOpenFile);
-
-		aOpenUrl.setText(sOpenUrl);
-		aOpenUrl.setToolTipText(sOpenUrl);
-		aOpenUrl.setImageDescriptor(idOpenUrl);
-
-		aShowDummy.setText(sDummy);
-		aShowDummy.setToolTipText(sDummy);
-		aShowDummy.setImageDescriptor(idDummy);
-		
-		aClearAll.setText(sClearAll);
-		aClearAll.setToolTipText(sClearAll);
-		aClearAll.setImageDescriptor(idClearAll);
-		
-		aClearSelected.setText(sClearSelected);
-		aClearSelected.setToolTipText(sClearSelected);
-		aClearSelected.setImageDescriptor(idClearSelected);
 	}
 
 	/**
