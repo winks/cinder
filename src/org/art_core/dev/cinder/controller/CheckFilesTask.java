@@ -17,7 +17,7 @@ public class CheckFilesTask extends TimerTask {
 	
 	@Override
 	public void run() {
-		CinderLog.logInfo("running CheckUrl on " + sFilename);
+		CinderLog.logDebug("running CheckFilesTask on " + sFilename);
 		
 		Display display = Display.getCurrent();
 		if (display == null) {

@@ -7,7 +7,6 @@ import java.util.TimerTask;
 
 import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.CinderPlugin;
-import org.art_core.dev.cinder.CinderTools;
 import org.art_core.dev.cinder.input.PropertiesInputReader;
 import org.art_core.dev.cinder.input.XmlInputReader;
 import org.art_core.dev.cinder.model.IItem;
@@ -52,7 +51,6 @@ public class MainController {
 	 */
 	public MainController(JFInputView view) {
 		this.cView = view;
-		//this.viewer = cView.getViewer();
 		this.manager = ItemManager.getManager();
 		this.checkIntervals();
 	}
@@ -61,9 +59,6 @@ public class MainController {
 	 * Regularly check for updates from the CI system.
 	 */
 	private void checkIntervals() {
-		Timer tU = new Timer();
-		Timer tF = new Timer();
-		
 		long delay;
 		
 		// both in msec
@@ -72,6 +67,7 @@ public class MainController {
 		boolean bCheckUrl = ipsPref.getBoolean(CinderPrefPage.P_BOOLEAN + "_xml_url_check");
 		String sCheckUrl = ipsPref.getString(CinderPrefPage.P_STRING + "_xml_url");
 		TimerTask tCheckUrl = new CheckFilesTask(this, sCheckUrl, MainController.FILE_REMOTE);
+		Timer tU = new Timer();
 		
 		if (bCheckUrl && periodUrl > 0) {
 			tU.schedule(tCheckUrl, delay, periodUrl);
@@ -83,6 +79,7 @@ public class MainController {
 		boolean bCheckFile = ipsPref.getBoolean(CinderPrefPage.P_BOOLEAN + "_xml_file_check");
 		String sCheckFile = ipsPref.getString(CinderPrefPage.P_STRING + "_xml_file");
 		TimerTask tCheckFile = new CheckFilesTask(this, sCheckFile, MainController.FILE_LOCAL);
+		Timer tF = new Timer();
 		
 		if (bCheckFile && periodFile > 0) {
 			tF.schedule(tCheckFile, delay, periodFile);
@@ -101,7 +98,7 @@ public class MainController {
 		for (Object oItem : manager.getItems()) {
 			pItem = (IItem) oItem;
 			sMyLoc = pItem.getLocation();
-			res = CinderTools.getResource(sMyLoc);
+			res = getResource(sMyLoc);
 			ItemType type = pItem.getType();
 
 			try {
@@ -153,7 +150,7 @@ public class MainController {
 		for (Object oItem : manager.getItems()) {
 			pItem = (IItem) oItem;
 			sMyLoc = pItem.getLocation();
-			res = CinderTools.getResource(sMyLoc);
+			res = getResource(sMyLoc);
 
 			try {
 				res.deleteMarkers(null, true, 2);
@@ -231,7 +228,7 @@ public class MainController {
 			return;
 		}
 
-		final IFile res = CinderTools.getResource(item.getLocation());
+		final IFile res = getResource(item.getLocation());
 		AbstractTextEditor editor = null;
 		FileEditorInput fileInput;
 
@@ -389,5 +386,32 @@ public class MainController {
 		} catch (Exception e) {
 			CinderLog.logError(e);
 		}
+	}
+	
+	public IFile getResource(final String sFile) {
+		IFile res = null;
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		final IProject[] projects = root.getProjects();
+		String sProjName = "";
+
+		try {
+			CinderLog.logDebug("CT_GR_start");
+			
+			for (int i = 0; i < projects.length; i++) {
+				sProjName = projects[i].getName();
+				CinderLog.logDebug("CT_GR:DBG: " + sProjName);
+				res = (IFile) root.findMember(sProjName + "/" + sFile);
+				if (res == null) {
+					CinderLog.logDebug("CT_GR_notfound:NULL");
+					continue;
+				} else {
+					CinderLog.logDebug("CT_GR___found:" + res.toString());
+					break;
+				}
+			}
+		} catch (Exception e) {
+			CinderLog.logErrorInfo("CT_GR:E:" + sFile, e);
+		}
+		return res;
 	}
 }

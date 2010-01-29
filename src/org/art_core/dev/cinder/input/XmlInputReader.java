@@ -8,7 +8,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.art_core.dev.cinder.CinderLog;
-import org.art_core.dev.cinder.CinderTools;
 import org.art_core.dev.cinder.model.IItem;
 import org.art_core.dev.cinder.model.PropertiesItem;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -133,7 +132,7 @@ public class XmlInputReader implements IInputHandler {
 									+ ":" + eSeverity);
 
 							xItem = new PropertiesItem(ePattern,
-									sTargetFileName, CinderTools
+									sTargetFileName, PropertiesItem
 											.chooseType(eSeverity), eLine
 											.intValue(), eColumn.intValue());
 							xItem.setMessage(eMessage);

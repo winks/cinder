@@ -125,6 +125,22 @@ public class PropertiesItem implements IItem {
 	public void setMessage(String msg) {
 		this.message = msg;
 	}
+	
+	public static ItemType chooseType(final String type) {
+		ItemType itemtype;
+
+		if ("warning".equals(type)) {
+			itemtype = ItemType.TASK_WARN;
+		} else if ("error".equals(type)) {
+			itemtype = ItemType.TASK_ERROR;
+		} else if ("info".equals(type)) {
+			itemtype = ItemType.TASK_INFO;
+		} else {
+			itemtype = PropertiesItem.DEFAULT_TYPE;
+		}
+
+		return itemtype;
+	}
 
 	public String toString() {
 		String sSep;
