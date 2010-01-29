@@ -71,7 +71,7 @@ public class MainController {
 		long periodUrl = 1000 * 60 * ipsPref.getInt(CinderPrefPage.P_INTEGER + "_xml_url_time");
 		boolean bCheckUrl = ipsPref.getBoolean(CinderPrefPage.P_BOOLEAN + "_xml_url_check");
 		String sCheckUrl = ipsPref.getString(CinderPrefPage.P_STRING + "_xml_url");
-		TimerTask tCheckUrl = new CheckUrl(this, sCheckUrl);
+		TimerTask tCheckUrl = new CheckFilesTask(this, sCheckUrl, MainController.FILE_REMOTE);
 		
 		if (bCheckUrl && periodUrl > 0) {
 			tU.schedule(tCheckUrl, delay, periodUrl);
@@ -82,7 +82,7 @@ public class MainController {
 		long periodFile = 1000 * 60 * ipsPref.getInt(CinderPrefPage.P_INTEGER + "_xml_file_time");
 		boolean bCheckFile = ipsPref.getBoolean(CinderPrefPage.P_BOOLEAN + "_xml_file_check");
 		String sCheckFile = ipsPref.getString(CinderPrefPage.P_STRING + "_xml_file");
-		TimerTask tCheckFile = new CheckFile(this, sCheckFile);
+		TimerTask tCheckFile = new CheckFilesTask(this, sCheckFile, MainController.FILE_LOCAL);
 		
 		if (bCheckFile && periodFile > 0) {
 			tF.schedule(tCheckFile, delay, periodFile);
