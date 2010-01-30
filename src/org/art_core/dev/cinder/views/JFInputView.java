@@ -11,6 +11,8 @@ import org.art_core.dev.cinder.model.ItemManager;
 import org.art_core.dev.cinder.model.IItem;
 import org.art_core.dev.cinder.model.ItemStatus;
 import org.art_core.dev.cinder.prefs.CinderPrefPage;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -45,11 +47,13 @@ import org.eclipse.swt.SWT;
 public class JFInputView extends ViewPart {
 
 	private final String[] colNames = { "", "Name", "Message", "Location", "Line", "Offset", "Status", "Changed" };
+	private final int[] colSizes = {20, 150, 200, 200, 50, 50, 100, 120 };
 	private ResourceBundle cRes = ResourceBundle.getBundle("org.art_core.dev.cinder.CinderResource");
 	private static final boolean TOGGLE_OFF = false;
 	private static final boolean TOGGLE_ON = true;
 
 	private TableViewer viewer;
+	private JFSorter sorter;
 	private MainController cControl;
 	private IPreferenceStore ipsPref = CinderPlugin.getDefault()
 			.getPreferenceStore();
@@ -89,58 +93,43 @@ public class JFInputView extends ViewPart {
 	private void createTableViewer(final Composite parent) {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.FULL_SELECTION);
-		createColumn(viewer);
+		createColumns(viewer);
 		
 		viewer.setContentProvider(new JFContentProvider());
 		viewer.setLabelProvider(new JFLabelProvider());
-		viewer.setSorter(new JFSorter());
+		sorter = new JFSorter();
+		viewer.setSorter(sorter);
 		viewer.setInput(ItemManager.getManager());
 	}
 
-	private void createColumn(TableViewer viewer) {
+	/**
+	 * Create columns in the TableViewer.
+	 * @param viewer
+	 */
+	private void createColumns(final TableViewer viewer) {
 		final Table table = viewer.getTable();
-		TableColumn tCol, nCol, mCol, locCol, lineCol, offCol, statCol, tsCol;
-
-		// icon column
-		tCol = new TableColumn(table, SWT.LEFT);
-		tCol.setText(colNames[0]);
-		tCol.setWidth(20);
-
-		// name column
-		nCol = new TableColumn(table, SWT.LEFT);
-		nCol.setText(colNames[1]);
-		nCol.setWidth(150);
 		
-		// message column
-		mCol = new TableColumn(table, SWT.LEFT);
-		mCol.setText(colNames[2]);
-		mCol.setWidth(200);
-
-		// location column
-		locCol = new TableColumn(table, SWT.LEFT);
-		locCol.setText(colNames[3]);
-		locCol.setWidth(200);
-
-		// line number column
-		lineCol = new TableColumn(table, SWT.LEFT);
-		lineCol.setText(colNames[4]);
-		lineCol.setWidth(50);
-
-		// offset column
-		offCol = new TableColumn(table, SWT.LEFT);
-		offCol.setText(colNames[5]);
-		offCol.setWidth(50);
-		
-		// timestamp column
-		statCol = new TableColumn(table, SWT.LEFT);
-		statCol.setText(colNames[6]);
-		statCol.setWidth(100);
-		
-		// status column
-		tsCol = new TableColumn(table, SWT.LEFT);
-		tsCol.setText(colNames[7]);
-		tsCol.setWidth(120);
-
+		for (int i = 0; i < colSizes.length; i++) {
+			final int index = i;
+			final TableColumn col = new TableColumn(table, SWT.LEFT);
+			col.setText(colNames[i]);
+			col.setWidth(colSizes[i]);
+			
+			col.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					sorter.setColumn(index);
+					int dir = table.getSortDirection();
+					if (table.getSortColumn() == col) {
+						dir = dir == SWT.UP ? SWT.DOWN : SWT.UP;
+					} else {
+						dir = SWT.DOWN;
+					}
+					table.setSortDirection(dir);
+					table.setSortColumn(col);
+					viewer.refresh();
+				}
+			});
+		}
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 	}
@@ -425,7 +414,7 @@ public class JFInputView extends ViewPart {
 		aClearSelected.setToolTipText(cRes.getString("TEXT_CLEAR_SEL"));
 		aClearSelected.setImageDescriptor((ImageDescriptor) cRes.getObject("IMAGE_CLEAR_SEL"));
 		
-		// set status to xxx
+		// set status to XXX
 		int iLen = ItemStatus.values().length;
 		aStatusActions = new Action[iLen];
 		for (final ItemStatus x: ItemStatus.values()) {

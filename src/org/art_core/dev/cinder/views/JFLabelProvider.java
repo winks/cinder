@@ -29,7 +29,6 @@ class JFLabelProvider extends LabelProvider implements ITableLabelProvider {
 		try {
 			item = (IItem) obj;
 		} catch (Exception e) {
-			// TODO: handle exception
 			CinderLog.logDebug("gCT:" + obj.getClass());
 		}
 		switch (index) {
