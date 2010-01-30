@@ -1,6 +1,5 @@
 package org.art_core.dev.cinder.model;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
 
@@ -13,7 +12,6 @@ public class PropertiesItem implements IItem {
 	private int line;
 	private int offset;
 	private int timestamp;
-	public IFile rFile;
 
 	private IResource resource;
 

@@ -182,18 +182,18 @@ public class MainController {
 		String sProjName = "";
 		for (int i = 0; i < projects.length; i++) {
 			sProjName = projects[i].getName();
-			CinderLog.logDebug("JFIV_D:DBG: " + sProjName);
+			CinderLog.logDebug("MC_HIDE:DBG: " + sProjName);
 			res = (IFile) root
 					.findMember(sProjName + "/" + pItem.getLocation());
 			if (res == null) {
-				CinderLog.logDebug("JFIV_D_notfound:NULL");
+				CinderLog.logDebug("MC_HIDE_notfound:NULL");
 				continue;
 			} else {
-				CinderLog.logDebug("JFIV_D____found:" + res.toString());
+				CinderLog.logDebug("MC_HIDE____found:" + res.toString());
 				break;
 			}
 		}
-		CinderLog.logDebug("JFIV_D_start2");
+		
 
 		try {
 			//res.deleteMarkers(null, true, 2);
@@ -225,7 +225,8 @@ public class MainController {
 	/**
 	 * Removes selected items from the manager.
 	 */
-	public void clearSelected() {
+	public void clearSelected(IItem item) {
+		manager.remove(item);
 		cView.getViewer().refresh();
 	}
 	

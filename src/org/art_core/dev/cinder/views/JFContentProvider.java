@@ -35,11 +35,11 @@ public class JFContentProvider implements IStructuredContentProvider,
 			final Object newInput) {
 		this.viewer = (TableViewer) vViewer;
 		if (manager != null) {
-			manager.removeItemManagerListener(this);
+			manager.removeListener(this);
 		}
 		manager = (ItemManager) newInput;
 		if (manager != null) {
-			manager.addItemManagerListener(this);
+			manager.addListener(this);
 		}
 		this.viewer.refresh();
 	}

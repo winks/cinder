@@ -44,6 +44,10 @@ public final class ItemManager {
 	public void add(final IItem iiNewItem) {
 		items.add(iiNewItem);
 	}
+	
+	public void remove(final IItem iiItem) {
+		items.remove(iiItem);
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	//
@@ -51,13 +55,13 @@ public final class ItemManager {
 	//
 	// /////////////////////////////////////////////////////////////////////////
 
-	public void addItemManagerListener(final ItemManagerListener listener) {
+	public void addListener(final ItemManagerListener listener) {
 		if (!listeners.contains(listener)) {
 			listeners.add(listener);
 		}
 	}
 
-	public void removeItemManagerListener(final ItemManagerListener listener) {
+	public void removeListener(final ItemManagerListener listener) {
 		listeners.remove(listener);
 	}
 

@@ -170,15 +170,13 @@ public class JFInputView extends ViewPart {
 	 * @param bEnable
 	 */
 	private void executeMarkerToggleSelected(final boolean bEnable) {
-		for (IItem pItem: this.getSelectedItems()) {
-			if (pItem == null) {
-				CinderLog.logErrorInfo("executeMarkerToggleSingle", new Exception());
-			} else {
-				if (bEnable == TOGGLE_ON) {
-					cControl.showMarkersSelected(pItem);
-				} else {
-					cControl.hideMarkersSelected(pItem);
-				}
+		if (bEnable == TOGGLE_ON) {
+			for (IItem pItem: this.getSelectedItems()) {
+				cControl.showMarkersSelected(pItem);
+			}
+		} else {
+			for (IItem pItem: this.getSelectedItems()) {
+				cControl.hideMarkersSelected(pItem);
 			}
 		}
 	}
@@ -201,16 +199,14 @@ public class JFInputView extends ViewPart {
 	 * Executes clearing selected entries.
 	 */
 	private void executeClearSelected() {
-		cControl.clearSelected();
+		for (IItem pItem: this.getSelectedItems()) {
+			cControl.clearSelected(pItem);
+		}
 	}
 	
 	private void executeSetStatus(ItemStatus status) {
 		for (IItem pItem: this.getSelectedItems()) {
-			if (pItem == null) {
-				CinderLog.logErrorInfo("executeSetStatus", new Exception());
-			} else {
-				cControl.setStatus(pItem, status);
-			}
+			cControl.setStatus(pItem, status);
 		}
 	}
 
@@ -222,7 +218,7 @@ public class JFInputView extends ViewPart {
 		String sPrefPath = ipsPref.getString(sPrefKey);
 		CinderLog.logDebug("JFIV_eOF:" + sPrefPath);
 		final String sFile = getOpenFile(sPrefPath);
-		if (sFile.length() > 0) {
+		if (sFile != null && sFile.length() > 0) {
 			try {
 				cControl.insertFromFile(sFile, MainController.FILE_LOCAL);
 				ipsPref.setValue(sPrefKey, sFile);
@@ -241,7 +237,7 @@ public class JFInputView extends ViewPart {
 		String sPrefPath = ipsPref.getString(sPrefKey);
 		CinderLog.logDebug("JFIV_eOU:" + sPrefPath);
 		final String sFile = getOpenUrl(sPrefPath);
-		if (sFile.length() > 0) {
+		if (sFile != null && sFile.length() > 0) {
 			try {
 				cControl.insertFromFile(sFile, MainController.FILE_REMOTE);
 				ipsPref.setValue(sPrefKey, sFile);
