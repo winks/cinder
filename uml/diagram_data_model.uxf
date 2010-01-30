@@ -30,12 +30,13 @@ model::ItemManager
 items: HashSet&lt;IItem&gt;
 listeners: List&lt;ItemManagerListener&gt;
 --
-getItems(): IItem[]
-reset()
-add(IItem)
-remove(IItem)
-addListener(ItemManagerListener)
-removeListener(ItemManagerListener)</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>430</x><y>50</y><w>220</w><h>320</h></coordinates><panel_attributes>model::PropertiesItem
++ getManager(): Singleton
++ getItems(): IItem[]
++ reset()
++ add(IItem)
++ remove(IItem)
++ addListener(ItemManagerListener)
++ removeListener(ItemManagerListener)</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>430</x><y>50</y><w>220</w><h>320</h></coordinates><panel_attributes>model::PropertiesItem
 --
 - type: ItemType
 - status: ItemStatus 

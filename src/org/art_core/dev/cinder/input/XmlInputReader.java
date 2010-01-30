@@ -106,6 +106,7 @@ public class XmlInputReader implements IInputHandler {
 			Element fileElement, error;
 
 			fileNodes = doc.getChildNodes().item(0).getChildNodes();
+			
 			// handle all <file name=""> sections
 			for (int fIndex = 0; fIndex < fileNodes.getLength(); fIndex++) {
 				// ignore whitespace
@@ -115,6 +116,7 @@ public class XmlInputReader implements IInputHandler {
 					sTargetFileName = fileElement.getAttribute("name");
 					CinderLog.logDebug("XIR::read:" + sTargetFileName);
 					errorNodes = fileElement.getChildNodes();
+					
 					// handle all <error line="" column="" severity=""
 					// message="" pattern=""> sections
 					for (int eIndex = 0; eIndex < errorNodes.getLength(); eIndex++) {
@@ -128,13 +130,13 @@ public class XmlInputReader implements IInputHandler {
 							eSeverity = error.getAttribute("severity");
 							eMessage = error.getAttribute("message");
 							ePattern = error.getAttribute("pattern");
-							CinderLog.logDebug("XIR:" + eLine + ":" + eColumn
-									+ ":" + eSeverity);
+							CinderLog.logDebug("XIR:" + eLine + ":" + eColumn + ":" + eSeverity);
 
 							xItem = new PropertiesItem(ePattern,
-									sTargetFileName, PropertiesItem
-											.chooseType(eSeverity), eLine
-											.intValue(), eColumn.intValue());
+										sTargetFileName, 
+										PropertiesItem.chooseType(eSeverity), 
+										eLine.intValue(), 
+										eColumn.intValue());
 							xItem.setMessage(eMessage);
 							items.add(xItem);
 						}
