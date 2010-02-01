@@ -208,8 +208,7 @@ public class MainController {
 	 * @param status
 	 */
 	public void setStatus(IItem item, ItemStatus status) {
-		PropertiesItem pItem = (PropertiesItem) item;
-		pItem.setStatus(status);
+		item.setStatus(status);
 		CinderLog.logDebug("setting status to " + status.name());
 		cView.getViewer().refresh();
 	}

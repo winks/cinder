@@ -20,6 +20,8 @@ public interface IItem extends IAdaptable {
 	int getTimestamp();
 	
 	ItemStatus getStatus();
+	
+	void setStatus(ItemStatus status);
 
 	ItemType getType();
 
