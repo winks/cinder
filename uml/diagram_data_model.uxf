@@ -11,24 +11,25 @@
 // Press Ctrl-c to copy an element, and to store the whole UML diagram to the system clipboard.
 // Select "Custom elements &gt; New..." to create new element types.
 //
-// This text will be stored with each diagram;  use it for notes.</help_text><zoom_level>10</zoom_level><element><type>com.umlet.element.base.Class</type><coordinates><x>720</x><y>250</y><w>160</w><h>40</h></coordinates><panel_attributes>&lt;&lt;abstract&gt;&gt;
+// This text will be stored with each diagram;  use it for notes.</help_text><zoom_level>10</zoom_level><element><type>com.umlet.element.base.Class</type><coordinates><x>720</x><y>50</y><w>160</w><h>40</h></coordinates><panel_attributes>&lt;&lt;abstract&gt;&gt;
 model::ItemType
-</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>720</x><y>50</y><w>160</w><h>190</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>720</x><y>180</y><w>160</w><h>200</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
 model::IItem
 --
 --
-getName(): String
+getLine(): int
 getLocation():String
 getMessage(): String
-getLine(): int
+getName(): String
 getOffset(): int
-getTimestamp(): int
 getStatus(): ItemStatus
-getType(): ItemType</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>100</x><y>50</y><w>260</w><h>210</h></coordinates><panel_attributes>&lt;&lt;singleton&gt;&gt;
+getTimestamp(): int
+getType(): ItemType
+setStatus(ItemStatus)</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>90</x><y>50</y><w>270</w><h>210</h></coordinates><panel_attributes>&lt;&lt;singleton&gt;&gt;
 model::ItemManager
 --
-items: HashSet&lt;IItem&gt;
-listeners: List&lt;ItemManagerListener&gt;
+- items: HashSet&lt;IItem&gt;
+- listeners: List&lt;ItemManagerListener&gt;
 --
 + getManager(): Singleton
 + getItems(): IItem[]
@@ -36,32 +37,30 @@ listeners: List&lt;ItemManagerListener&gt;
 + add(IItem)
 + remove(IItem)
 + addListener(ItemManagerListener)
-+ removeListener(ItemManagerListener)</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>430</x><y>50</y><w>220</w><h>320</h></coordinates><panel_attributes>model::PropertiesItem
++ removeListener(ItemManagerListener)</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>430</x><y>50</y><w>220</w><h>330</h></coordinates><panel_attributes>model::PropertiesItem
 --
-- type: ItemType
-- status: ItemStatus 
-- name: String
+- line: int
 - location: String
 - message: String
-- line: int
+- name: String
 - offset: int
+- status: ItemStatus 
 - timestamp: int
+- type: ItemType
 --
 - getCurrentTimestamp(): int
++ chooseType(String): ItemType
++ setMessage(String)
++ setStatus(ItemStatus)
 + setTimestamp()
 + setTimestamp(int)
-+ setStatus(ItemStatus)
-+ setMessage(String)
-+ chooseType(String): ItemType
-</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>620</x><y>50</y><w>120</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>100;30;30;30</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>330</x><y>80</y><w>120</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
-m1=1
-m2=1..n</panel_attributes><additional_attributes>30;30;100;30</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>620</x><y>240</y><w>120</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
-m1=1
-m2=1</panel_attributes><additional_attributes>30;30;100;30</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>720</x><y>300</y><w>160</w><h>70</h></coordinates><panel_attributes>&lt;&lt;enum&gt;&gt;
+
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>620</x><y>160</y><w>120</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>100;30;30;30</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>330</x><y>30</y><w>120</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
+
+m2=1..n</panel_attributes><additional_attributes>30;30;100;30</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>620</x><y>30</y><w>120</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>30;30;100;30</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>720</x><y>100</y><w>160</w><h>70</h></coordinates><panel_attributes>&lt;&lt;enum&gt;&gt;
 model::ItemStatus
 --
 - sName: String
 --
-</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>620</x><y>300</y><w>120</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
-m1=1
-m2=1</panel_attributes><additional_attributes>30;30;100;30</additional_attributes></element></umlet_diagram>
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>620</x><y>80</y><w>120</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
+</panel_attributes><additional_attributes>30;30;100;30</additional_attributes></element></umlet_diagram>
