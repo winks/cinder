@@ -105,7 +105,7 @@ public class XmlInputReader implements IInputHandler {
 			String eSeverity, eMessage, ePattern, sTargetFileName;
 			Element fileElement, error;
 
-			fileNodes = doc.getChildNodes().item(0).getChildNodes();
+			fileNodes = doc.getElementsByTagName("padawan").item(0).getChildNodes();
 			
 			// handle all <file name=""> sections
 			for (int fIndex = 0; fIndex < fileNodes.getLength(); fIndex++) {

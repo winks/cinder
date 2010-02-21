@@ -1,4 +1,5 @@
-<files>
+<cruisecontrol>
+<padawan version="0.4-beta1">
 <file name="src/HelloWorldASD.java">
   <error line="1" column="0" severity="warning" message="unneeded import" pattern="ImportPattern" />
   <error line="2" column="0" severity="warning" message="unneeded import" pattern="ImportPattern" />
@@ -14,4 +15,5 @@
   <error line="9" column="0" severity="warning" message="unneeded loop" pattern="PHP_LoopPattern" />
   <error line="11" column="0" severity="warning" message="duplicate code" pattern="PHP_DuplicateCodePattern" />
 </file>
-</files>
+</padawan>
+</cruisecontrol>
