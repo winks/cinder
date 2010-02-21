@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.art_core.dev.cinder_0.1.3.jar" id="org.art_core.dev.cinder" version="0.1.3">
+      <category name="Cinder"/>
+   </feature>
+   <category-def name="Cinder" label="Cinder"/>
+</site>
