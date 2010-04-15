@@ -9,6 +9,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * XML Parser for CruiseControl CPD data
+ * @author Florian Anderiasch
+ *
+ */
 public class CruiseControlCpdParser {
 	private NodeList fileNodes;
 	private final Collection<IItem> items;

@@ -1,5 +1,10 @@
 package org.art_core.dev.cinder.model;
 
+/**
+ * ItemStatus for CINDER IItems
+ * @author Florian Anderiasch
+ *
+ */
 public enum ItemStatus {
 	NEW("NEW"),
 	DONE("DONE"),

@@ -1,5 +1,10 @@
 package org.art_core.dev.cinder.model;
 
+/**
+ * ItemSource for CINDER IItems
+ * @author Florian Anderiasch
+ *
+ */
 public enum ItemSource {
 	PADAWAN("PADAWAN"),
 	PHPMD("PHPMD"),

@@ -15,6 +15,11 @@ import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+/**
+ * XML Reader for CruiseControl / phpUnderControl XML files
+ * @author Florian Anderiasch
+ *
+ */
 public class XmlInputReader implements IInputHandler {
 	private String sFilename = null;
 	private final Collection<IItem> items = new ArrayList<IItem>();
