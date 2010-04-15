@@ -406,25 +406,45 @@ public class MainController {
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IProject[] projects = root.getProjects();
 		String sProjName = "";
-
+		String sFileTmp = "";
+		String sDelim = "/";
+		String[] sComponents = sFile.split(sDelim);
 		try {
-			CinderLog.logDebug("CT_GR_start");
+			CinderLog.logDebug("CT_GR_start:" + sFile);
 			
 			for (int i = 0; i < projects.length; i++) {
-				sProjName = projects[i].getName();
-				CinderLog.logDebug("CT_GR:DBG: " + sProjName);
-				res = (IFile) root.findMember(sProjName + "/" + sFile);
-				if (res == null) {
-					CinderLog.logDebug("CT_GR_notfound:NULL");
-					continue;
-				} else {
-					CinderLog.logDebug("CT_GR___found:" + res.toString());
-					break;
+				sFileTmp = sFile;
+				sProjName = projects[i].getName();				
+				for(int j = 0; j < sComponents.length; j++) {
+					res = (IFile) root.findMember(sProjName + sDelim + sFileTmp);
+					CinderLog.logDebug( "CT_GR_res:" + sProjName + sDelim + sFileTmp);
+					
+					if (res == null) {
+						CinderLog.logDebug("CT_GR_notfound:NULL:" + sFileTmp);
+						sFileTmp = this.strip(sFileTmp, sDelim);
+						continue;
+					} else {
+						CinderLog.logDebug("CT_GR___found:" + res.toString());
+						break;
+					}
+					
 				}
 			}
 		} catch (Exception e) {
 			CinderLog.logErrorInfo("CT_GR:E:" + sFile, e);
 		}
 		return res;
+	}
+	
+	/**
+	 * Gradually shorten a file system path
+	 * @param sIn
+	 * @param sDelim
+	 * @return
+	 */
+	private String strip(String sIn, String sDelim) {
+		int iPos = sIn.indexOf(sDelim, 0);
+		String sOut = sIn.substring(iPos+1);
+		return sOut;
 	}
 }
