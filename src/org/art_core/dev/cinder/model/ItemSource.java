@@ -6,10 +6,12 @@ package org.art_core.dev.cinder.model;
  *
  */
 public enum ItemSource {
+	UNKNOWN("UNKNOWN"),
+	CHECKSTYLE("CHECKSTYLE"),
+	CPD("CPD"),
 	PADAWAN("PADAWAN"),
 	PHPMD("PHPMD"),
-	CHECKSTYLE("CHECKSTYLE"),
-	CPD("CPD");
+	;
 	
 	private final String sName;
 	

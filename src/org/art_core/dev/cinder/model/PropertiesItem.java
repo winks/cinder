@@ -1,24 +1,8 @@
 package org.art_core.dev.cinder.model;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Platform;
+import java.util.HashMap;
 
-public class PropertiesItem implements IItem {
-	private ItemType type;
-	private ItemStatus status;
-	private String name;
-	private String location;
-	private String message;
-	private int line;
-	private int offset;
-	private int timestamp;
-
-	private IResource resource;
-
-	public static final ItemType DEFAULT_TYPE = ItemType.JAVA_PACKAGE;
-	public static final int DEFAULT_LINE = 0;
-	public static final int DEFAULT_OFFSET = 0;
-
+public class PropertiesItem extends AbstractCinderItem implements IItem {
 	/*
 	 * These are the Constructors
 	 */
@@ -52,134 +36,26 @@ public class PropertiesItem implements IItem {
 	 * @param line
 	 * @param offset
 	 */
-	public PropertiesItem(String name, String loc, ItemType type, int line,
-			int offset) {
+	public PropertiesItem(String name, String loc, ItemType type, int line, int offset) {
+		super();
 		this.name = name;
 		this.location = loc;
 		this.type = type;
 		this.line = line;
 		this.offset = offset;
+		this.details = new HashMap<String, String>();
 		this.setTimestamp();
 		this.setStatus(ItemStatus.NEW);
+		this.setSource(ItemSource.UNKNOWN);
 	}
 	
-	private int getCurrentTimestamp() {
-		int iNow = (int) (System.currentTimeMillis()/1000L);
-		return iNow;
+	public String getDetail(String sKey) {
+		return this.details.get(sKey);
 	}
 	
-	public void setTimestamp() {
-		this.timestamp = this.getCurrentTimestamp();
-	}
 	
-	public void setTimestamp(int iTime) {
-		this.timestamp = iTime;
-	}
-	
-	public void setStatus(ItemStatus st) {
-		this.status = st;
-	}
-
-	@Override
-	public String getName() {
-		return this.name;
-	}
-
-	@Override
-	public String getLocation() {
-		return this.location;
-	}
-
-	@Override
-	public ItemType getType() {
-		return this.type;
-	}
-
-	@Override
-	public int getLine() {
-		return this.line;
-	}
-
-	@Override
-	public int getOffset() {
-		return this.offset;
-	}
-	
-	@Override
-	public int getTimestamp() {
-		return this.timestamp;
-	}
-	
-	@Override
-	public ItemStatus getStatus() {
-		return this.status;
-	}
-
-	@Override
-	public String getMessage() {
-		return this.message;
-	}
-
-	public void setMessage(String msg) {
-		this.message = msg;
-	}
-	
-	public static ItemType chooseType(final String type) {
-		ItemType itemtype;
-
-		if ("warning".equals(type)) {
-			itemtype = ItemType.TASK_WARN;
-		} else if ("error".equals(type)) {
-			itemtype = ItemType.TASK_ERROR;
-		} else if ("info".equals(type)) {
-			itemtype = ItemType.TASK_INFO;
-		} else {
-			itemtype = PropertiesItem.DEFAULT_TYPE;
-		}
-
-		return itemtype;
-	}
-
-	public String toString() {
-		String sSep;
-		sSep = ":";
-		final StringBuilder str = new StringBuilder("");
-		str.append(this.name);
-		str.append(sSep);
-		str.append(this.location);
-		str.append(sSep);
-		str.append(this.line);
-		str.append(sSep);
-		str.append(this.offset);
-		str.append(sSep);
-		str.append(this.type.toString());
-		return str.toString();
-	}
-
-	// For now, this is how we suppress a warning that we cannot fix
-	// See Bugzilla #163093 and Bugzilla #149805 comment #14
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class adapter) {
-		return getAdapterDelegate(adapter);
-	}
-
-	private Object getAdapterDelegate(Class<?> adapter) {
-		if (adapter.isInstance(resource)) {
-			return resource;
-		}
-		return Platform.getAdapterManager().getAdapter(this, adapter);
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + line;
-		result = prime * result
-				+ ((location == null) ? 0 : location.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + offset;
-		return result;
+	public void setDetail(String sKey, String sVal) {
+		this.details.put(sKey, sVal);
 	}
 
 	@Override

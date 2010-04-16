@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.model.IItem;
+import org.art_core.dev.cinder.model.ItemSource;
 import org.art_core.dev.cinder.model.PropertiesItem;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -83,6 +84,11 @@ public class CruiseControlPMDParser {
 									eBeginLine, 
 									eEndLine);
 						pItem.setMessage(eMessage);
+						pItem.setSource(ItemSource.PHPMD);
+						pItem.setDetail("ruleset", eRuleSet);
+						pItem.setDetail("package", ePackage);
+						pItem.setDetail("class", eClass);
+						pItem.setDetail("reference", eExternalInfoUrl);
 						items.add(pItem);
 					}
 				}

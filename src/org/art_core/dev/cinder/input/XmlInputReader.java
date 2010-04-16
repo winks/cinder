@@ -11,7 +11,6 @@ import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.model.IItem;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -102,28 +101,45 @@ public class XmlInputReader implements IInputHandler {
 	 */
 	protected void parseDocument(final Document doc) {
 		try {
-			NodeList fileNodes = doc.getElementsByTagName("padawan").item(0).getChildNodes();
+			NodeList fileNodes = this.getChildNodes(doc, "padawan");
+			if (fileNodes != null) {
+				CruiseControlPadawanParser padparser = new CruiseControlPadawanParser(fileNodes, items);
+				padparser.parse();
+			}
 			
-			CruiseControlPadawanParser padparser = new CruiseControlPadawanParser(fileNodes, items);
-			padparser.parse();
+			fileNodes = this.getChildNodes(doc, "pmd");
+			if (fileNodes != null) {
+				CruiseControlPMDParser pmdparser = new CruiseControlPMDParser(fileNodes, items);
+				pmdparser.parse();
+			}
 			
-			fileNodes = doc.getElementsByTagName("pmd").item(0).getChildNodes();
-			CruiseControlPMDParser pmdparser = new CruiseControlPMDParser(fileNodes, items);
-			pmdparser.parse();
+			fileNodes = this.getChildNodes(doc, "pmd-cpd");
+			if (fileNodes != null) {
+				CruiseControlCpdParser cpdparser = new CruiseControlCpdParser(fileNodes, items);
+				cpdparser.parse();
+			}
 			
-			fileNodes = doc.getElementsByTagName("pmd-cpd").item(0).getChildNodes();
-			CruiseControlCpdParser cpdparser = new CruiseControlCpdParser(fileNodes, items);
-			cpdparser.parse();
-			
-			fileNodes = doc.getElementsByTagName("checkstyle").item(0).getChildNodes();
-			CruiseControlCheckstyleParser csparser = new CruiseControlCheckstyleParser(fileNodes, items);
-			csparser.parse();
+			fileNodes = this.getChildNodes(doc, "checkstyle");
+			if (fileNodes != null) {
+				CruiseControlCheckstyleParser csparser = new CruiseControlCheckstyleParser(fileNodes, items);
+				csparser.parse();
+			}
 			
 		} catch (Exception e) {
 			CinderLog.logError(e);
 		}
 	}
 
+	private NodeList getChildNodes(final Document doc, String sName) {
+		NodeList fileNodes = null;
+		try {
+			fileNodes = doc.getElementsByTagName(sName).item(0).getChildNodes();
+		} catch (Exception e) {
+			CinderLog.logErrorInfo("no " + sName + " in XML", e);
+		}
+		return fileNodes;
+	}
+	
 	@Override
 	public boolean isReadable() {
 		return false;

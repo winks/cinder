@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.model.IItem;
+import org.art_core.dev.cinder.model.ItemSource;
 import org.art_core.dev.cinder.model.PropertiesItem;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -60,6 +61,7 @@ public class CruiseControlCheckstyleParser {
 									eLine, 
 									eColumn);
 						pItem.setMessage(eMessage);
+						pItem.setSource(ItemSource.CHECKSTYLE);
 						items.add(pItem);
 					}
 				}

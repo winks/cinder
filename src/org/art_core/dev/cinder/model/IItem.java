@@ -1,5 +1,6 @@
 package org.art_core.dev.cinder.model;
 
+import java.util.HashMap;
 import org.eclipse.core.runtime.IAdaptable;
 
 /*
@@ -21,9 +22,13 @@ public interface IItem extends IAdaptable {
 	
 	ItemStatus getStatus();
 	
-	void setStatus(ItemStatus status);
-
+	ItemSource getSource();
+	
+	HashMap<String, String> getDetails();
+	
 	ItemType getType();
+	
+	void setStatus(ItemStatus status);
 
 	IItem[] NONE = new IItem[] {};
 }
