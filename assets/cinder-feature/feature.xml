@@ -2,7 +2,7 @@
 <feature
       id="org.art_core.dev.cinder"
       label="Cinder Feature"
-      version="0.1.3">
+      version="0.1.4">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -24,7 +24,7 @@
          id="org.art_core.dev.cinder"
          download-size="0"
          install-size="0"
-         version="0.1.3"
+         version="0.1.4"
          unpack="false"/>
 
 </feature>

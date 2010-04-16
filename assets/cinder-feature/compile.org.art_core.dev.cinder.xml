@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Compile org.art_core.dev.cinder" default="main">
 	<target name="main">
-		<ant antfile="build.xml" dir="../Cinder" target="build.jars"/>
+		<ant antfile="build.xml" dir="../../" target="build.jars"/>
 	</target>
 </project>
