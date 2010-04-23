@@ -19,8 +19,10 @@ import org.art_core.dev.cinder.views.JFInputView;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextSelection;
@@ -255,6 +257,8 @@ public class MainController {
 			
 			final TextSelection sel = new TextSelection(iOffset[0], iOffset[1]);
 			editor.getSelectionProvider().setSelection(sel);
+		} catch (IllegalArgumentException e) {
+			//@TODO show status line message
 		} catch (PartInitException e1) {
 			CinderLog.logError(e1);
 		} catch (Exception e) {
@@ -408,24 +412,30 @@ public class MainController {
 		String sProjName = "";
 		String sFileTmp = "";
 		String sDelim = "/";
+		Path path;
 		String[] sComponents = sFile.split(sDelim);
 		try {
-			CinderLog.logDebug("CT_GR_start:" + sFile);
+			CinderLog.logDebug("CT_GR_start:[" + sFile + "]");
 			
 			for (int i = 0; i < projects.length; i++) {
+				sProjName = projects[i].getName();
+				if (!projects[i].isAccessible()) {
+					CinderLog.logDebug("CT_GR_not_accessible:{" + sProjName + "}");
+					continue;
+				}
 				sFileTmp = sFile;
-				sProjName = projects[i].getName();				
 				for(int j = 0; j < sComponents.length; j++) {
-					res = (IFile) root.findMember(sProjName + sDelim + sFileTmp);
-					CinderLog.logDebug( "CT_GR_res:" + sProjName + sDelim + sFileTmp);
+					path = new Path(sFileTmp);
+					res = (IFile) projects[i].findMember(path);
+					CinderLog.logDebug( "CT_GR:{" + sProjName + "}__[" + sFileTmp + "]");
 					
 					if (res == null) {
-						CinderLog.logDebug("CT_GR_notfound:NULL:" + sFileTmp);
-						sFileTmp = this.strip(sFileTmp, sDelim);
+						CinderLog.logDebug("CT_GR_notfound:[" + path.toString() + "]");
+						sFileTmp = this.stripPath(sFileTmp, sDelim);
 						continue;
 					} else {
-						CinderLog.logDebug("CT_GR___found:" + res.toString());
-						break;
+						CinderLog.logDebug("CT_GR___found:[" + res.toString() + "]");
+						return res;
 					}
 					
 				}
@@ -442,7 +452,7 @@ public class MainController {
 	 * @param sDelim
 	 * @return
 	 */
-	private String strip(String sIn, String sDelim) {
+	private String stripPath(String sIn, String sDelim) {
 		int iPos = sIn.indexOf(sDelim, 0);
 		String sOut = sIn.substring(iPos+1);
 		return sOut;
