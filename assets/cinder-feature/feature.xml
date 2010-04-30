@@ -2,29 +2,29 @@
 <feature
       id="org.art_core.dev.cinder"
       label="Cinder Feature"
-      version="0.1.4">
+      version="0.1.5">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="http://dev.art-core.org/wiki/cinder">
+      CINDER - Integrating CruiseControl Data into the Eclipse IDE
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright url="http://dev.art-core.org/wiki/cinder:copyright">
+      (c) 2009-2010, Florian Anderiasch
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="http://dev.art-core.org/wiki/cinder:license">
+      BSD License, http://www.opensource.org/licenses/bsd-license.php
    </license>
 
    <url>
-      <update label="dev.art-core.org Update Site" url="http://dev.art-core.org/update"/>
+      <update label="Cinder Update Site" url="http://dev.art-core.org/update"/>
    </url>
 
    <plugin
          id="org.art_core.dev.cinder"
          download-size="0"
          install-size="0"
-         version="0.1.4"
+         version="0.1.5"
          unpack="false"/>
 
 </feature>

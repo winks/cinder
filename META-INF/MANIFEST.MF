@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Cinder Plug-in
 Bundle-SymbolicName: org.art_core.dev.cinder;singleton:=true
-Bundle-Version: 0.1.4
+Bundle-Version: 0.1.5
 Bundle-Activator: org.art_core.dev.cinder.CinderPlugin
 Bundle-Vendor: art-core
 Require-Bundle: org.eclipse.ui,

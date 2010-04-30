@@ -19,9 +19,9 @@ import org.art_core.dev.cinder.views.JFInputView;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
@@ -93,52 +93,8 @@ public class MainController {
 	 * Shows all markers for findings.
 	 */
 	public void showMarkersAll() {
-		String sMyLoc;
-		IFile res;
-		IItem pItem;
-		IMarker marker;
-		
-		for (Object oItem : manager.getItems()) {
-			pItem = (IItem) oItem;
-			sMyLoc = pItem.getLocation();
-			res = getResource(sMyLoc);
-			ItemType type = pItem.getType();
-
-			try {
-				switch (type.getPostion()) {
-				case 13:
-					marker = res.createMarker(IMarker.PROBLEM);
-					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-					break;
-				case 12:
-					marker = res.createMarker(IMarker.PROBLEM);
-					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-					break;
-				case 11:
-					marker = res.createMarker(IMarker.PROBLEM);
-					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-					break;
-				default:
-					marker = res.createMarker(IMarker.TEXT);
-					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-					break;
-				}
-				
-				marker.setAttribute(IMarker.MESSAGE, pItem.getName() + "("
-						+ pItem.getMessage() + "): " + pItem.getLine());
-				// marker.setAttribute(IMarker.CHAR_START, 50);
-				// marker.setAttribute(IMarker.CHAR_END, 70);
-				marker.setAttribute(IMarker.LINE_NUMBER, pItem.getLine());
-				
-				marker.setAttribute("key", pItem.getName());
-				marker.setAttribute("violation", pItem.getMessage());
-				
-				CinderLog.logDebug("JFIV:MARKER:" + marker.getType());
-				CinderLog.logDebug("JFIV:MARKER:"
-						+ marker.getAttribute(IMarker.LINE_NUMBER, 666));
-			} catch (Exception e) {
-				CinderLog.logErrorInfo("showMarkersAll", e);
-			}
+		for (IItem oItem : manager.getItems()) {
+			showMarkersSelected(oItem);
 		}
 	}
 
@@ -146,20 +102,8 @@ public class MainController {
 	 * Hides all markers for findings.
 	 */
 	public void hideMarkersAll() {
-		String sMyLoc;
-		IFile res;
-		IItem pItem;
-
-		for (Object oItem : manager.getItems()) {
-			pItem = (IItem) oItem;
-			sMyLoc = pItem.getLocation();
-			res = getResource(sMyLoc);
-
-			try {
-				res.deleteMarkers(null, true, 2);
-			} catch (Exception e1) {
-				CinderLog.logErrorInfo("hideMarkersAll", e1);
-			}
+		for (IItem oItem : manager.getItems()) {
+			hideMarkersSelected(oItem);
 		}
 	}
 
@@ -168,7 +112,50 @@ public class MainController {
 	 * @param pItem
 	 */
 	public void showMarkersSelected(final IItem pItem) {
-		//TODO
+		String sMyLoc;
+		IFile res;
+		IMarker marker;
+		
+		
+		sMyLoc = pItem.getLocation();
+		res = getResource(sMyLoc);
+		ItemType type = pItem.getType();
+
+		try {
+			switch (type.getPostion()) {
+			case 13:
+				marker = res.createMarker(IMarker.PROBLEM);
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+				break;
+			case 12:
+				marker = res.createMarker(IMarker.PROBLEM);
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+				break;
+			case 11:
+				marker = res.createMarker(IMarker.PROBLEM);
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+				break;
+			default:
+				marker = res.createMarker(IMarker.TEXT);
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+				break;
+			}
+			
+			marker.setAttribute(IMarker.MESSAGE, pItem.getName() + "("
+					+ pItem.getMessage() + "): " + pItem.getLine());
+			// marker.setAttribute(IMarker.CHAR_START, 50);
+			// marker.setAttribute(IMarker.CHAR_END, 70);
+			marker.setAttribute(IMarker.LINE_NUMBER, pItem.getLine());
+			
+			marker.setAttribute("key", pItem.getName());
+			marker.setAttribute("violation", pItem.getMessage());
+			
+			CinderLog.logDebug("JFIV:MARKER:" + marker.getType());
+			CinderLog.logDebug("JFIV:MARKER:"
+					+ marker.getAttribute(IMarker.LINE_NUMBER, 666));
+		} catch (Exception e) {
+			CinderLog.logErrorInfo("showMarkersAll", e);
+		}
 	}
 	
 	/**
@@ -178,28 +165,11 @@ public class MainController {
 	 */
 	public void hideMarkersSelected(final IItem pItem) {
 		// find the correct editor window, based on the name
-		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		final IProject[] projects = root.getProjects();
-		IFile res = null;
-		String sProjName = "";
-		for (int i = 0; i < projects.length; i++) {
-			sProjName = projects[i].getName();
-			CinderLog.logDebug("MC_HIDE:DBG: " + sProjName);
-			res = (IFile) root
-					.findMember(sProjName + "/" + pItem.getLocation());
-			if (res == null) {
-				CinderLog.logDebug("MC_HIDE_notfound:NULL");
-				continue;
-			} else {
-				CinderLog.logDebug("MC_HIDE____found:" + res.toString());
-				break;
-			}
-		}
-		
+		IFile res = getResource(pItem.getLocation());
 
 		try {
-			//res.deleteMarkers(null, true, 2);
-		} catch (Exception e) {
+			res.deleteMarkers(null, true, 2);
+		} catch (CoreException e) {
 			CinderLog.logError(e);
 		}
 	}
@@ -405,6 +375,11 @@ public class MainController {
 		}
 	}
 	
+	/**
+	 * Get an Eclipse Resource in the workspace from a filename
+	 * @param sFile the filename representing the resource
+	 * @return the eclipse resource
+	 */
 	public IFile getResource(final String sFile) {
 		IFile res = null;
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
