@@ -2,3 +2,6 @@
 bin/
 #ignore assets-workspace
 assets/.metadata/
+assets/cinder-web/features/
+assets/cinder-web/plugins
+docs/javadoc
