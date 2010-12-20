@@ -2,29 +2,117 @@
 <feature
       id="org.art_core.dev.cinder"
       label="Cinder Feature"
-      version="0.1.5">
+      version="0.1.6">
 
-   <description url="http://dev.art-core.org/wiki/cinder">
-      CINDER - Integrating CruiseControl Data into the Eclipse IDE
+   <description url="http://opensource.mayflower.de/cinder">
+      CINDER - Continous INtegration Data in Eclipse Represented
+==========================================================
+
+Cinder is a plug-in that lets you see the reports and errors from your 
+Continuous Integration system (CruiseControl, Hudson, Bamboo) directly 
+inside your eclipse-based IDE (Eclipse, Zend Studio, Aptana, etc.).
+
+Installation
+============
+
+Short Version:
+~~~~~~~~~~~~~~
+- Install from
+    http://opensource.mayflower.de/cinder
+- Show the view:
+    Window -&gt; Show View -&gt; Other
+
+Long Version:
+~~~~~~~~~~~~~
+The plugin can be installed by first adding the according
+Eclipse Update Site to Eclipse by following these steps:
+
+- Help -&gt; Install New Software... -&gt; Work with: http://opensource.mayflower.de/cinder -&gt; Add...
+
+And then selecting Cinder - CinderFeature Version x.y.z
+and clicking on &quot;Next &gt;&quot; and following the instructions in the wizard window.
+
+After installation, the Cinder View can be displayed by choosing
+
+Window -&gt; Show View -&gt; Other
+
+then browsing to
+
+Cinder -&gt; Cinder View
    </description>
 
-   <copyright url="http://dev.art-core.org/wiki/cinder:copyright">
-      (c) 2009-2010, Florian Anderiasch
+   <copyright url="http://www.opensource.org/licenses/bsd-license.php">
+      Copyright (c) 2009-2010, Florian Anderiasch
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+* Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer
+in 
+the documentation and/or other materials provided with the distribution.
+* Neither the name of Florian Anderiasch nor the names of its
+contributors may be used to endorse or promote products derived
+from this software without specific prior written permission.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+&quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
+NOT 
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+IN 
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
    </copyright>
 
-   <license url="http://dev.art-core.org/wiki/cinder:license">
-      BSD License, http://www.opensource.org/licenses/bsd-license.php
+   <license url="http://www.opensource.org/licenses/bsd-license.php">
+      Copyright (c) 2009-2010, Florian Anderiasch
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+* Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer
+in 
+the documentation and/or other materials provided with the distribution.
+* Neither the name of Florian Anderiasch nor the names of its
+contributors may be used to endorse or promote products derived
+from this software without specific prior written permission.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+&quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
+NOT 
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+IN 
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
    </license>
 
    <url>
-      <update label="Cinder Update Site" url="http://dev.art-core.org/update"/>
+      <update label="Cinder Update Site" url="http://opensource.mayflower.de/cinder"/>
+      <discovery label="CINDER @ Mayflower OpenSource Labs" url="http://confluence.opensource.mayflower.de/display/CINDER"/>
    </url>
 
    <plugin
          id="org.art_core.dev.cinder"
          download-size="0"
          install-size="0"
-         version="0.1.5"
+         version="0.1.6"
          unpack="false"/>
 
 </feature>
