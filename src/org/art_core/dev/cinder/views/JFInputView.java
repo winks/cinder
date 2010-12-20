@@ -1,6 +1,7 @@
 package org.art_core.dev.cinder.views;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -141,13 +142,12 @@ public class JFInputView extends ViewPart {
 	 */
 	@SuppressWarnings("unchecked")
 	private List<IItem> getSelectedItems() {
+		CinderLog.logDebug("getSel_start");
 		final ISelection selection = viewer.getSelection();
 		List<Object> foo = ((IStructuredSelection) selection).toList();
-		
 		List<IItem> list = new ArrayList<IItem>();
-		for(Object x: foo) {
-			list.add((IItem) x);
-		}
+		list.addAll((Collection<? extends IItem>) foo);
+		CinderLog.logDebug("getSel_end");
 		return list;
 	}
 
@@ -204,10 +204,15 @@ public class JFInputView extends ViewPart {
 		}
 	}
 	
+	/**
+	 * Sets the status for selected items.
+	 * @param status
+	 */
 	private void executeSetStatus(ItemStatus status) {
 		for (IItem pItem: this.getSelectedItems()) {
 			cControl.setStatus(pItem, status);
 		}
+		this.getViewer().refresh();
 	}
 
 	/**
@@ -298,8 +303,11 @@ public class JFInputView extends ViewPart {
 		final Shell shell = new Shell(display);
 		final InputDialog dlg = new InputDialog(shell, dialogTitle,
 				dialogMessage, sPre, null);
-		dlg.open();
-		sResult = dlg.getValue();
+
+		int result = dlg.open();
+		if (result == org.eclipse.jface.window.Window.OK) {
+			sResult = dlg.getValue();
+		}
 
 		return sResult;
 	}

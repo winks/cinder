@@ -153,6 +153,8 @@ public class MainController {
 			CinderLog.logDebug("JFIV:MARKER:" + marker.getType());
 			CinderLog.logDebug("JFIV:MARKER:"
 					+ marker.getAttribute(IMarker.LINE_NUMBER, 666));
+		} catch (NullPointerException e) {
+			// nothing found, all ok
 		} catch (Exception e) {
 			CinderLog.logErrorInfo("showMarkersAll", e);
 		}
@@ -169,6 +171,8 @@ public class MainController {
 
 		try {
 			res.deleteMarkers(null, true, 2);
+		} catch (NullPointerException e) {
+			// nothing selected, everything ok
 		} catch (CoreException e) {
 			CinderLog.logError(e);
 		}
@@ -180,9 +184,8 @@ public class MainController {
 	 * @param status
 	 */
 	public void setStatus(IItem item, ItemStatus status) {
-		item.setStatus(status);
 		CinderLog.logDebug("setting status to " + status.name());
-		cView.getViewer().refresh();
+		item.setStatus(status);
 	}
 
 	/**

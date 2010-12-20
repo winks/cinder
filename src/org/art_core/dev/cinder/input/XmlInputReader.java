@@ -135,7 +135,7 @@ public class XmlInputReader implements IInputHandler {
 		try {
 			fileNodes = doc.getElementsByTagName(sName).item(0).getChildNodes();
 		} catch (Exception e) {
-			CinderLog.logErrorInfo("no " + sName + " in XML", e);
+			CinderLog.logDebug("no " + sName + " in XML found");
 		}
 		return fileNodes;
 	}
