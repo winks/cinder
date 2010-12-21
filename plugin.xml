@@ -22,7 +22,7 @@
       </category>
       <view
             name="Cinder"
-            icon="icons/face-monkey.gif"
+            icon="icons/cinder.gif"
             category="org.art_core.dev.cinder"
             class="org.art_core.dev.cinder.views.JFInputView"
             id="org.art_core.dev.cinder.views.JFInputView">

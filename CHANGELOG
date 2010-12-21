@@ -1,4 +1,15 @@
-CINDER 0.1.5
-------------
+CINDER Changelog
+================
 
-- First public release
+0.1.6 - 21.12.2010
+~~~~~~~~~~~~~~~~~~
+    * Fixed: X button in "Load from URL" does not cancel the operation
+    * Fixed: Hide selected markers
+    * Fixed: Bad XML input performance
+    * Fixed: Bad ItemManager clearing performance
+    * Fixed: Bad performance when setting status to many items
+    * UI: New icon
+
+0.1.5
+~~~~~
+    * First public release

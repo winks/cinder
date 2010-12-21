@@ -33,12 +33,7 @@ then browsing to
 
 Cinder -> Cinder View
 
-Changelog
-=========
-
-0.1.6   21.12.2010
-    * Fixed: X button in "Load from URL" does not cancel the operation
-    * Fixed: Hide selected markers
-    * Fixed: Bad XML input performance
-    * Fixed: Bad ItemManager clearing performance
-    * Fixed: Bad performance when setting status to many items
+Thanks
+~~~~~~
+* Mayflower GmbH for development time, infrastructure and testing
+* http://www.thenounproject.com/ for the icon
