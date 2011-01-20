@@ -1,12 +1,8 @@
 package org.art_core.dev.cinder.prefs;
 
 import org.eclipse.jface.preference.*;
-import org.eclipse.osgi.framework.internal.protocol.MultiplexingURLStreamHandler;
-import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbench;
-import org.art_core.dev.cinder.CinderLog;
 import org.art_core.dev.cinder.CinderPlugin;
 
 /**
@@ -50,8 +46,10 @@ public class CinderPrefPage extends FieldEditorPreferencePage implements
 	public void createFieldEditors() {
 		addImportSource(STRING_FIELD, "xml_url", 1);
 		addImportSource(STRING_FIELD, "xml_url", 2);
+		addImportSource(STRING_FIELD, "xml_url", 3);
 		addImportSource(FILE_FIELD, "xml_file", 1);
 		addImportSource(FILE_FIELD, "xml_file", 2);
+		addImportSource(FILE_FIELD, "xml_file", 3);
 		
 		addField(new BooleanFieldEditor(CinderPrefPage.P_BOOLEAN + "_show_debug", 
 				"Show debug messages", getFieldEditorParent()));
