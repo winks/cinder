@@ -62,33 +62,44 @@ public class MainController {
 	 * Regularly check for updates from the CI system.
 	 */
 	private void checkIntervals() {
-		long delay;
-		
-		// both in msec
-		delay = 1000;
-		long periodUrl = 1000 * 60 * ipsPref.getInt(CinderPrefPage.P_INTEGER + "_xml_url_time");
-		boolean bCheckUrl = ipsPref.getBoolean(CinderPrefPage.P_BOOLEAN + "_xml_url_check");
-		String sCheckUrl = ipsPref.getString(CinderPrefPage.P_STRING + "_xml_url");
-		TimerTask tCheckUrl = new CheckFilesTask(this, sCheckUrl, MainController.FILE_REMOTE);
-		Timer tU = new Timer();
-		
-		if (bCheckUrl && periodUrl > 0) {
-			tU.schedule(tCheckUrl, delay, periodUrl);
-		}
-		
-		// both in msec
-		delay = 30000;
-		long periodFile = 1000 * 60 * ipsPref.getInt(CinderPrefPage.P_INTEGER + "_xml_file_time");
-		boolean bCheckFile = ipsPref.getBoolean(CinderPrefPage.P_BOOLEAN + "_xml_file_check");
-		String sCheckFile = ipsPref.getString(CinderPrefPage.P_STRING + "_xml_file");
-		TimerTask tCheckFile = new CheckFilesTask(this, sCheckFile, MainController.FILE_LOCAL);
-		Timer tF = new Timer();
-		
-		if (bCheckFile && periodFile > 0) {
-			tF.schedule(tCheckFile, delay, periodFile);
-		}
-		
+		createTask("xml_url", 1, MainController.FILE_REMOTE);
+		createTask("xml_url", 2, MainController.FILE_REMOTE);
+		createTask("xml_file", 1, MainController.FILE_LOCAL);
+		createTask("xml_file", 2, MainController.FILE_LOCAL);
 	}
+	
+	/**
+	 * Creates tasks for periodically updating the source files.
+	 * 
+	 * @param sIdentifier the name of the field set, e.g. xml_file
+	 * @param iNumber the number of the field set, e.g. 1
+	 * @param iMode either FILE_LOCAL or FILE_REMOTE
+	 * @param iDelay delay in msec
+	 */
+	private void createTask(String sIdentifier, int iNumber, int iMode, long iDelay) {
+		String sCheckString = CinderPrefPage.P_STRING + "_" + sIdentifier + "_" + iNumber;
+		String sCheckInt = CinderPrefPage.P_INTEGER + "_" + sIdentifier + "_" + iNumber;
+		String sCheckBool = CinderPrefPage.P_BOOLEAN + "_" + sIdentifier + "_" + iNumber;
+		
+		long iPeriod = 1000 * 60 * ipsPref.getInt(sCheckInt + "_time");
+		boolean bCheck = ipsPref.getBoolean(sCheckBool + "_check");
+		
+		CinderLog.logInfo("A"+sCheckString);
+		CinderLog.logInfo("A"+sCheckBool);
+		CinderLog.logInfo("A"+sCheckInt);
+		
+		TimerTask ttCheck = new CheckFilesTask(this, sCheckString, iMode);
+		Timer tCheck = new Timer();
+		
+		if (bCheck && iPeriod > 0) {
+			tCheck.schedule(ttCheck, iDelay, iPeriod);
+		}
+	}
+	
+	private void createTask(String sIdentifier, int iNumber, int iMode) {
+		createTask(sIdentifier, iNumber, iMode, 10000);
+	}
+	
 	/**
 	 * Shows all markers for findings.
 	 */

@@ -219,7 +219,7 @@ public class JFInputView extends ViewPart {
 	 * Executes opening a file.
 	 */
 	private void executeOpenFile() {
-		String sPrefKey = CinderPrefPage.P_STRING + "_xml_file";
+		String sPrefKey = CinderPrefPage.P_STRING + "_xml_file_1";
 		String sPrefPath = ipsPref.getString(sPrefKey);
 		CinderLog.logDebug("JFIV_eOF:" + sPrefPath);
 		final String sFile = getOpenFile(sPrefPath);
@@ -238,7 +238,7 @@ public class JFInputView extends ViewPart {
 	 * Executes opening an URL.
 	 */
 	private void executeOpenUrl() {
-		String sPrefKey = CinderPrefPage.P_STRING + "_xml_url";
+		String sPrefKey = CinderPrefPage.P_STRING + "_xml_url_1";
 		String sPrefPath = ipsPref.getString(sPrefKey);
 		CinderLog.logDebug("JFIV_eOU:" + sPrefPath);
 		final String sFile = getOpenUrl(sPrefPath);

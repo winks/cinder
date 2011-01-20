@@ -17,10 +17,14 @@ public class CinderPrefInit extends AbstractPreferenceInitializer {
 	 */
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = CinderPlugin.getDefault().getPreferenceStore();
-		store.setDefault(CinderPrefPage.P_INTEGER + "_xml_url_time", "5");
-		store.setDefault(CinderPrefPage.P_INTEGER + "_xml_file_time", "5");
-		store.setDefault(CinderPrefPage.P_BOOLEAN + "_xml_url_check", false);
-		store.setDefault(CinderPrefPage.P_BOOLEAN + "_xml_file_check", false);
+		store.setDefault(CinderPrefPage.P_INTEGER + "_xml_url_1_time", "5");
+		store.setDefault(CinderPrefPage.P_BOOLEAN + "_xml_url_1_check", false);
+		
+		store.setDefault(CinderPrefPage.P_INTEGER + "_xml_file_1_time", "5");
+		store.setDefault(CinderPrefPage.P_BOOLEAN + "_xml_file_1_check", false);
+		
+		store.setDefault(CinderPrefPage.P_INTEGER + "_xml_file_2_time", "5");
+		store.setDefault(CinderPrefPage.P_BOOLEAN + "_xml_file_2_check", false);
 	}
 
 }
