@@ -1,5 +1,7 @@
 package org.art_core.dev.cinder.prefs;
 
+import java.util.ResourceBundle;
+
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbench;
@@ -19,14 +21,14 @@ import org.art_core.dev.cinder.CinderPlugin;
 public class CinderPrefPage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 
+	private ResourceBundle cRes = ResourceBundle.getBundle("org.art_core.dev.cinder.CinderResource");
+	
 	public static final String P_PATH = "pathPreference";
 	public static final String P_BOOLEAN = "booleanPreference";
 	public static final String P_CHOICE = "choicePreference";
 	public static final String P_STRING = "stringPreference";
 	public static final String P_COLOR = "colorPreference";
 	public static final String P_INTEGER = "integerPreference";
-	public static final String DESCRIPTION = "General settings for Cinder:";
-	public static final String MESSAGE = "Cinder Preferences";
 	
 	public static final int STRING_FIELD = 1;
 	public static final int FILE_FIELD = 2;
@@ -34,8 +36,8 @@ public class CinderPrefPage extends FieldEditorPreferencePage implements
 	public CinderPrefPage() {
 		super(GRID);
 		setPreferenceStore(CinderPlugin.getDefault().getPreferenceStore());
-		setDescription(CinderPrefPage.DESCRIPTION);
-		setMessage(CinderPrefPage.MESSAGE);
+		setDescription(cRes.getString("GENERAL_SETTINGS"));
+		setMessage(cRes.getString("PREFERENCES"));
 	}
 
 	/**
@@ -52,7 +54,7 @@ public class CinderPrefPage extends FieldEditorPreferencePage implements
 		addImportSource(FILE_FIELD, "xml_file", 3);
 		
 		addField(new BooleanFieldEditor(CinderPrefPage.P_BOOLEAN + "_show_debug", 
-				"Show debug messages", getFieldEditorParent()));
+				cRes.getString("SHOW_DEBUG"), getFieldEditorParent()));
 	}
 
 	private void addImportSource(int iMode, String sIdentifier, int iNumber) {
@@ -62,15 +64,15 @@ public class CinderPrefPage extends FieldEditorPreferencePage implements
 		
 		if (iMode == FILE_FIELD) {
 			addField(new FileFieldEditor(sNameString,
-				"XML File", getFieldEditorParent()));
+				cRes.getString("XML_FILE"), getFieldEditorParent()));
 		} else {
 			addField(new StringFieldEditor(sNameString,
-					"URL to XML", getFieldEditorParent()));
+					cRes.getString("XML_URL"), getFieldEditorParent()));
 		}
 		addField(new BooleanFieldEditor(sNameBool + "_check", 
-				"Check periodically", getFieldEditorParent()));
+				cRes.getString("CHECK_PERIODICALLY"), getFieldEditorParent()));
 		IntegerFieldEditor ifeUrl = new IntegerFieldEditor(sNameInt + "_time", 
-				"Interval in minutes:", getFieldEditorParent());
+				cRes.getString("INTERVAL_IN_MINUTES"), getFieldEditorParent());
 		ifeUrl.setTextLimit(3);
 		ifeUrl.setValidRange(1, 999);
 		addField(ifeUrl);

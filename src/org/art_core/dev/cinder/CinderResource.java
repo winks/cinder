@@ -18,6 +18,9 @@ public class CinderResource extends ListResourceBundle {
 	}
 	
 	static Object[][] contents = {
+		{ "COLNAMES",
+			  "", "Name", "Message", "Location", "Line", "Offset", "Status", "Changed" 
+		},
 		{ "TEXT_SET_STATUS",
 			"Set Status to"
 		},
@@ -29,6 +32,27 @@ public class CinderResource extends ListResourceBundle {
 		},
 		{ "DIALOG_READ_XML_URL_MESSAGE",
 			"Please enter the URL of the XML file to open:"
+		},
+		{ "GENERAL_SETTINGS",
+			"General settings for Cinder:"
+		},
+		{ "PREFERENCES",
+			"Cinder Preferences"
+		},
+		{ "SHOW_DEBUG",
+			"Show debug messages"
+		},
+		{ "XML_FILE",
+			"XML File"
+		},
+		{ "XML_URL",
+			"URL to XML"
+		},
+		{ "CHECK_PERIODICALLY",
+			"Check periodically"
+		},
+		{ "INTERVAL_IN_MINUTES",
+			"Interval in minutes:"
 		},
 		{ "TEXT_HIDE_ALL_MARKERS",
 			"Hide all Markers"

@@ -48,16 +48,18 @@ import org.eclipse.swt.SWT;
 public class JFInputView extends ViewPart {
 
 	private final String[] colNames = { "", "Name", "Message", "Location", "Line", "Offset", "Status", "Changed" };
+	
 	private final int[] colSizes = {20, 150, 200, 200, 50, 50, 100, 120 };
+	
 	private ResourceBundle cRes = ResourceBundle.getBundle("org.art_core.dev.cinder.CinderResource");
+	
 	private static final boolean TOGGLE_OFF = false;
 	private static final boolean TOGGLE_ON = true;
 
 	private TableViewer viewer;
 	private JFSorter sorter;
 	private MainController cControl;
-	private IPreferenceStore ipsPref = CinderPlugin.getDefault()
-			.getPreferenceStore();
+	private IPreferenceStore ipsPref = CinderPlugin.getDefault().getPreferenceStore();
 
 	private Action aShowMarkersAll;
 	private Action aHideMarkersAll;
@@ -71,6 +73,11 @@ public class JFInputView extends ViewPart {
 	private Action aClearSelected;
 	private Action[] aStatusActions;
 
+	public JFInputView() {
+		super();
+		//colNames = cRes.getStringArray("COLNAMES");
+	}
+	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
@@ -92,8 +99,8 @@ public class JFInputView extends ViewPart {
 	 * @param parent
 	 */
 	private void createTableViewer(final Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.FULL_SELECTION);
+		viewer = new TableViewer(parent, 
+				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		createColumns(viewer);
 		
 		viewer.setContentProvider(new JFContentProvider());

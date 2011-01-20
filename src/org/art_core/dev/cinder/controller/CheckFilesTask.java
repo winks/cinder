@@ -1,5 +1,6 @@
 package org.art_core.dev.cinder.controller;
 
+import java.util.ResourceBundle;
 import java.util.TimerTask;
 import org.art_core.dev.cinder.CinderLog;
 import org.eclipse.swt.widgets.Display;
@@ -13,6 +14,7 @@ public class CheckFilesTask extends TimerTask {
 		this.parent = mc;
 		this.sFilename = sFile;
 		this.iFileLocation = iFileLocation;
+		
 	}
 	
 	@Override
