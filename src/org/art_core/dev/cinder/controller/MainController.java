@@ -83,12 +83,9 @@ public class MainController {
 		
 		long iPeriod = 1000 * 60 * ipsPref.getInt(sCheckInt + "_time");
 		boolean bCheck = ipsPref.getBoolean(sCheckBool + "_check");
+		String sCheck = ipsPref.getString(sCheckString);
 		
-		CinderLog.logInfo("A"+sCheckString);
-		CinderLog.logInfo("A"+sCheckBool);
-		CinderLog.logInfo("A"+sCheckInt);
-		
-		TimerTask ttCheck = new CheckFilesTask(this, sCheckString, iMode);
+		TimerTask ttCheck = new CheckFilesTask(this, sCheck, iMode);
 		Timer tCheck = new Timer();
 		
 		if (bCheck && iPeriod > 0) {

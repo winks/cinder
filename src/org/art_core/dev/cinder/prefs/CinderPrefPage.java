@@ -32,6 +32,9 @@ public class CinderPrefPage extends FieldEditorPreferencePage implements
 	public static final String DESCRIPTION = "General settings for Cinder:";
 	public static final String MESSAGE = "Cinder Preferences";
 	
+	public static final int STRING_FIELD = 1;
+	public static final int FILE_FIELD = 2;
+	
 	public CinderPrefPage() {
 		super(GRID);
 		setPreferenceStore(CinderPlugin.getDefault().getPreferenceStore());
@@ -45,27 +48,10 @@ public class CinderPrefPage extends FieldEditorPreferencePage implements
 	 * editor knows how to save and restore itself.
 	 */
 	public void createFieldEditors() {
-		addImportSource(1, "xml_url", 1);
-		
-		addField(new FileFieldEditor(CinderPrefPage.P_STRING + "_xml_file_1",
-				"XML File", getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CinderPrefPage.P_BOOLEAN + "_xml_file_1_check", 
-				"Check periodically", getFieldEditorParent()));
-		IntegerFieldEditor ifeFile = new IntegerFieldEditor(CinderPrefPage.P_INTEGER + "_xml_file_1_time", 
-				"Interval in minutes:", getFieldEditorParent());
-		ifeFile.setTextLimit(3);
-		ifeFile.setValidRange(1, 999);
-		addField(ifeFile);
-		
-		addField(new FileFieldEditor(CinderPrefPage.P_STRING + "_xml_file_2",
-				"XML File", getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CinderPrefPage.P_BOOLEAN + "_xml_file_2_check", 
-				"Check periodically", getFieldEditorParent()));
-		IntegerFieldEditor ifeFile2 = new IntegerFieldEditor(CinderPrefPage.P_INTEGER + "_xml_file_2_time", 
-				"Interval in minutes:", getFieldEditorParent());
-		ifeFile2.setTextLimit(3);
-		ifeFile2.setValidRange(1, 999);
-		addField(ifeFile2);
+		addImportSource(STRING_FIELD, "xml_url", 1);
+		addImportSource(STRING_FIELD, "xml_url", 2);
+		addImportSource(FILE_FIELD, "xml_file", 1);
+		addImportSource(FILE_FIELD, "xml_file", 2);
 		
 		addField(new BooleanFieldEditor(CinderPrefPage.P_BOOLEAN + "_show_debug", 
 				"Show debug messages", getFieldEditorParent()));
@@ -76,9 +62,13 @@ public class CinderPrefPage extends FieldEditorPreferencePage implements
 		String sNameInt = CinderPrefPage.P_INTEGER + "_" + sIdentifier + "_" + iNumber;
 		String sNameBool = CinderPrefPage.P_BOOLEAN + "_" + sIdentifier + "_" + iNumber;
 		
-		CinderLog.logInfo("B"+sNameString);
-		addField(new StringFieldEditor(sNameString,
-				"URL to XML", getFieldEditorParent()));
+		if (iMode == FILE_FIELD) {
+			addField(new FileFieldEditor(sNameString,
+				"XML File", getFieldEditorParent()));
+		} else {
+			addField(new StringFieldEditor(sNameString,
+					"URL to XML", getFieldEditorParent()));
+		}
 		addField(new BooleanFieldEditor(sNameBool + "_check", 
 				"Check periodically", getFieldEditorParent()));
 		IntegerFieldEditor ifeUrl = new IntegerFieldEditor(sNameInt + "_time", 

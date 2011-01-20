@@ -87,7 +87,8 @@ public class XmlInputReader implements IInputHandler {
 				doc = builder.parse(fXml);
 				CinderLog.logDebug("XIR:RFF_L:" + sFile + "_" + fXml.length());
 			}
-
+		} catch (java.net.ConnectException e) {
+			CinderLog.logInfo("Could not connect to host");
 		} catch (Exception e) {
 			CinderLog.logError(e);
 		}
