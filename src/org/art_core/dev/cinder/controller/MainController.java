@@ -28,7 +28,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
@@ -229,10 +231,12 @@ public class MainController {
 		FileEditorInput fileInput;
 
 		try {
+			IWorkbenchPage page = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
+			IEditorDescriptor desc = PlatformUI.getWorkbench()
+				.getEditorRegistry().getDefaultEditor(res.getName());
 			fileInput = new FileEditorInput(res);
-			editor = (AbstractTextEditor) PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage().openEditor(
-							fileInput, JAVAEDITORID);
+			editor = (AbstractTextEditor) page.openEditor(fileInput, desc.getId());
 			
 			int[] iOffset = convertLineToOffset(editor, item.getOffset(), item.getLine());
 			
